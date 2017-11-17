@@ -246,7 +246,7 @@
 
     
         <meta property="article:published_time" content="Fri Nov 17 2017 19:01:00 GMT+0800" />
-        <meta property="article:modified_time" content="Fri Nov 17 2017 19:19:03 GMT+0800" />
+        <meta property="article:modified_time" content="Fri Nov 17 2017 19:48:35 GMT+0800" />
     
 
     <!-- The Twitter Card protocol -->
@@ -273,7 +273,7 @@
     "mainEntityOfPage": "http://jinyu00.github.io/java应用破解思路/2017-11-17-使用sa-jdi-jar-dump-内存中的class.html",
     "headline": "使用sa-jdi.jar dump 内存中的class",
     "datePublished": "Fri Nov 17 2017 19:01:00 GMT+0800",
-    "dateModified": "Fri Nov 17 2017 19:19:03 GMT+0800",
+    "dateModified": "Fri Nov 17 2017 19:48:35 GMT+0800",
     "author": {
         "@type": "Person",
         "name": "hac425",
@@ -366,7 +366,7 @@
     </button>
 
     <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
-        <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#正文"><span class="post-toc-number">2.</span> <span class="post-toc-text">正文</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#示例"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">示例</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#问题解决"><span class="post-toc-number">3.</span> <span class="post-toc-text">问题解决</span></a></li></ol>
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#正文"><span class="post-toc-number">2.</span> <span class="post-toc-text">正文</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#示例"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">示例</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#问题解决"><span class="post-toc-number">3.</span> <span class="post-toc-text">问题解决</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#最后"><span class="post-toc-number">4.</span> <span class="post-toc-text">最后</span></a></li></ol>
     </ul>
     
 
@@ -554,7 +554,16 @@
 <p>进入 刚刚写的 <code>filter</code> 类的class文件的目录下。执行</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">java  -Dsun.jvm.hotspot.tools.jcore.filter=MyFilter  -Dsun.jvm.hotspot.tools.jcore.outputDir=d:\dump  sun.jvm.hotspot.tools.jcore.ClassDump 5308</div></pre></td></tr></table></figure>
 <p>把<code>MyFilter</code> 改为你自己的类名， <code>5308</code> 为目标 java进程的 <code>pid</code>(可以使用 <code>jps</code> 查看）。然后就会在 <code>d:\dump</code> 产生相应的 <code>class</code> 文件。</p>
-<h3 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h3>
+<h3 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h3><ul>
+<li><p>如果直接点击应用的 exe, 来启动应用，使用 jps 获取到的 pid， 可能没有办法附加， 所以我们要找到启动的命令， 比如 bat脚本里面。</p>
+</li>
+<li><p>一般大型应用会自带 jre, 我们要使用上面的技术，替换 jre,为我们的，才能正常dump, 否则会出现版本不匹配。</p>
+</li>
+<li>windows下还需把 <code>sawindbg.dll</code> 放到 <code>jre/bin/</code> 和java.exe 同目录下。否则可能会遇到 加载不了这个 dll 的问题。</li>
+</ul>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1510919261728mq8ffmr8.png?imageslim" alt="paste image"></p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>搞java应用第一步还是找到启动的命令，便于后面的分析。一般别使用 <code>exe</code>启动应用</p>
+
         
                 <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
                     <p><strong>
