@@ -3,6 +3,96 @@
   
     
     <entry>
+      <title><![CDATA[android studio使用openssl]]></title>
+      <url>//%E5%AE%89%E5%8D%93%E5%AE%89%E5%85%A8/2017-11-19-android-studio%E4%BD%BF%E7%94%A8openssl.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>逆向的基础是开发， 逆向分析时很多时候会使用一些公开的加密函数来对数据进行加密，通过使用 <code>openssl</code> 熟悉下。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先得先编译出来 <code>openssl</code>，然后把它们复制到你的工程目录下。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15110733397054zqc1idw.png?imageslim" alt="paste image"></p>
+<p><code>include</code> 是 <code>openssl</code> 的头文件。<code>lib</code> 下的那些是编译出来的so。</p>
+<p>然后修改 <code>build.gradle</code> 中的 <code>cmake</code> 项：</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1511073468721ci33oo8v.png?imageslim" alt="paste image"></p>
+<p><code>cppFlags</code> 是编译选项， <code>abiFilters</code>指定编译so的 <code>abi</code>，和 刚才 <code>lib</code> 目录中的目录项对应。后面会用到。</p>
+<p>增加 <img src="http://oy9h5q2k4.bkt.clouddn.com/1511073600119rzvpfdcl.png?imageslim" alt="paste image"></p>
+<p><code>jniLibs.srcDirs</code> 的值为<code>openssl</code> so的目录。表示打包时直接复制这些就行了。<br>最终的 <code>build.gradle</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line">apply plugin: &apos;com.android.application&apos;</div><div class="line"></div><div class="line">android &#123;</div><div class="line">    compileSdkVersion 26</div><div class="line">    defaultConfig &#123;</div><div class="line">        applicationId &quot;com.example.administrator.oi&quot;</div><div class="line">        minSdkVersion 19</div><div class="line">        targetSdkVersion 26</div><div class="line">        versionCode 1</div><div class="line">        versionName &quot;1.0&quot;</div><div class="line">        testInstrumentationRunner &quot;android.support.test.runner.AndroidJUnitRunner&quot;</div><div class="line">        externalNativeBuild &#123;</div><div class="line">            cmake &#123;</div><div class="line">                cppFlags &quot;-std=c++11 -frtti -fexceptions&quot;</div><div class="line">                abiFilters &apos;armeabi&apos;, &apos;armeabi-v7a&apos;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    buildTypes &#123;</div><div class="line">        release &#123;</div><div class="line">            minifyEnabled false</div><div class="line">            proguardFiles getDefaultProguardFile(&apos;proguard-android.txt&apos;), &apos;proguard-rules.pro&apos;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    sourceSets &#123;</div><div class="line">        main &#123;</div><div class="line">            jniLibs.srcDirs = [&quot;C:\\Users\\Administrator\\AndroidStudioProjects\\oi\\app\\openssl_resouce\\lib&quot;]</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    externalNativeBuild &#123;</div><div class="line">        cmake &#123;</div><div class="line">            path &quot;CMakeLists.txt&quot;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">dependencies &#123;</div><div class="line">    implementation fileTree(dir: &apos;libs&apos;, include: [&apos;*.jar&apos;])</div><div class="line">    implementation &apos;com.android.support:appcompat-v7:26.1.0&apos;</div><div class="line">    implementation &apos;com.android.support.constraint:constraint-layout:1.0.2&apos;</div><div class="line">    testImplementation &apos;junit:junit:4.12&apos;</div><div class="line">    androidTestImplementation &apos;com.android.support.test:runner:1.0.1&apos;</div><div class="line">    androidTestImplementation &apos;com.android.support.test.espresso:espresso-core:3.0.1&apos;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>然后修改 <code>CMakeLists.txt</code>， 中文注释的地方就是修改的地方。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line"># For more information about using CMake with Android Studio, read the</div><div class="line"># documentation: https://d.android.com/studio/projects/add-native-code.html</div><div class="line"></div><div class="line"># Sets the minimum version of CMake required to build the native library.</div><div class="line"></div><div class="line">cmake_minimum_required(VERSION 3.4.1)</div><div class="line"></div><div class="line"># 设置头文件加载的目录</div><div class="line">include_directories(C:/Users/Administrator/AndroidStudioProjects/oi/app/openssl_resouce/include)</div><div class="line"></div><div class="line"></div><div class="line">#动态方式加载</div><div class="line">add_library(openssl SHARED IMPORTED )</div><div class="line">add_library(ssl SHARED IMPORTED )</div><div class="line"></div><div class="line">#引入第三方.so库，根据$&#123;ANDROID_ABI&#125; 引用不同的库</div><div class="line">set_target_properties(openssl PROPERTIES IMPORTED_LOCATION C:/Users/Administrator/AndroidStudioProjects/oi/app/openssl_resouce/lib/$&#123;ANDROID_ABI&#125;/libcrypto.so)</div><div class="line">set_target_properties(ssl PROPERTIES IMPORTED_LOCATION C:/Users/Administrator/AndroidStudioProjects/oi/app/openssl_resouce/lib/$&#123;ANDROID_ABI&#125;/libssl.so)</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"># Creates and names a library, sets it as either STATIC</div><div class="line"># or SHARED, and provides the relative paths to its source code.</div><div class="line"># You can define multiple libraries, and CMake builds them for you.</div><div class="line"># Gradle automatically packages shared libraries with your APK.</div><div class="line"></div><div class="line">add_library( # Sets the name of the library.</div><div class="line">             native-lib</div><div class="line"></div><div class="line">             # Sets the library as a shared library.</div><div class="line">             SHARED</div><div class="line"></div><div class="line">             # Provides a relative path to your source file(s).</div><div class="line">             src/main/cpp/native-lib.cpp )</div><div class="line"></div><div class="line"># Searches for a specified prebuilt library and stores the path as a</div><div class="line"># variable. Because CMake includes system libraries in the search path by</div><div class="line"># default, you only need to specify the name of the public NDK library</div><div class="line"># you want to add. CMake verifies that the library exists before</div><div class="line"># completing its build.</div><div class="line"></div><div class="line">find_library( # Sets the name of the path variable.</div><div class="line">              log-lib</div><div class="line"></div><div class="line">              # Specifies the name of the NDK library that</div><div class="line">              # you want CMake to locate.</div><div class="line">              log )</div><div class="line"></div><div class="line"># Specifies libraries CMake should link to your target library. You</div><div class="line"># can link multiple libraries, such as libraries you define in this</div><div class="line"># build script, prebuilt third-party libraries, or system libraries.</div><div class="line"></div><div class="line"># 设置链接选项</div><div class="line">target_link_libraries( # Specifies the target library.</div><div class="line">                       native-lib</div><div class="line">                       openssl</div><div class="line">                       ssl</div><div class="line"></div><div class="line">                       # Links the target library to the log library</div><div class="line">                       # included in the NDK.</div><div class="line">                       $&#123;log-lib&#125; )</div></pre></td></tr></table></figure>
+<p>然后就可以使用了。</p>
+<p>项目路径</p>
+<p><a href="https://gitee.com/hac425/android_openssl/" target="_blank" rel="external">https://gitee.com/hac425/android_openssl/</a></p>
+]]></content>
+      
+        <categories>
+            
+            <category> 安卓安全 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> openssl </tag>
+            
+            <tag> 开发 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[使用sa-jdi.jar dump 内存中的class]]></title>
+      <url>//java%E5%BA%94%E7%94%A8%E7%A0%B4%E8%A7%A3%E6%80%9D%E8%B7%AF/2017-11-17-%E4%BD%BF%E7%94%A8sa-jdi-jar-dump-%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84class.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在分析一个 <code>jar</code> 包时发现他把关键类采用了运行时使用 <code>classloader</code> 的方式加载了。懒得分析算法了，可以使用 <code>jdk</code> 自带的工具 <code>dump</code> 出需要的<code>class</code>.</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>从运行的java进程里dump出运行中的类的class文件的方法，所知道的有两种</p>
+<ul>
+<li><p>用agent attatch 到进程，然后利用 Instrumentation和 ClassFileTransformer就可以获取 到类的字节码了。</p>
+</li>
+<li><p>使用 sd-jdi.jar里的工具</p>
+</li>
+</ul>
+<p>本文介绍的就是使用 <code>sd-jdi.jar</code> 来dump.  <code>sd-jdi.jar</code>里自带的的 <code>sun.jvm.hotspot.tools.jcore.ClassDump</code> 可以把类的class内容dump到文件里。</p>
+<p><code>ClassDump</code> 里可以设置两个 <code>System properties</code>：</p>
+<ul>
+<li>sun.jvm.hotspot.tools.jcore.filter  Filter的类名</li>
+<li>sun.jvm.hotspot.tools.jcore.outputDir 输出的目录</li>
+</ul>
+<h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><p>首先写一个 <code>filter</code> 类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">import sun.jvm.hotspot.tools.jcore.ClassFilter;</div><div class="line">import sun.jvm.hotspot.oops.InstanceKlass;</div><div class="line">import sun.jvm.hotspot.tools.jcore.ClassDump;</div><div class="line">public class MyFilter implements ClassFilter &#123;</div><div class="line">    @Override</div><div class="line">    public boolean canInclude(InstanceKlass kls) &#123;</div><div class="line">        String klassName = kls.getName().asString();</div><div class="line">        return klassName.startsWith(&quot;com/fr/license/selector/&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>代码很显而易见了， 作用是 <code>dump</code> 所有 以 <code>com/fr/license/selector/</code> 开头的 类的· 字节码。</p>
+<p>然后编译成class文件</p>
+<p>要使用这个首先需要把  <code>sa-jdi.jar</code> 加到 <code>java</code> 的 <code>classpath</code> 里。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1510917062153e72v6rn3.png?imageslim" alt="paste image"></p>
+<p>进入 刚刚写的 <code>filter</code> 类的class文件的目录下。执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">java  -Dsun.jvm.hotspot.tools.jcore.filter=MyFilter  -Dsun.jvm.hotspot.tools.jcore.outputDir=d:\dump  sun.jvm.hotspot.tools.jcore.ClassDump 5308</div></pre></td></tr></table></figure>
+<p>把<code>MyFilter</code> 改为你自己的类名， <code>5308</code> 为目标 java进程的 <code>pid</code>(可以使用 <code>jps</code> 查看）。然后就会在 <code>d:\dump</code> 产生相应的 <code>class</code> 文件。</p>
+<h3 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h3><ul>
+<li><p>如果直接点击应用的 exe, 来启动应用，使用 jps 获取到的 pid， 可能没有办法附加， 所以我们要找到启动的命令， 比如 bat脚本里面。</p>
+</li>
+<li><p>一般大型应用会自带 jre, 我们要使用上面的技术，替换 jre,为我们的，才能正常dump, 否则会出现版本不匹配。</p>
+</li>
+<li>windows下还需把 <code>sawindbg.dll</code> 放到 <code>jre/bin/</code> 和java.exe 同目录下。否则可能会遇到 加载不了这个 dll 的问题。</li>
+</ul>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1510919261728mq8ffmr8.png?imageslim" alt="paste image"></p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>搞java应用第一步还是找到启动的命令，便于后面的分析。一般别使用 <code>exe</code>启动应用</p>
+]]></content>
+      
+        <categories>
+            
+            <category> java应用破解思路 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> dump class </tag>
+            
+            <tag> sa-jdi.jar </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[可执行文件patch技术&&持续更新]]></title>
       <url>//%E6%96%87%E4%BB%B6patch/2017-11-07-%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6patch%E6%8A%80%E6%9C%AF-%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在ctf比赛中， 有时我们需要对可执行文件进行patch, 或者在植入后门时，patch也是常用的手段。不过手工patch比较麻烦，下面介绍几个工具。本文介绍遇到的各种技术，不断更新。</p>
