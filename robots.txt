@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Allow: /archives/
+Allow: /categories/
+Allow: /tags/ 
+Allow: /about/
+Allow: /timeline/
+Allow: /links/
+Disallow: /js/
+Disallow: /css/
+Disallow: /fonts/
+
+Sitemap: https://jinyu00.github.io/sitemap.xml
+Sitemap: https://jinyu00.github.io/baidusitemap.xml

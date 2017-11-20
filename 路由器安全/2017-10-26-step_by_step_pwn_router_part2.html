@@ -45,7 +45,7 @@
     
     <title>
         
-            可执行文件patch技术&amp;&amp;持续更新 | 
+            一步一步pwn路由器之路由器环境修复&amp;&amp;rop技术分析 | 
         
         穷则变，变则通，通则久
     </title>
@@ -57,7 +57,7 @@
     <meta name="theme-color" content="#0097A7">
     <meta name="author" content="hac425">
     <meta name="description" itemprop="description" content="">
-    <meta name="keywords" content=",patch,elf patch,pe patch,mach-o patch,ctf">
+    <meta name="keywords" content=",路由器安全,mips rop,路由器环境修复">
 
     <!-- Import lsloader -->
     <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
@@ -239,18 +239,18 @@
     <!-- The Open Graph protocol -->
     <meta property="og:url" content="http://jinyu00.github.io">
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="可执行文件patch技术&amp;&amp;持续更新 | 穷则变，变则通，通则久">
+    <meta property="og:title" content="一步一步pwn路由器之路由器环境修复&amp;&amp;rop技术分析 | 穷则变，变则通，通则久">
     <meta property="og:image" content="http://jinyu00.github.io/img/girl.png" />
     <meta property="og:description" content="">
-    <meta property="og:article:tag" content="patch"> <meta property="og:article:tag" content="elf patch"> <meta property="og:article:tag" content="pe patch"> <meta property="og:article:tag" content="mach-o patch"> <meta property="og:article:tag" content="ctf"> 
+    <meta property="og:article:tag" content="路由器安全"> <meta property="og:article:tag" content="mips rop"> <meta property="og:article:tag" content="路由器环境修复"> 
 
     
-        <meta property="article:published_time" content="Tue Nov 07 2017 21:51:00 GMT+0800" />
-        <meta property="article:modified_time" content="Tue Nov 07 2017 22:45:27 GMT+0800" />
+        <meta property="article:published_time" content="Thu Oct 26 2017 23:05:00 GMT+0800" />
+        <meta property="article:modified_time" content="Mon Nov 20 2017 15:15:41 GMT+0800" />
     
 
     <!-- The Twitter Card protocol -->
-    <meta name="twitter:title" content="可执行文件patch技术&amp;&amp;持续更新 | 穷则变，变则通，通则久">
+    <meta name="twitter:title" content="一步一步pwn路由器之路由器环境修复&amp;&amp;rop技术分析 | 穷则变，变则通，通则久">
     <meta name="twitter:description" content="">
     <meta name="twitter:image" content="http://jinyu00.github.io/img/girl.png">
     <meta name="twitter:card" content="summary_large_image" />
@@ -258,7 +258,7 @@
 
     <!-- Add canonical link for SEO -->
     
-        <link rel="canonical" href="http://jinyu00.github.io/文件patch/2017-11-07-可执行文件patch技术-持续更新.html" />
+        <link rel="canonical" href="http://jinyu00.github.io/路由器安全/2017-10-26-step_by_step_pwn_router_part2.html" />
     
 
     <!-- Structured-data for SEO -->
@@ -270,10 +270,10 @@
 {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "mainEntityOfPage": "http://jinyu00.github.io/文件patch/2017-11-07-可执行文件patch技术-持续更新.html",
-    "headline": "可执行文件patch技术&&持续更新",
-    "datePublished": "Tue Nov 07 2017 21:51:00 GMT+0800",
-    "dateModified": "Tue Nov 07 2017 22:45:27 GMT+0800",
+    "mainEntityOfPage": "http://jinyu00.github.io/路由器安全/2017-10-26-step_by_step_pwn_router_part2.html",
+    "headline": "一步一步pwn路由器之路由器环境修复&&rop技术分析",
+    "datePublished": "Thu Oct 26 2017 23:05:00 GMT+0800",
+    "dateModified": "Mon Nov 20 2017 15:15:41 GMT+0800",
     "author": {
         "@type": "Person",
         "name": "hac425",
@@ -291,7 +291,7 @@
             "url": "/img/girl.png"
         }
     },
-    "keywords": ",patch,elf patch,pe patch,mach-o patch,ctf",
+    "keywords": ",路由器安全,mips rop,路由器环境修复",
     "description": "",
 }
 </script>
@@ -366,7 +366,7 @@
     </button>
 
     <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
-        <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ELF"><span class="post-toc-number">2.</span> <span class="post-toc-text">ELF</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#Patchkit"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">Patchkit</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#LIEF"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">LIEF</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-6"><a class="post-toc-link" href="#修改库函数"><span class="post-toc-number">2.2.0.1.</span> <span class="post-toc-text">修改库函数</span></a></li></ol></li><li class="post-toc-item post-toc-level-5"><a class="post-toc-link" href="#通过-got-plt-表-直接劫持程序"><span class="post-toc-number">2.2.1.</span> <span class="post-toc-text">通过 got/plt 表 直接劫持程序</span></a></li></ol></li></ol></li></ol>
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#正文"><span class="post-toc-number">2.</span> <span class="post-toc-text">正文</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#总结"><span class="post-toc-number">3.</span> <span class="post-toc-text">总结</span></a></li></ol>
     </ul>
     
 
@@ -398,7 +398,7 @@
         
     
             <p class="article-headline-p">
-                可执行文件patch技术&&持续更新
+                一步一步pwn路由器之路由器环境修复&&rop技术分析
             </p>
         </div>
 
@@ -417,7 +417,7 @@
     <!-- Author Name & Date -->
     <div>
         <strong>hac425</strong>
-        <span>11月 07, 2017</span>
+        <span>10月 26, 2017</span>
     </div>
 
     <div class="section-spacer"></div>
@@ -439,7 +439,7 @@
 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
     <li class="mdl-menu__item">在其它设备中阅读本文章</li>
     
-        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQ4AAAEOCAAAAABd2qZ5AAADkklEQVR42u3ay27bQBAEQP3/TyfXAI7l7pldQjCKp4BQxGXp0J7H64/rn+uFAAcOHDhw4MCBAweOD+Z4xdfX//X+e/7z4OD++8+8/+TwXXDgwIEDxwWOH6IoOGKO2FJ+B5EAJe+CAwcOHDjucSSPmYVidKzgTsLakuHAgQMHjs/hqB/8NjLfw+XfjwMHDhw4fgfH5kBt+y/5PA4cOHDg+ASOpNzKj9uiJ0E7Kykv9kpx4MCBA8d6oeHz//3ofgcOHDhw4PjC0V7tStxsqa4N79Ub4cCBAweOoxx5ULUHna3Q5Ytx7XNx4MCBA8fzHG2UtnAtU/49mz8OcODAgQPHWY79cYdrBKPQ3RdvOHDgwIHjeY7kTlvazRp8CdmmeMOBAwcOHM9wvEfJg/PUQlse5PmPigMHDhw47nHMVhPaSD71bVGzr/1pceDAgQPHUY68nNuMpvI7bWtvVuzhwIEDB457HPmoqS2rZgRJ0fgaXThw4MCB4xmOZFCUtPbyFYR81NSitEMvHDhw4MBxmyMfONVLAyVTPujKh17f/pA4cODAgeMox34lbj9kSgqzfCSWr1zgwIEDB457HG0h17YX2+bdPkSL9iUOHDhw4LjG0RZLebjmCwqzyJ+tQeDAgQMHjmc42peZrc1tyrbNEkYdtDhw4MCBY8TRRmZe2s3iM19WSMK1DlocOHDgwHGII2qlnRr2LBbd2mHV4YUGHDhw4MARd8NmiwsHou5oaVe3PnHgwIEDxzWO2bioXWjbjKySPwgO90px4MCBA8dizpLf2RRU+YgrbyO24Y0DBw4cOO5xnGrDtZ9sVxBmZV5dwuHAgQMHjjVH/jJ5UdcWXW1Jlo/KoqjGgQMHDhzXOPLjJjRJ7OXf0/5ZcKA5iAMHDhw41mOnU/HWrhrkBV7eTCxOggMHDhw4LnPkKLPR1KZsa0dNScDjwIEDB457HPnjkwWF2VrDLLBnIy4cOHDgwHGDo71amn3Lb9ZwzE+FAwcOHDjOcszCKT/KvsmY308Kv9UUDgcOHDhwjEq4/PXypmEe2G3D8cCKHg4cOHDguMaRD4E2iwiblYjN01dTOBw4cODA8QjHpp2XxGo7ZBoOyXDgwIEDx0dyvA/XvPSatQs3oYsDBw4cOO5x5EsMbZOuGAIFjcX2Z/jhhDhw4MCB4wJHHlSbKJ1F7GygtQpaHDhw4MCx4HDhwIEDBw4cOHDgwIHjw66/ADQfuKcCIxcAAAAASUVORK5CYII=">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQ4AAAEOCAAAAABd2qZ5AAADm0lEQVR42u3ay46jMBAF0Pz/T09vR0qT3Fu2GUY6rFppMPiwKOrx+uP463ghwIEDBw4cOHDgwIHjwRyv+Phlobf/Xp15da+rdZJrP6+T7wUHDhw4cJzg+BKK3peIgfKrWsR2ncu94MCBAweOYxyfA9jnDc/CZ/7o+bPl5+PAgQMHjudwtExLjxuD4sCBAweO/5ejDatJATGnyelx4MCBA8e/5cgDWE4wKxcmpcm26YUDBw4cOO7kyIcAnv/3rfMdOHDgwIHjjWOlFZT80pYLZ+MOSzvCgQMHDhxbOfJANXvQdp18YCK/45ercODAgQPHVo5ZyEwaP3m5MC/zJell/jsOHDhw4DjNkWy7HThIAmcS7NfTuUtiHDhw4MCxleNEw6kYU4tHIvIhieRaHDhw4MBxjiNKcka3b0uEbeNqVi6Mvjtw4MCBA8cCR/6Iu4p0sxRuBrQ0OYgDBw4cOEYcbbDMhyHyUuMstOcp6NJAAw4cOHDgKDmGS8SNpVm6OGsptSEWBw4cOHCc4GjLanmwzM9PCPKQnBPjwIEDB44THO0gWhuM9yZ7swJlPd+BAwcOHDgWOPJgmSdL7VDCSpq3EuBx4MCBA8dpjlnyliRObXOoTfDaFhoOHDhw4DjH0RbgErhZ22k2SLE+GIEDBw4cOPZy5DcejgvEJbx8tfblfXltOHDgwIFjK0ebXOUFuCQMt2MKszZV/d2BAwcOHDiWOVZKbznKrkSufbbhfAcOHDhw4Dg80JCXBWcbzsN/glK8Whw4cODAcSPHLLytDzEkG1tJDnHgwIEDxzmOtnmTB9FomGDUXprd8fJ3HDhw4MCxlSNPvVZKhy10W+zLsXDgwIEDx2mOPNTlWxq2fw5sOwr2OHDgwIHjMEe7dBKY85JiW+BrPwjq+Q4cOHDgwLHAsTK+lg8otE2pNlS3LwkHDhw4cNzJMRsyyJtMeRJ4ItnDgQMHDhynOfJhgral1AbFWfFxNoqHAwcOHDj2crTHesGuLTsmLyYfufgSaHHgwIEDxzLHriA3S+FmwxOfgdqCJg4cOHDgOMGxXv4r2jzBCm2a166GAwcOHDju4WjbNu3YQTsY0aaUwzEIHDhw4MDxAI711tSulXP0S1AcOHDgwPFIjjwJbAPnrgEIHDhw4MBxP0e+mZYsD4F5wF5pSuHAgQMHjtMcbYltmCzF9O1oRbJCEWhx4MCBA8cChwMHDhw4cODAgQMHDhwPO34AnfJncGpUqyYAAAAASUVORK5CYII=">
     
 </ul>
 
@@ -453,7 +453,7 @@
     </button>
     <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
         <li class="mdl-menu__item">
-        <a class="post_tag-link" href="/tags/ctf/">ctf</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/elf-patch/">elf patch</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/mach-o-patch/">mach-o patch</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/patch/">patch</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/pe-patch/">pe patch</a>
+        <a class="post_tag-link" href="/tags/mips-rop/">mips rop</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/路由器安全/">路由器安全</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/路由器环境修复/">路由器环境修复</a>
     </ul>
     
 
@@ -480,7 +480,7 @@
 
     <!-- Share Weibo -->
     
-        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=可执行文件patch技术&amp;&amp;持续更新&url=http://jinyu00.github.io/文件patch/2017-11-07-可执行文件patch技术-持续更新.html&pic=http://jinyu00.github.io/img/girl.png&searchPic=false&style=simple" target="_blank">
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=一步一步pwn路由器之路由器环境修复&amp;&amp;rop技术分析&url=http://jinyu00.github.io/路由器安全/2017-10-26-step_by_step_pwn_router_part2.html&pic=http://jinyu00.github.io/img/girl.png&searchPic=false&style=simple" target="_blank">
             <li class="mdl-menu__item">
                 分享到微博
             </li>
@@ -489,7 +489,7 @@
 
     <!-- Share Twitter -->
     
-        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=可执行文件patch技术&amp;&amp;持续更新&url=http://jinyu00.github.io/文件patch/2017-11-07-可执行文件patch技术-持续更新.html&via=hac425" target="_blank">
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=一步一步pwn路由器之路由器环境修复&amp;&amp;rop技术分析&url=http://jinyu00.github.io/路由器安全/2017-10-26-step_by_step_pwn_router_part2.html&via=hac425" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Twitter
             </li>
@@ -498,7 +498,7 @@
 
     <!-- Share Facebook -->
     
-        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://jinyu00.github.io/文件patch/2017-11-07-可执行文件patch技术-持续更新.html" target="_blank">
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://jinyu00.github.io/路由器安全/2017-10-26-step_by_step_pwn_router_part2.html" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Facebook
             </li>
@@ -507,7 +507,7 @@
 
     <!-- Share Google+ -->
     
-        <a class="post_share-link" href="https://plus.google.com/share?url=http://jinyu00.github.io/文件patch/2017-11-07-可执行文件patch技术-持续更新.html" target="_blank">
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://jinyu00.github.io/路由器安全/2017-10-26-step_by_step_pwn_router_part2.html" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Google+
             </li>
@@ -531,51 +531,44 @@
                 <!-- Post Content -->
                 <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
     
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在ctf比赛中， 有时我们需要对可执行文件进行patch, 或者在植入后门时，patch也是常用的手段。不过手工patch比较麻烦，下面介绍几个工具。本文介绍遇到的各种技术，不断更新。</p>
-<h3 id="ELF"><a href="#ELF" class="headerlink" title="ELF"></a>ELF</h3><h4 id="Patchkit"><a href="#Patchkit" class="headerlink" title="Patchkit"></a>Patchkit</h4><p>地址：<br><a href="https://github.com/lunixbochs/patchkit.git" target="_blank" rel="external">https://github.com/lunixbochs/patchkit.git</a></p>
-<p>1.由于链接器的原因暂时还不能使用 libc 中的函数，所以所有要做的事情都需要我们自己实现。用 c 或者 asm</p>
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>拿到路由器的固件后，第一时间肯定是去运行目标程序，一般是web服务程序。我们可以去 <code>/etc/init.d/</code> 找启动文件，或者看看一些有可能的目录。一般来说路由器的程序很少的情况下是可以直接用qemu运行起来的。我们需要做一些修复的工作，本文会介绍一个常用的方法，后面会分析在 <code>mips uclibc</code> 中常用的 <code>rop</code> 手法。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><strong>运行环境修复</strong></p>
+<p>由于路由器运行时会去 nvram中获取配置信息，而我们的qemu中是没有该设备，路由器中的程序可能会因为没法获取配置信息而退出。我们可以使用    <code>https://github.com/zcutlip/nvram-faker</code> 配合着设置 <code>LD_PRELOAD</code> 环境变量来使用( 类似于一种 <code>hook</code> )。如果你的mips交叉编译工具链和它脚本里面的不一样就要修改它的脚本，比如</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15090309370211cupr2kg.png?imageslim" alt="paste image"><br>编译后把 <code>libnvram-faker.so</code> 和 <code>nvram.ini</code> 放到 <code>/</code> 目录，然后使用 <code>LD_PRELOAD</code>来加载。即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo chroot . ./qemu-mips-static -E LD_PRELOAD=/libnvram-faker.so  /usr/bin/httpd</div></pre></td></tr></table></figure>
+<p>如果程序还会在其他地方保错，就要自己分析程序，然后根据实际情况，在 <code>nvram-faker</code> 增加 <code>hook代码</code></p>
+<p>注：</p>
 <ul>
-<li><code>pt.patch(addr,jmp=jmp_addr)</code>  用于修改程序流程。</li>
-<li><code>pt.hook(addr, target)</code> 用于劫持程序流程，进行参数过滤。</li>
+<li>要注意目标应用是用的 <code>glibc</code> 还是 <code>uclibc</code> ,从而选择对应的交叉编译工具链来进行编译。</li>
+<li>先使用 <code>firmadyne</code> 运行看看，然后优先选择 <code>qemu-system-mips-static</code>来调试，实在不行用 <code>qemu-system</code></li>
+<li>如果需要某些静态编译（给生成的Makefile里面增加 <code>-static</code> 选项）的程序，建议去 <code>qemu-system</code> 编译，交叉编译太麻烦了。</li>
 </ul>
-<p>使用方式：<code>./patch binary_file patch.py</code></p>
-<p>过滤printf中 %n 的脚本。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">def replace_free(pt):</div><div class="line">    printf_addr = 0x400548;// call printf 时的地址</div><div class="line">    new_printf = pt.inject(c=r&apos;&apos;&apos;</div><div class="line">void fix_printf(char *fmt) &#123;</div><div class="line">    for (int i = 0; fmt[i]; ++i)</div><div class="line">    &#123;</div><div class="line">        if (fmt[i] == &apos;%&apos; &amp;&amp; fmt[i+1] == &apos;n&apos;) &#123;</div><div class="line">           //找到后，通过前移的方式删除字符，每次删掉一个。</div><div class="line">            int len=0;</div><div class="line">            int j;</div><div class="line">            while(fmt[len++])&#123;</div><div class="line">            &#125;</div><div class="line">            for(j=i;j&lt;len-1;j++)</div><div class="line">                fmt[j] = fmt[j+1];</div><div class="line">            fmt[len-1] = &apos;\x00&apos;;</div><div class="line">            len=0;</div><div class="line">            while(fmt[len++])&#123;</div><div class="line">            &#125;</div><div class="line">            for(j=i;j&lt;len-1;j++)</div><div class="line">                fmt[j] = fmt[j+1];</div><div class="line">            </div><div class="line">            fmt[len-1] = &apos;\x00&apos;;</div><div class="line">            //i--;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">&#125;</div><div class="line">    &apos;&apos;&apos;)</div><div class="line">    pt.hook(printf_addr, new_printf);</div></pre></td></tr></table></figure>
-<p>64位程序，修改 malloc函数的参数为 <code>0x20</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">def replace(pt):</div><div class="line">    malloc_addr = 0x040057A;  //call malloc的位置</div><div class="line">    new_malloc = pt.inject(asm=r&apos;&apos;&apos;</div><div class="line">    mov rdi,0x20</div><div class="line">    ret</div><div class="line">    &apos;&apos;&apos;)</div><div class="line">    pt.hook(malloc_addr, new_malloc);</div></pre></td></tr></table></figure></p>
-<p>32位，由于与栈进行操作，要注意保存还原返回地址</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">def replace(pt):</div><div class="line">    malloc_addr = 0x08048454;</div><div class="line">    new_malloc = pt.inject(asm=r&apos;&apos;&apos;</div><div class="line">    pop eax</div><div class="line">    pop ebx</div><div class="line">    push 0x20</div><div class="line">    push eax</div><div class="line">    ret</div><div class="line">    &apos;&apos;&apos;)</div><div class="line">    pt.hook(malloc_addr,new_malloc);</div></pre></td></tr></table></figure>
-<p>或者</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">def replace(pt):</div><div class="line">    malloc_addr = 0x08048454;</div><div class="line">    new_malloc = pt.inject(asm=r&apos;&apos;&apos;</div><div class="line">    mov eax,0x20</div><div class="line">    mov [esp+4], eax</div><div class="line">    ret</div><div class="line">    &apos;&apos;&apos;)</div><div class="line">    pt.hook(malloc_addr,new_malloc);</div></pre></td></tr></table></figure>
-<h4 id="LIEF"><a href="#LIEF" class="headerlink" title="LIEF"></a>LIEF</h4><p>程序地址：<a href="https://github.com/lief-project/LIEF" target="_blank" rel="external">https://github.com/lief-project/LIEF</a></p>
-<p>使用这个工具可以很方便的 patch <code>elf</code>， <code>pe</code>，<code>MachO</code> 文件。本文以<code>elf</code>  为例。</p>
-<p><strong>通过交换导入导出符号</strong></p>
-<p>首先看第一个测试程序：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">int main(int argc, char** argv) &#123;</div><div class="line">  puts(&quot;/bin/sh&quot;);</div><div class="line">  return EXIT_SUCCESS;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>我们的目标是让他调用 <code>puts</code> 变成调用 <code>system</code></p>
-<p><strong>方案一</strong></p>
-<p>修改 libc 中的相关符号，然后使用 <code>LD_LIBRARY_PATH</code> 加载我们修改后的库。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">import lief</div><div class="line"></div><div class="line">hashme = lief.parse(&quot;hashme&quot;)</div><div class="line">libc = lief.parse(&quot;/lib/x86_64-linux-gnu/libc-2.23.so&quot;)</div><div class="line"></div><div class="line"># get puts, system symbol</div><div class="line">puts_sym = filter(lambda e: e.name == &quot;puts&quot;, libc.dynamic_symbols)[0]</div><div class="line">system_sym = filter(lambda e: e.name == &quot;system&quot;, libc.dynamic_symbols)[0]</div><div class="line"></div><div class="line"># swap them</div><div class="line">puts_sym.name = &quot;system&quot;</div><div class="line">system_sym.name = &quot;puts&quot;</div><div class="line">libc.write(&quot;libc.so.6&quot;)</div><div class="line"></div><div class="line">print(&quot;done&quot;)</div></pre></td></tr></table></figure>
-<p>首先拿到 puts 和 system 符号对象，然后交换他们的名称。</p>
-<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1510064081347di3rwx94.png?imageslim" alt="paste image"><br>成功</p>
-<p><strong>方案二</strong></p>
-<p>直接修改目标文件的导入符号，代码如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">import lief</div><div class="line"></div><div class="line">hashme = lief.parse(&quot;hashme&quot;)</div><div class="line"></div><div class="line"># get puts, system symbol</div><div class="line">puts_sym = filter(lambda e: e.name == &quot;puts&quot;, hashme.imported_symbols)[0]</div><div class="line"></div><div class="line"># set puts to system </div><div class="line">puts_sym.name = &quot;system&quot;</div><div class="line"></div><div class="line">hashme.write(&quot;hashme.patch&quot;)</div><div class="line">print(&quot;done&quot;)</div></pre></td></tr></table></figure>
-<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1510064333755d675x70o.png?imageslim" alt="paste image"></p>
-<p><strong>直接增加代码进行patch</strong></p>
-<h6 id="修改库函数"><a href="#修改库函数" class="headerlink" title="修改库函数"></a>修改库函数</h6><p>测试程序：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;math.h&gt;</div><div class="line"></div><div class="line">int main(int argc, char **argv) &#123;</div><div class="line">  if (argc != 2) &#123;</div><div class="line">    printf(&quot;Usage: %s &lt;a&gt; \n&quot;, argv[0]);</div><div class="line">    exit(-1);</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  int a = atoi(argv[1]);</div><div class="line">  printf(&quot;exp(%d) = %f\n&quot;, a, exp(a));</div><div class="line">  return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>目标是hook <code>exp</code> 函数，直接增加一个 <code>segments</code> , 然后劫持函数指针到这里。首先编译一个 <code>lib</code> 用来提供用于 <code>hook</code> 的代码。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gcc -Os -nostdlib -nodefaultlibs -fPIC -Wl,-shared hook.c -o hook</div></pre></td></tr></table></figure>
-<p>hook.c 的内容：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">double hook(double x) &#123;</div><div class="line">  return x + 100;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>然后看脚本内容，很清晰。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">import lief</div><div class="line"></div><div class="line">libm = lief.parse(&quot;/lib/x86_64-linux-gnu/libm-2.23.so&quot;)</div><div class="line">hook = lief.parse(&quot;hook&quot;)</div><div class="line"></div><div class="line">segment_added = libm.add(hook.segments[0])</div><div class="line"></div><div class="line">print(&quot;Hook inserted at VA: 0x&#123;:06x&#125;&quot;.format(segment_added.virtual_address))</div><div class="line"></div><div class="line">exp_symbol = libm.get_symbol(&quot;exp&quot;)</div><div class="line">hook_symbol = hook.get_symbol(&quot;hook&quot;)</div><div class="line"></div><div class="line">exp_symbol.value = segment_added.virtual_address + hook_symbol.value</div><div class="line"></div><div class="line">libm.write(&quot;libm.so.6&quot;)</div></pre></td></tr></table></figure></p>
-<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1510065215828nuiov7ys.png?imageslim" alt="paste image"></p>
-<h5 id="通过-got-plt-表-直接劫持程序"><a href="#通过-got-plt-表-直接劫持程序" class="headerlink" title="通过 got/plt 表 直接劫持程序"></a>通过 got/plt 表 直接劫持程序</h5><p>测试程序<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;string.h&gt;</div><div class="line"></div><div class="line">// Damn_YoU_Got_The_Flag</div><div class="line">char password[] = &quot;\x18\x3d\x31\x32\x03\x05\x33\x09\x03\x1b\x33\x28\x03\x08\x34\x39\x03\x1a\x30\x3d\x3b&quot;;</div><div class="line"></div><div class="line">inline int check(char* input);</div><div class="line"></div><div class="line">int check(char* input) &#123;</div><div class="line">  for (int i = 0; i &lt; sizeof(password) - 1; ++i) &#123;</div><div class="line">    password[i] ^= 0x5c;</div><div class="line">  &#125;</div><div class="line">  return memcmp(password, input, sizeof(password) - 1);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(int argc, char **argv) &#123;</div><div class="line"></div><div class="line">  if (check(argv[1]) == 0) &#123;</div><div class="line">    puts(&quot;You got it !!&quot;);</div><div class="line">    return EXIT_SUCCESS;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  puts(&quot;Wrong&quot;);</div><div class="line">  return EXIT_FAILURE;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p><code>hook.c</code> 内容，hook memcpy, 打印内容。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">#include &quot;arch/x86_64/syscall.c&quot;</div><div class="line">#define stdout 1</div><div class="line"></div><div class="line">//gcc -nostdlib -nodefaultlibs -fPIC -Wl,-shared hook.c -o hook</div><div class="line"></div><div class="line">int my_memcmp(const void* lhs, const void* rhs, int n) &#123;</div><div class="line">  const char msg[] = &quot;Hook add\n&quot;;</div><div class="line">  _write(stdout, msg, sizeof(msg));</div><div class="line">  _write(stdout, (const char*)lhs, n);</div><div class="line">  _write(stdout, &quot;\n&quot;, 2);</div><div class="line">  _write(stdout, (const char*)rhs, n);</div><div class="line">  _write(stdout, &quot;\n&quot;, 2);</div><div class="line">  return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>hook 脚本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">import lief</div><div class="line"></div><div class="line">crackme = lief.parse(&quot;crackme.bin&quot;)</div><div class="line">hook = lief.parse(&quot;hook&quot;)</div><div class="line"></div><div class="line">segment_added = crackme.add(hook.segments[0])</div><div class="line"></div><div class="line">my_memcmp = hook.get_symbol(&quot;my_memcmp&quot;)</div><div class="line">my_memcmp_addr = segment_added.virtual_address + my_memcmp.value</div><div class="line"></div><div class="line">crackme.patch_pltgot(&apos;memcmp&apos;, my_memcmp_addr)</div><div class="line">crackme.write(&quot;crackme.hooked&quot;)</div></pre></td></tr></table></figure></p>
-<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1510065926275fzlkcrtw.png?imageslim" alt="paste image"><br>参考：</p>
-<p><a href="https://lief.quarkslab.com/doc/tutorials/" target="_blank" rel="external">https://lief.quarkslab.com/doc/tutorials/</a></p>
-<p><a href="https://github.com/lunixbochs/patchkit" target="_blank" rel="external">https://github.com/lunixbochs/patchkit</a></p>
+<hr>
+<p><strong>MIPS ROP分析</strong></p>
+<p>看了 <a href="http://www.devttys0.com/2012/10/exploiting-a-mips-stack-overflow/" target="_blank" rel="external">Exploiting a MIPS Stack Overflow</a> 做的实验，因为    <code>tplink</code>上没有对应版本的固件了。于是只能自己写一个栈溢出的程序，并配合着gdb调试，来模拟整个rop过程。</p>
+<p>代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;  </div><div class="line">#include &lt;stdlib.h&gt;  </div><div class="line">#include &lt;unistd.h&gt;  </div><div class="line"></div><div class="line"></div><div class="line">void getshell()&#123;</div><div class="line">    system(&quot;sh&quot;);</div><div class="line">    sleep(1);</div><div class="line">&#125;</div><div class="line"></div><div class="line">void vulnerable_function() &#123;  </div><div class="line">    char buf[128]; </div><div class="line">    read(STDIN_FILENO, buf, 256);  </div><div class="line">&#125;  </div><div class="line">   </div><div class="line">int main(int argc, char** argv) &#123; </div><div class="line">	printf(&quot;%p\n&quot;, (int *)write); </div><div class="line">    vulnerable_function();  </div><div class="line">    write(STDOUT_FILENO, &quot;Hello, World\n&quot;, 13);  </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>因为要使用 <code>qemu-mips-static</code> 来调试程序，这样就不方便找到libc的基地址。于是在程序运行时把libc中的函数地址打印出来，然后计算基地址，便于我们找到gadgets具体在内存中的位置。然后使用 uclibc的交叉编译工具链来编译。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/home/haclh/router_exploit/cross-compiler-mips/bin/mips-gcc level1.c -o level1</div></pre></td></tr></table></figure></p>
+<p>把它扔到一个路由器文件系统目录中，这样就不用单独拷贝它依赖的lib了。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15090326039915db83l6b.png?imageslim" alt="paste image"></p>
+<p>可以看到程序使用了 uClibc，通过查看qemu的maps，找到uClibc的路径<br><img src="http://oy9h5q2k4.bkt.clouddn.com/15090327179167od9lz52.png?imageslim" alt="paste image"></p>
+<p>拿到ida中分析找 gadgets.具体可以看上面的那篇文章。找到的gadgets如下。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">rop_gad1:</div><div class="line">	LOAD:00055C60                 li      $a0, 1</div><div class="line">	LOAD:00055C64                 move    $t9, $s1</div><div class="line">	LOAD:00055C68                 jalr    $t9 ; sub_55960</div><div class="line">	LOAD:00055C5C                 lui     $s0, 2</div><div class="line"></div><div class="line">gadg_2</div><div class="line"></div><div class="line">	LOAD:0001E20C                 move    $t9, $s1</div><div class="line">	LOAD:0001E210                 lw      $ra, 0x28+var_4($sp)</div><div class="line">	LOAD:0001E214                 lw      $s2, 0x28+var_8($sp)</div><div class="line">	LOAD:0001E218                 lw      $s1, 0x28+var_C($sp)</div><div class="line">	LOAD:0001E21C                 lw      $s0, 0x28+var_10($sp)</div><div class="line">	LOAD:0001E220                 jr      $t9</div><div class="line">	LOAD:0001E224                 addiu   $sp, 0x28</div><div class="line"></div><div class="line"></div><div class="line">rop_gad3:</div><div class="line">	LOAD:000164C0                 addiu   $s2, $sp, 0x198+var_180</div><div class="line">	LOAD:000164C4                 move    $a2, $v1</div><div class="line">	LOAD:000164C8                 move    $t9, $s0</div><div class="line">	LOAD:000164CC                 jalr    $t9 ; mempcpy</div><div class="line">	LOAD:000164D0                 move    $a0, $s2</div><div class="line"></div><div class="line"></div><div class="line">rop_gad4:</div><div class="line">	LOAD:000118A4                 move    $t9, $s2</div><div class="line">	LOAD:000118A8                 jalr    $t9</div></pre></td></tr></table></figure></p>
+<p>rop的过程，和对应的sp寄存器的值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">sp:0x76fff710</div><div class="line">首先进入 rop_gad1， $s1 gadg_2</div><div class="line"></div><div class="line">sp:0x76fff710</div><div class="line">进入 gadg_2，这时$s1还是gadg_2， 从内存加载数据到寄存器s1--&gt;sleep, ra--&gt; rop_gad3, $s0---&gt;rop_gad4</div><div class="line"></div><div class="line">sp:0x76fff738</div><div class="line">再次进入 gadg_2,s1--&gt;sleep, ra--&gt; rop_gad3, $s0---&gt;rop_gad4</div><div class="line"></div><div class="line">sp:0x76fff760</div><div class="line">进入 rop_gad3， 获取栈地址到$s2,跳到 $s0</div><div class="line"></div><div class="line"></div><div class="line">进入rop_gad4，s2--&gt;0x76fff778 跳进栈中，。。。</div></pre></td></tr></table></figure></p>
+<p><strong>gdb调试的部分截图</strong></p>
+<p>断在函数返回地址被覆盖的时候，使用gdb命令，设置<code>$pc</code>寄存器的值，伪造劫持程序流程到 rop_gad1<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1509033066831ysbgu293.png?imageslim" alt="paste image"></p>
+<p>汇编代码如下<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1509033106631mwc1gl07.png?imageslim" alt="paste image"></p>
+<p>第一次进入rop_gad2<br><img src="http://oy9h5q2k4.bkt.clouddn.com/15090332319233l54m90b.png?imageslim" alt="paste image"></p>
+<p>第二次运行到 rop_gad2 时的寄存器状态。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1509033335464zv8t8p6f.png?imageslim" alt="paste image"></p>
+<p><code>t9</code> 指向 <code>sleep</code>函数，接下来调用 <code>sleep(1)</code> 刷新 <code>cache</code>, 便于后面指向 <code>shellcode</code>。次数的 <code>$ra</code> 为 <code>rop_gad3</code>的地址，便于在 <code>sleep</code> 返回后继续 <code>rop</code> ,获取一个栈的指针到寄存器，便于后面直接跳过去。</p>
+<p>进入rop_gad3</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509033654570mt5p9xro.png?imageslim" alt="paste image"></p>
+<p>进入 rop_gad4,跳到栈上执行shellcode</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509033720821o12bll0r.png?imageslim" alt="paste image"></p>
+<p>分析完毕。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>修复环境要注意使用的gcc, 必要时自己跟踪，逆向代码，修复运行环境。看了几篇mips漏洞利用的文章，rop的思路就是上面的思路，估计那就是通用思路吧，记录下来，以备不时只需。调rop的过程还是有趣的。</p>
+<p>参考链接：</p>
+<p><a href="http://www.devttys0.com/2012/10/exploiting-a-mips-stack-overflow/" target="_blank" rel="external">http://www.devttys0.com/2012/10/exploiting-a-mips-stack-overflow/</a></p>
+<p>注：</p>
+<p>&emsp;&emsp;本文先发布于：<a href="https://xianzhi.aliyun.com/forum/topic/1509/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/topic/1509/</a></p>
 
         
                 <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
@@ -584,7 +577,7 @@
                             <a> 转载注明来源</a>
                         </strong>
                         <br>
-                        <strong>本文链接：</strong><a href="http://jinyu00.github.io/文件patch/2017-11-07-可执行文件patch技术-持续更新.html">http://jinyu00.github.io/文件patch/2017-11-07-可执行文件patch技术-持续更新.html</a>
+                        <strong>本文链接：</strong><a href="http://jinyu00.github.io/路由器安全/2017-10-26-step_by_step_pwn_router_part2.html">http://jinyu00.github.io/路由器安全/2017-10-26-step_by_step_pwn_router_part2.html</a>
                     </p>
                 </blockquote>
         
@@ -634,7 +627,7 @@
             <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
     <!-- Prev Nav -->
     
-        <a href="/java应用破解思路/2017-11-17-使用sa-jdi-jar-dump-内存中的class.html" id="post_nav-newer" class="prev-content">
+        <a href="/jeb破解/2017-10-27-crack_jeb_mips_2_3_7.html" id="post_nav-newer" class="prev-content">
             <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
                 <i class="material-icons">arrow_back</i>
             </button>
@@ -648,7 +641,7 @@
 
     <!-- Next Nav -->
     
-        <a href="/ctf/2017-11-05-上海ctf2017-pwn100-pwn200.html" id="post_nav-older" class="next-content">
+        <a href="/路由器安全/2017-10-26-step_by_step_pwn_router_part1.html" id="post_nav-older" class="next-content">
             旧篇
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
