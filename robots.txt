@@ -6,6 +6,7 @@ Allow: /tags/
 Allow: /about/
 Allow: /timeline/
 Allow: /links/
+
 Disallow: /js/
 Disallow: /css/
 Disallow: /fonts/

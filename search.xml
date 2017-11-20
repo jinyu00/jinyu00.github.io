@@ -4,7 +4,7 @@
     
     <entry>
       <title><![CDATA[android studio使用openssl]]></title>
-      <url>//%E5%AE%89%E5%8D%93%E5%AE%89%E5%85%A8/2017-11-19-android_studio_use_openssl.html</url>
+      <url>/2017/11/19/android_studio_use_openssl.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>逆向的基础是开发， 逆向分析时很多时候会使用一些公开的加密函数来对数据进行加密，通过使用 <code>openssl</code> 熟悉下。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先得先编译出来 <code>openssl</code>，然后把它们复制到你的工程目录下。</p>
 <p><img src="http://oy9h5q2k4.bkt.clouddn.com/15110733397054zqc1idw.png?imageslim" alt="paste image"></p>
@@ -40,7 +40,7 @@
     
     <entry>
       <title><![CDATA[使用sa-jdi.jar dump 内存中的class]]></title>
-      <url>//java%E5%BA%94%E7%94%A8%E7%A0%B4%E8%A7%A3%E6%80%9D%E8%B7%AF/2017-11-17-use_sa_jdi_jar_dump_class.html</url>
+      <url>/2017/11/17/use_sa_jdi_jar_dump_class.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在分析一个 <code>jar</code> 包时发现他把关键类采用了运行时使用 <code>classloader</code> 的方式加载了。懒得分析算法了，可以使用 <code>jdk</code> 自带的工具 <code>dump</code> 出需要的<code>class</code>.</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>从运行的java进程里dump出运行中的类的class文件的方法，所知道的有两种</p>
 <ul>
@@ -94,7 +94,7 @@
     
     <entry>
       <title><![CDATA[可执行文件patch技术&&持续更新]]></title>
-      <url>//%E6%96%87%E4%BB%B6patch/2017-11-07-patch_file_methods.html</url>
+      <url>/2017/11/07/patch_file_methods.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在ctf比赛中， 有时我们需要对可执行文件进行patch, 或者在植入后门时，patch也是常用的手段。不过手工patch比较麻烦，下面介绍几个工具。本文介绍遇到的各种技术，不断更新。</p>
 <h3 id="ELF"><a href="#ELF" class="headerlink" title="ELF"></a>ELF</h3><h4 id="Patchkit"><a href="#Patchkit" class="headerlink" title="Patchkit"></a>Patchkit</h4><p>地址：<br><a href="https://github.com/lunixbochs/patchkit.git" target="_blank" rel="external">https://github.com/lunixbochs/patchkit.git</a></p>
 <p>1.由于链接器的原因暂时还不能使用 libc 中的函数，所以所有要做的事情都需要我们自己实现。用 c 或者 asm</p>
@@ -167,7 +167,7 @@
     
     <entry>
       <title><![CDATA[上海ctf2017 pwn100 && pwn200]]></title>
-      <url>//ctf/2017-11-05-shctf2017_pwn100_pwn200.html</url>
+      <url>/2017/11/05/shctf2017_pwn100_pwn200.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>尽量详细，给有需要的学弟们看看<br>分析的 idb 文件在这：</p>
 <p><a href="https://gitee.com/hac425/blog_data/tree/master/shanghaictf" target="_blank" rel="external">https://gitee.com/hac425/blog_data/tree/master/shanghaictf</a></p>
 <h3 id="pwn100"><a href="#pwn100" class="headerlink" title="pwn100"></a>pwn100</h3><p>程序是一个经典的 堆管理程序，基本增删改查功能。</p>
@@ -228,7 +228,7 @@
     
     <entry>
       <title><![CDATA[一步一步pwn路由器之wr940栈溢出漏洞分析与利用]]></title>
-      <url>//%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/2017-10-29-step_by_step_pwn_router_part5.html</url>
+      <url>/2017/10/29/step_by_step_pwn_router_part5.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>这个是最近爆出来的漏洞，漏洞编号：<a href="https://www.fidusinfosec.com/tp-link-remote-code-execution-cve-2017-13772/" target="_blank" rel="external">CVE-2017-13772</a></p>
 <p>固件链接：<a href="http://static.tp-link.com/TL-WR940N(US)_V4_160617_1476690524248q.zip" target="_blank" rel="external">http://static.tp-link.com/TL-WR940N(US)_V4_160617_1476690524248q.zip</a></p>
 <p>之前使用 <code>firmadyn</code> 可以正常模拟运行，但是调试不了，就没有仔细看这个漏洞。今天突然想起 他会启动一个 <code>ssh</code> 服务，那我们是不是就可以通过<code>ssh</code> 连上去进行调试，正想试试，又不能正常模拟了。。。。。下面看具体漏洞。</p>
@@ -264,7 +264,7 @@
     
     <entry>
       <title><![CDATA[一步一步pwn路由器之rop技术实战]]></title>
-      <url>//%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/2017-10-28-step_by_step_pwn_router_part4.html</url>
+      <url>/2017/10/28/step_by_step_pwn_router_part4.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>这次程序也是 DVRF 里面的，他的路径是 <code>pwnable/ShellCode_Required/stack_bof_02</code> , 同样是一个简单的栈溢出，不过这个程序里面没有提供 <code>getshell</code> 的函数，需要我们执行shellcode来实现。这个正好实战下前文: <a href="https://jinyu00.github.io/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/2017-10-26-%E4%B8%80%E6%AD%A5%E4%B8%80%E6%AD%A5pwn%E8%B7%AF%E7%94%B1%E5%99%A8%E4%B9%8B%E8%B7%AF%E7%94%B1%E5%99%A8%E7%8E%AF%E5%A2%83%E4%BF%AE%E5%A4%8D-rop%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90.html">一步一步pwn路由器之路由器环境修复&amp;&amp;rop技术分析</a>,中分析的在mips下的通用的rop技术。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先使用 <code>qemu</code> 运行目标程序，并等待 <code>gdb</code> 来调试。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo chroot . ./qemu-mipsel-static -g 1234 ./pwnable/ShellCode_Required/stack_bof_02  &quot;`cat ./pwnable/Intro/input`&quot;</div></pre></td></tr></table></figure></p>
 <p>使用pwntools的 cyclic 功能，找到偏移<br><img src="http://oy9h5q2k4.bkt.clouddn.com/15091628511130mev14fe.png?imageslim" alt="paste image"><br>验证一下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">payload = &quot;A&quot; * 508 + &apos;B&apos; * 4</div><div class="line"></div><div class="line">with open(&quot;input&quot;, &quot;wb&quot;) as f:</div><div class="line">    f.write(payload)</div></pre></td></tr></table></figure></p>
@@ -296,7 +296,7 @@
     
     <entry>
       <title><![CDATA[MIPS rop gadgets记录贴&&持续更新]]></title>
-      <url>//%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/2017-10-27-MIPS_rop_gadgets_collects.html</url>
+      <url>/2017/10/27/MIPS_rop_gadgets_collects.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本帖记录一些常用的,效果好的 rop gadgets.</p>
 <p><strong>uClibc</strong></p>
 <p><strong>从栈中设置<code>$t9</code> 并跳到 <code>$t9</code> 的gadgets , <code>__thread_start</code> 函数第二行</strong></p>
@@ -335,7 +335,7 @@
     
     <entry>
       <title><![CDATA[一步一步pwn路由器之栈溢出实战]]></title>
-      <url>//%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/2017-10-27-step_by_step_pwn_router_part3.html</url>
+      <url>/2017/10/27/step_by_step_pwn_router_part3.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本文以 <a href="https://github.com/praetorian-inc/DVRF" target="_blank" rel="external">DVRF</a> 中的第一个漏洞程序 <code>stack_bof_01</code> 为例，在实战 <code>MIPS</code> 架构中栈溢出的简单利用。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>去github上面把 DVRF 下载下来，然后用 <code>binwalk</code> 解开</p>
 <p><img src="http://oy9h5q2k4.bkt.clouddn.com/15090843759335sjlc5jz.png?imageslim" alt="paste image"></p>
@@ -393,7 +393,7 @@
     
     <entry>
       <title><![CDATA[破解 jeb  2.3.7 demo]]></title>
-      <url>//jeb%E7%A0%B4%E8%A7%A3/2017-10-27-crack_jeb_mips_2_3_7.html</url>
+      <url>/2017/10/27/crack_jeb_mips_2_3_7.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>使用的技术和上文的一样。</p>
 <p><code>mips</code> 版本的修改版</p>
 <p>百度云：</p>
@@ -426,7 +426,7 @@
     
     <entry>
       <title><![CDATA[一步一步pwn路由器之路由器环境修复&&rop技术分析]]></title>
-      <url>//%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/2017-10-26-step_by_step_pwn_router_part2.html</url>
+      <url>/2017/10/26/step_by_step_pwn_router_part2.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>拿到路由器的固件后，第一时间肯定是去运行目标程序，一般是web服务程序。我们可以去 <code>/etc/init.d/</code> 找启动文件，或者看看一些有可能的目录。一般来说路由器的程序很少的情况下是可以直接用qemu运行起来的。我们需要做一些修复的工作，本文会介绍一个常用的方法，后面会分析在 <code>mips uclibc</code> 中常用的 <code>rop</code> 手法。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><strong>运行环境修复</strong></p>
 <p>由于路由器运行时会去 nvram中获取配置信息，而我们的qemu中是没有该设备，路由器中的程序可能会因为没法获取配置信息而退出。我们可以使用    <code>https://github.com/zcutlip/nvram-faker</code> 配合着设置 <code>LD_PRELOAD</code> 环境变量来使用( 类似于一种 <code>hook</code> )。如果你的mips交叉编译工具链和它脚本里面的不一样就要修改它的脚本，比如</p>
@@ -488,7 +488,7 @@
     
     <entry>
       <title><![CDATA[一步一步pwn路由器之环境搭建]]></title>
-      <url>//%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/2017-10-26-step_by_step_pwn_router_part1.html</url>
+      <url>/2017/10/26/step_by_step_pwn_router_part1.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>正式进入路由器的世界了。感觉路由器这块就是固件提取，运行环境修复比较麻烦，其他部分和一般的 pwn 差不多。由于大多数路由器是 mips 架构的，本文就以搭建  <code>MIPS运行、调试平台</code> 为例介绍环境的搭建。其他架构类似。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><h6 id="安装-与-配置-Qemu"><a href="#安装-与-配置-Qemu" class="headerlink" title="安装 与 配置 Qemu:"></a>安装 与 配置 Qemu:</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install qemu </div><div class="line">sudo apt-get install qemu-user-static</div><div class="line">sudo apt-get install qemu-system</div></pre></td></tr></table></figure>
 <p>配置网络</p>
@@ -549,7 +549,7 @@
     
     <entry>
       <title><![CDATA[java应用破解之破解 jeb mips 2.3.3 ]]></title>
-      <url>//jeb%E7%A0%B4%E8%A7%A3/2017-10-23-crack_jeb_mips_2_3_3.html</url>
+      <url>/2017/10/23/crack_jeb_mips_2_3_3.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>由于要去学习路由器相关的漏洞利用技术的学习，而许多的路由器都是 <code>mips架构</code>  的，<code>IDA</code> 又不能反编译 <code>mips</code> , 发现 <code>jeb</code> 的新版支持 <code>mips的反编译</code> ，于是去官网申请一个试用版，试用版的限制还是比较多的，比如 <code>使用时间验证</code>，<code>没法复制粘贴</code> 等，于是想尝试看看能否破解，同时填了 <code>java破解</code> 这个坑。</p>
 <hr>
 <p>本文主要记录的是破解过程中的思路和使用的一些工具，技巧。文末有处理后的数据。</p>
@@ -621,7 +621,7 @@
     
     <entry>
       <title><![CDATA[【天翼杯安卓题二】 爱加密脱壳实战]]></title>
-      <url>//%E5%AE%89%E5%8D%93%E5%AE%89%E5%85%A8/2017-10-22-aijiami_unpacker.html</url>
+      <url>/2017/10/22/aijiami_unpacker.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  这个apk使用爱加密加密，加密时间是2017.6月。这个题其实就是个脱壳题，脱完立马见flag。(出题人也太懒了)</p>
 <p>题目链接：<a href="https://gitee.com/hac425/blog_data/blob/master/app02.apk" target="_blank" rel="external">https://gitee.com/hac425/blog_data/blob/master/app02.apk</a></p>
 <h3 id="壳介绍"><a href="#壳介绍" class="headerlink" title="壳介绍"></a>壳介绍</h3><p>爱加密的壳16年年底就已经开始通过 <code>hook dvmResolveClass</code> ，在调用具体方法时解密方法指令，然后将 DexFile结构体中的对应方法的 <code>md-&gt;insns</code> 指向 解密后的方法指令数据区，然后进入 <code>真正的dvmResolveClass</code>中执行指令，执行完后在重新加密指令，这样就可以防止 <code>dexhunter</code> 等工具在内存中 <code>dump dex</code> 文件。</p>
