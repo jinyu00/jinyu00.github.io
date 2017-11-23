@@ -4,6 +4,28 @@
 
     
   <url>
+    <loc>http://jinyu00.github.io/2017/11/23/CVE_2017_11882_Phishing_sample.html</loc>
+    <lastmod>2017-11-23T01:18:40.754Z</lastmod>
+    <data>
+        <display>
+        <title>CVE-2017-11882钓鱼样本构造</title>
+        <pubTime>2017-11-23T01:03:00.000Z</pubTime>
+        
+        <tag>office漏洞</tag>
+         
+        <tag>CVE-2017-11882</tag>
+         
+         
+           
+             
+              <breadCrumb title="渗透测试" url="http://jinyu00.github.io/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://jinyu00.github.io/2017/11/21/cve_2015_3864_google_exploit.html</loc>
     <lastmod>2017-11-22T07:00:45.392Z</lastmod>
     <data>
