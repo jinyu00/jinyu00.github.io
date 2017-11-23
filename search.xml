@@ -5,7 +5,9 @@
     <entry>
       <title><![CDATA[CVE-2017-11882钓鱼样本构造]]></title>
       <url>/2017/11/23/CVE_2017_11882_Phishing_sample.html</url>
-      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近的一个影响很广泛的漏洞。</p>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>漏洞详情：</p>
+<p><a href="https://embedi.com/blog/skeleton-closet-ms-office-vulnerability-you-didnt-know-about" target="_blank" rel="external">https://embedi.com/blog/skeleton-closet-ms-office-vulnerability-you-didnt-know-about</a></p>
+<p>最近的一个影响很广泛的漏洞。</p>
 <p>据说影响范围：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">Office 365</div><div class="line"></div><div class="line">Microsoft Office 2000      </div><div class="line"></div><div class="line">Microsoft Office 2003      </div><div class="line"></div><div class="line">Microsoft Office 2007 Service Pack 3</div><div class="line"></div><div class="line">Microsoft Office 2010 Service Pack 2</div><div class="line"></div><div class="line">Microsoft Office 2013 Service Pack 1</div><div class="line"></div><div class="line">Microsoft Office 2016</div></pre></td></tr></table></figure>
 <p>exploit在 <code>github</code>已经有了。</p>
