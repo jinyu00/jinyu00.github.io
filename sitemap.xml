@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part6.html</loc>
+    
+    <lastmod>2017-11-24T06:37:45.173Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://jinyu00.github.io/about/index.html</loc>
     
     <lastmod>2017-11-24T01:38:17.510Z</lastmod>
