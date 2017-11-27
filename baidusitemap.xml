@@ -4,8 +4,70 @@
 
     
   <url>
+    <loc>http://jinyu00.github.io/2017/11/01/step_by_step_pwn_router_part8.html</loc>
+    <lastmod>2017-11-27T05:36:29.848Z</lastmod>
+    <data>
+        <display>
+        <title>一步一步pwn路由器之radare2使用实战</title>
+        <pubTime>2017-11-01T11:33:00.000Z</pubTime>
+        
+        <tag>radare2</tag>
+         
+         
+           
+             
+              <breadCrumb title="路由器安全" url="http://jinyu00.github.io/categories/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://jinyu00.github.io/2017/10/31/step_by_step_pwn_router_part7.html</loc>
+    <lastmod>2017-11-27T05:36:15.364Z</lastmod>
+    <data>
+        <display>
+        <title>一步一步pwn路由器之radare2使用全解</title>
+        <pubTime>2017-10-31T07:12:00.000Z</pubTime>
+        
+        <tag>radare2</tag>
+         
+         
+           
+             
+              <breadCrumb title="路由器安全" url="http://jinyu00.github.io/categories/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://jinyu00.github.io/2017/10/29/step_by_step_pwn_router_part5.html</loc>
+    <lastmod>2017-11-27T05:35:51.654Z</lastmod>
+    <data>
+        <display>
+        <title>一步一步pwn路由器之wr940栈溢出漏洞分析与利用</title>
+        <pubTime>2017-10-29T14:20:00.000Z</pubTime>
+        
+        <tag>CVE-2017-13772</tag>
+         
+        <tag>路由器实战</tag>
+         
+         
+           
+             
+              <breadCrumb title="路由器安全" url="http://jinyu00.github.io/categories/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part6.html</loc>
-    <lastmod>2017-11-24T06:37:45.173Z</lastmod>
+    <lastmod>2017-11-27T05:35:19.309Z</lastmod>
     <data>
         <display>
         <title>一步一步pwn路由器之uClibc中malloc&&free分析</title>
@@ -14,6 +76,96 @@
         <tag>uclibc源码分析</tag>
          
         <tag>malloc &amp;&amp; free</tag>
+         
+         
+           
+             
+              <breadCrumb title="路由器安全" url="http://jinyu00.github.io/categories/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part4.html</loc>
+    <lastmod>2017-11-27T05:35:12.152Z</lastmod>
+    <data>
+        <display>
+        <title>一步一步pwn路由器之rop技术实战</title>
+        <pubTime>2017-10-28T03:47:00.000Z</pubTime>
+        
+        <tag>mips rop</tag>
+         
+        <tag>栈溢出</tag>
+         
+         
+           
+             
+              <breadCrumb title="路由器安全" url="http://jinyu00.github.io/categories/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://jinyu00.github.io/2017/10/27/step_by_step_pwn_router_part3.html</loc>
+    <lastmod>2017-11-27T05:35:03.996Z</lastmod>
+    <data>
+        <display>
+        <title>一步一步pwn路由器之栈溢出实战</title>
+        <pubTime>2017-10-27T06:01:00.000Z</pubTime>
+        
+        <tag>mips rop</tag>
+         
+        <tag>栈溢出</tag>
+         
+         
+           
+             
+              <breadCrumb title="路由器安全" url="http://jinyu00.github.io/categories/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://jinyu00.github.io/2017/10/26/step_by_step_pwn_router_part2.html</loc>
+    <lastmod>2017-11-27T05:34:55.621Z</lastmod>
+    <data>
+        <display>
+        <title>一步一步pwn路由器之路由器环境修复&&rop技术分析</title>
+        <pubTime>2017-10-26T15:05:00.000Z</pubTime>
+        
+        <tag>mips rop</tag>
+         
+        <tag>路由器安全</tag>
+         
+        <tag>路由器环境修复</tag>
+         
+         
+           
+             
+              <breadCrumb title="路由器安全" url="http://jinyu00.github.io/categories/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://jinyu00.github.io/2017/10/26/step_by_step_pwn_router_part1.html</loc>
+    <lastmod>2017-11-27T05:34:25.198Z</lastmod>
+    <data>
+        <display>
+        <title>一步一步pwn路由器之环境搭建</title>
+        <pubTime>2017-10-26T12:12:00.000Z</pubTime>
+        
+        <tag>mips rop</tag>
+         
+        <tag>路由器安全</tag>
          
          
            
@@ -216,118 +368,6 @@
            
              
               <breadCrumb title="jeb破解" url="http://jinyu00.github.io/categories/jeb%E7%A0%B4%E8%A7%A3/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://jinyu00.github.io/2017/10/29/step_by_step_pwn_router_part5.html</loc>
-    <lastmod>2017-11-20T07:16:22.951Z</lastmod>
-    <data>
-        <display>
-        <title>一步一步pwn路由器之wr940栈溢出漏洞分析与利用</title>
-        <pubTime>2017-10-29T14:20:00.000Z</pubTime>
-        
-        <tag>CVE-2017-13772</tag>
-         
-        <tag>路由器实战</tag>
-         
-         
-           
-             
-              <breadCrumb title="路由器安全" url="http://jinyu00.github.io/categories/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part4.html</loc>
-    <lastmod>2017-11-20T07:16:14.305Z</lastmod>
-    <data>
-        <display>
-        <title>一步一步pwn路由器之rop技术实战</title>
-        <pubTime>2017-10-28T03:47:00.000Z</pubTime>
-        
-        <tag>mips rop</tag>
-         
-        <tag>栈溢出</tag>
-         
-         
-           
-             
-              <breadCrumb title="路由器安全" url="http://jinyu00.github.io/categories/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://jinyu00.github.io/2017/10/27/step_by_step_pwn_router_part3.html</loc>
-    <lastmod>2017-11-20T07:16:02.120Z</lastmod>
-    <data>
-        <display>
-        <title>一步一步pwn路由器之栈溢出实战</title>
-        <pubTime>2017-10-27T06:01:00.000Z</pubTime>
-        
-        <tag>mips rop</tag>
-         
-        <tag>栈溢出</tag>
-         
-         
-           
-             
-              <breadCrumb title="路由器安全" url="http://jinyu00.github.io/categories/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://jinyu00.github.io/2017/10/26/step_by_step_pwn_router_part2.html</loc>
-    <lastmod>2017-11-20T07:15:41.601Z</lastmod>
-    <data>
-        <display>
-        <title>一步一步pwn路由器之路由器环境修复&&rop技术分析</title>
-        <pubTime>2017-10-26T15:05:00.000Z</pubTime>
-        
-        <tag>mips rop</tag>
-         
-        <tag>路由器安全</tag>
-         
-        <tag>路由器环境修复</tag>
-         
-         
-           
-             
-              <breadCrumb title="路由器安全" url="http://jinyu00.github.io/categories/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://jinyu00.github.io/2017/10/26/step_by_step_pwn_router_part1.html</loc>
-    <lastmod>2017-11-20T07:15:20.246Z</lastmod>
-    <data>
-        <display>
-        <title>一步一步pwn路由器之环境搭建</title>
-        <pubTime>2017-10-26T12:12:00.000Z</pubTime>
-        
-        <tag>mips rop</tag>
-         
-        <tag>路由器安全</tag>
-         
-         
-           
-             
-              <breadCrumb title="路由器安全" url="http://jinyu00.github.io/categories/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/"/>
           
         </display>
     </data>

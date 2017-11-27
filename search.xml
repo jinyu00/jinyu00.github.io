@@ -401,9 +401,210 @@
     </entry>
     
     <entry>
+      <title><![CDATA[一步一步pwn路由器之radare2使用实战]]></title>
+      <url>/2017/11/01/step_by_step_pwn_router_part8.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>前文讲了一些 <code>radare2</code> 的特性相关的操作方法。本文以一个 <code>crackme</code> 来具体介绍下 <code>radare2</code> 的使用</p>
+<p>程序的地址： <a href="https://gitee.com/hac425/blog_data/blob/master/crackme0x03" target="_blank" rel="external">在这里</a></p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先使用 <code>radare2</code> 加载该程序。使用了 <code>aaa</code> 分析了程序中的所有函数。使用 <code>iI</code> 查看二进制文件的信息。可以看到是 <code>32</code> 位的。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509536312825toj2ruk1.png?imageslim" alt="paste image"></p>
+<p>使用 <code>aaa</code>分析完程序后，可以使用 <code>afl</code> 查看所有的函数。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509536413775tyxowxq5.png?imageslim" alt="paste image"><br>直接跳到 <code>main</code> 函数看看逻辑</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15095364686834obsuwoc.png?imageslim" alt="paste image"></p>
+<p>不习惯看文本模式的汇编的话，可以使用 <code>VV</code> 进入图形化模式<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1509536557600j6sv26da.png?imageslim" alt="paste image"></p>
+<p>拿到个程序，我会首先看函数调用理解程序的大概流程。比如这里先调用了 <code>printf</code> 打印了一些提示信息，然后使用 <code>scanf</code> 获取我们的输入，分析 <code>scanf</code>的参数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">|           0x080484cc      8d45fc         lea eax, [local_4h]</div><div class="line">|           0x080484cf      89442404       mov dword [local_4h_2], eax</div><div class="line">|           0x080484d3      c70424348604.  mov dword [esp], 0x8048634  ; [0x8048634:4]=0x6425</div><div class="line">|           0x080484da      e851feffff     call sym.imp.scanf          ; int scanf(const char *format)</div></pre></td></tr></table></figure></p>
+<p>我们可以知道<code>0x8048634</code> 是我们的第一个参数, <code>local_4h</code>是我们的第二个参数。看看 <code>0x8048634</code>存放的是什么。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1509536913132ckutls7d.png?imageslim" alt="paste image"></p>
+<p>所以程序需要我们输入的是一个 整数，然后把它存在 <code>local_4h</code>里面了。那我们就可以把  <code>local_4h</code> 变量改下名字。这里改成 <code>input</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509537156669asiszojb.png?imageslim" alt="paste image"></p>
+<p>继续往下看发现 <code>input</code> 变量后来没有被处理直接传到了  <code>test</code> 函数。他的第二个参数是这样生成的</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509538263559azqlu0hp.png?imageslim" alt="paste image"></p>
+<p>为了获得这个参数我们有很多方法，比如 我们可以直接静态分析，或者用 <code>gdb</code> 调试这都很容易得到结果。</p>
+<p>这里正好试试 <code>radare</code> 的模拟执行功能。使用该功能我们需要先分析要模拟执行的代码对环境的依赖，比如寄存器的值，内存的值等，然后根据依赖关系修改内存和寄存器的值来满足代码运行的上下文。</p>
+<p>在这里这段代码只对栈的内存进行了处理。那我们就先分配一块内存，然后用 <code>esp</code> 刚刚分配的内存。由于这里一开始没有对内存数据进行读取，所以我们直接使用分配的内存就好，不用对他进行处理。</p>
+<p>首先我们跳到目标地址，然后使用 <code>aei</code> 或者 <code>aeip</code> 初始化虚拟机堆栈，然后使用 <code>aer</code> 查看寄存器状态。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15095388389068csy8248.png?imageslim" alt="paste image"></p>
+<p>然后分配一块内存作为栈内存，给程序模拟执行用。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509538957638rwu5ocqr.png?imageslim" alt="paste image"></p>
+<p>在 <code>0xff0000</code> 分配了 <code>0x40000</code> 大小的内存。然后把 <code>esp</code> 和 <code>ebp</code> 指到这块内存里面。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509539081176y3sckgra.png?imageslim" alt="paste image"></p>
+<p>然后我们让模拟器运行到 <code>0x0804850c</code> 也就是调用 <code>test</code> 函数的位置处，查看他的参数，可以看到第二个参数的值就是 <code>0x00052b24</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509539169362t234cqgc.png?imageslim" alt="paste image"><br>最后我们进去 <code>test</code> 函数里面看看</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/150953929096164elui3y.png?imageslim" alt="paste image"><br>就是判断 <code>参数一</code> 和 <code>参数二</code> 是否一致，所以这个 <code>crackme</code> 的 <code>key</code> 就是 <code>0x00052b24</code> 十进制数表示 <code>338724</code>.<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1509539408734tys3o1xg.png?imageslim" alt="paste image"></p>
+<p>成功</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><code>radare2</code> 的模拟执行功能是通过 <code>esil</code> 来实现的，粗略的试了一下感觉还是挺不错的感觉和  <code>unicorn</code> 有的一拼，不过<code>radare2</code>也是有 <code>unicorn</code>的插件的。</p>
+<p> 参考：</p>
+<p> <a href="http://radare.org/r/talks.html" target="_blank" rel="external">http://radare.org/r/talks.html</a></p>
+<p> <a href="https://github.com/radare/radare2book" target="_blank" rel="external">https://github.com/radare/radare2book</a></p>
+<p> <a href="https://codeload.github.com/radareorg/r2con/" target="_blank" rel="external">https://codeload.github.com/radareorg/r2con/</a></p>
+]]></content>
+      
+        <categories>
+            
+            <category> 路由器安全 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> radare2 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[一步一步pwn路由器之radare2使用全解]]></title>
+      <url>/2017/10/31/step_by_step_pwn_router_part7.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p><code>radare2</code> 最近越来越流行，已经进入 <code>github</code> 前 25了，看到大佬们纷纷推荐，为了紧跟时代潮流，我也决定探究探究这款 <code>神器</code> 。下面画画重点，以便以后需要用了，可以方便查找。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先是安装 <code>radare2</code> ,直接去官方 <code>github</code> 安照指示安装即可。先把源代码下载下来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/radare/radare2</div></pre></td></tr></table></figure>
+<p>然后进入源码目录，执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sys/install.sh</div></pre></td></tr></table></figure>
+<p><code>radare2</code> 支持各种各样的平台，文件格式，具体可以看官网描述。它有很多各组件分别进行不同的工作。这些组件是：</p>
+<ul>
+<li>rax2 ———&gt; 用于数值转换</li>
+<li>rasm2  ——-&gt;  反汇编和汇编</li>
+<li>rabin2 ——-&gt;  查看文件格式</li>
+<li>radiff2 ——&gt;  对文件进行 diff</li>
+<li>ragg2/ragg2­cc ——&gt;  用于更方便的生成shellcode</li>
+<li>rahash2 ——&gt; 各种密码算法， hash算法</li>
+<li>radare2 ——&gt; 整合了上面的工具</li>
+</ul>
+<h3 id="rax2"><a href="#rax2" class="headerlink" title="rax2"></a>rax2</h3><p>数值转换，程序的 <code>help</code> 菜单很明确了:</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509440109544fxedvvf0.png?imageslim" alt="paste image"></p>
+<p>比如输入<code>rax2 -s 414141</code> ,会返回 <code>AAAA</code></p>
+<h3 id="rabin2"><a href="#rabin2" class="headerlink" title="rabin2"></a>rabin2</h3><p>对各种文件格式进行解析。</p>
+<p><code>rabin2 -I hello_pwn</code> 显示文件的信息</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509442510111na1s1dfo.png?imageslim" alt="paste image"></p>
+<p>使用 <code>-l</code> 显示依赖库。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509442808573t2mk98r0.png?imageslim" alt="paste image"></p>
+<p>使用 <code>-zz</code> 显示字符串信息，可以显示 <code>utf-8</code> 等宽字节字符串。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509442931440cmccvl54.png?imageslim" alt="paste image"></p>
+<p>可以看到显示了长度，所在位置等信息。</p>
+<p>通过使用 <code>-O</code> 选项可以修改一些文件的信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">haclh@ubuntu:~$ rabin2 -O?</div><div class="line">Operation string:</div><div class="line">  Change Entrypoint: e/0x8048000</div><div class="line">  Dump Symbols: d/s/1024</div><div class="line">  Dump Section: d/S/.text</div><div class="line">  Resize Section: r/.data/1024</div><div class="line">  Remove RPATH: R</div><div class="line">  Add Library: a/l/libfoo.dylib</div><div class="line">  Change Permissions: p/.data/rwx</div><div class="line">  Show LDID entitlements: C</div></pre></td></tr></table></figure>
+<p>比如修改 <code>section</code> 的属性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">haclh@ubuntu:~$ rabin2 -S a.out | grep text</div><div class="line">idx=14 vaddr=0x00400430 paddr=0x00000430 sz=386 vsz=386 perm=--rwx name=.text</div><div class="line">haclh@ubuntu:~$ rabin2 -O p/.text/r a.out </div><div class="line">wx 02 @ 0x1d60</div><div class="line">haclh@ubuntu:~$ rabin2 -S a.out | grep text</div><div class="line">idx=14 vaddr=0x00400430 paddr=0x00000430 sz=386 vsz=386 perm=--r-- name=.text</div></pre></td></tr></table></figure>
+<h3 id="rasm2"><a href="#rasm2" class="headerlink" title="rasm2"></a>rasm2</h3><p>这个工具用于进行各种平台的汇编和反汇编。该工具的主要选项有。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">-a 设置汇编和反汇编的架构（比如x86,mips, arm...）</div><div class="line">-L  列举支持的架构。</div><div class="line">-b  设置 位数</div><div class="line">-d，-D  反汇编 提供的 16进制字符串。</div></pre></td></tr></table></figure></p>
+<p>使用示例：<br>首先列举支持的架构（使用 <code>head</code> 只列举前面几项）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">haclh@ubuntu:~$ rasm2 -L | head</div><div class="line">_dAe  8 16       6502        LGPL3   6502/NES/C64/Tamagotchi/T-1000 CPU</div><div class="line">_dA_  8          8051        PD      8051 Intel CPU</div><div class="line">_dA_  16 32      arc         GPL3    Argonaut RISC Core</div><div class="line">a___  16 32 64   arm.as      LGPL3   as ARM Assembler (use ARM_AS environment)</div><div class="line">adAe  16 32 64   arm         BSD     Capstone ARM disassembler</div><div class="line">_dA_  16 32 64   arm.gnu     GPL3    Acorn RISC Machine CPU</div><div class="line">_d__  16 32      arm.winedbg LGPL2   WineDBG&apos;s ARM disassembler</div><div class="line">adAe  8 16       avr         GPL     AVR Atmel</div><div class="line">adAe  16 32 64   bf          LGPL3   Brainfuck (by pancake, nibble) v4.0.0</div><div class="line">_dA_  16         cr16        LGPL3   cr16 disassembly plugin</div></pre></td></tr></table></figure>
+<p>使用 <code>arm</code> 插件，汇编 三条 <code>nop</code> 指令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">haclh@ubuntu:~$ rasm2 -a arm &quot;nop;nop;nop;&quot;</div><div class="line">0000a0e10000a0e10000a0e1</div></pre></td></tr></table></figure>
+<p>然后我们使用 <code>-d</code> 把它反汇编出来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">haclh@ubuntu:~$ rasm2 -a arm -d 0000a0e10000a0e10000a0e1</div><div class="line">mov r0, r0</div><div class="line">mov r0, r0</div><div class="line">mov r0, r0</div></pre></td></tr></table></figure>
+<p>我可以在命令后面加上 <code>-r</code> 打印出在 <code>radare2</code>中实现对应的功能，需要使用的命令( <code>wa</code> 命令的作用是，汇编给出的指令，并把汇编得到的数据写到相应位置，默认是当前位置)。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">haclh@ubuntu:~$ rasm2 -a arm -d 0000a0e10000a0e10000a0e1 -r</div><div class="line">e asm.arch=arm</div><div class="line">e asm.bits=32</div><div class="line">&quot;wa mov r0, r0;mov r0, r0;mov r0, r0;&quot;</div></pre></td></tr></table></figure></p>
+<h3 id="ragg2-ragg2·cc"><a href="#ragg2-ragg2·cc" class="headerlink" title="ragg2/ragg2·cc"></a>ragg2/ragg2·cc</h3><p><code>radare2</code> 自己实现的 c 编译器，可以方便的写<code>shellcode</code> .<br>示例一：</p>
+<p>代码如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">int main() &#123; write (1,&quot;hi\n&quot;, 3); exit(0); &#125;</div></pre></td></tr></table></figure></p>
+<p>使用下面的命令，把它编译成x86 32位代码：</p>
+<p><code>ragg2-cc -a x86 -b 32 -d -o test test.c</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509456151971l3h3i5vj.png?imageslim" alt="paste image"></p>
+<p>可以生成正常的 <code>elf</code> 文件用于测试，可以使用 <code>-c</code> 只编译出 <code>shellcode</code> </p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15094562677604lzx38lm.png?imageslim" alt="paste image"><br>生成的 <code>shellcode</code> 存在于 <code>test.c.text</code> 文件里面，下面是用 <code>radare2</code> 反汇编得到的代码，可以看到使用了 系统调用来实现代码的功能。</p>
+<p>使用 <code>ragg2-cc</code> 生成的 <code>shellcode</code> 可以使用 <code>ragg2</code>中的 <code>xor</code> 编码器来编码字符，绕过一些字符限制，比如 <code>\x00</code>。<br>首先生成<code>shellcode</code> 的16进制表示。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ragg2-cc -a x86 -b 32 -d -x test.c</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/150945684017052tc8caw.png?imageslim" alt="paste image"></p>
+<p>然后使用 <code>rasm2</code> 验证下</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509456968736cujc5nti.png?imageslim" alt="paste image"><br>代码和上面的是一样的。<br>然后使用 <code>ragg2</code> 使用 <code>xor</code> 编码器编码 <code>shellcode</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509457754035xiiwmp5s.png?imageslim" alt="paste image"></p>
+<p>就是在 <code>shellcode</code> 执行前使用 <code>xor</code> 指令把<code>shellcode</code> 还原。这样就可以消除掉一些坏字符。</p>
+<p><code>ragg2</code> 也有自己 编写 <code>shellcode</code> 的语法。下面是一个示例，具体请看官方文档。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509458272098w4gx320m.png?imageslim" alt="paste image"></p>
+<p>使用这种方式，我们就能使用最接近 <code>汇编</code> 的类c语言 来编写跨平台 <code>shellcode</code></p>
+<h3 id="rahash2"><a href="#rahash2" class="headerlink" title="rahash2"></a>rahash2</h3><p>用于使用加密算法，hash算法等计算值</p>
+<p>使用<code>-L</code> 可以列举支持的算法，比如算算 md5<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">haclh@ubuntu:~$ rahash2 -a md5 -s admin</div><div class="line">0x00000000-0x00000004 md5: 21232f297a57a5a743894a0e4a801fc3</div></pre></td></tr></table></figure></p>
+<h3 id="radare2"><a href="#radare2" class="headerlink" title="radare2"></a>radare2</h3><p>最常用的工具了。整合了上面所有的工具。直接使用 <code>r2 target_bin</code> 进入程序。使用<code>-d</code> 选项进入调试模式。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509458880413jxib0gco.png?imageslim" alt="paste image"><br><code>radare2</code> 中的命令格式为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[.][times][cmd][~grep][@[@iter]addr!size][|&gt;pipe] ;</div></pre></td></tr></table></figure></p>
+<p><code>px</code>表示打印16进制数，默认从当前位置开始。参数控制打印的字节数，下面这张图应该就可以大概解释上面的格式了。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509459118495u8fvnh9m.png?imageslim" alt="paste image"></p>
+<p><code>@ addr</code> 表示该命令从 <code>addr</code> 开始执行。<code>addr</code> 不一定是 地址也可以是 <code>radare2</code> 中识别的符号，比如 <code>main</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/150945933341282rex3iw.png?imageslim" alt="paste image"><br>还有一个重要的东西要记得，在命令的后面加个 <code>?</code> ，就可以查看帮助。直接输入<code>?</code> 可以查看所有的命令。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509459469161neog4ssx.png?imageslim" alt="paste image"></p>
+<p>下面按照我们在 <code>ida</code> 中使用的功能，来介绍 <code>radare2</code><br>首先在 用 <code>ida</code> 分析程序时，在 <code>ida</code> 加载程序后默认会对程序进行分析。<code>radare2</code> 相应的功能是以 <code>a</code> 开头的。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509459639393vrpsfsr3.png?imageslim" alt="paste image"><br>注释很简明了。我们使用 <code>aaa</code> 就可以进行完整分析了。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1509459732526wt8fv8vk.png?imageslim" alt="paste image"></p>
+<p>分析前 <code>radare2</code> 识别不了函数，分析后就可以正常打印函数代码了（<code>pdf</code> 打印函数代码）</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509459800808z40o2w75.png?imageslim" alt="paste image"></p>
+<p>有时候我们不需要分析整个 二进制文件，或者有个函数  <code>radare2</code>没有识别出来我们可以 <code>af</code> 来分析该函数。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509460038689y3ejljvr.png?imageslim" alt="paste image"></p>
+<p>我们可以使用  <code>s</code> 跳转到想要跳转的位置。<br>跳转到 <code>main</code> 函数，并 定义该函数，然后打印函数代码</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15094601604612rtzywu2.png?imageslim" alt="paste image"></p>
+<p><code>pd</code>  类命令用于打印汇编信息。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509460248195wabrhoh5.png?imageslim" alt="paste image"></p>
+<p>具体看帮助。<br>使用 <code>VV</code> 进入 图形化模式（需要是函数范围内）。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15094603917512ee12s3o.png?imageslim" alt="paste image"><br>在图形化模式下，输入 <code>?</code> 可以查看图形化模式的帮助。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509460451292vd4u4cma.png?imageslim" alt="paste image"></p>
+<p>使用 <code>hjkl</code> 来移动图形</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509460648267s237v95k.png?imageslim" alt="paste image"></p>
+<p>使用 <code>p/P</code>  切换图形模式</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509460704922bax3wo07.png?imageslim" alt="paste image"></p>
+<p>在图形模式下使用 <code>:</code> 可以输入<code>radare2</code> 命令</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509461026761tbpeekgu.png?imageslim" alt="paste image"></p>
+<p>输入 <code>!</code> ， 在调试的时候应该很有用</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509461098057g2hz9wjr.png?imageslim" alt="paste image"></p>
+<p>使用 空格 ，切换图形模式和文本模式</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509460817550ho8w5er5.png?imageslim" alt="paste image"></p>
+<p>在文本模式模式下也可以使用 <code>p</code> 来切换视图。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509460884141o5b4k28f.png?imageslim" alt="paste image"><br>剩下的看帮助。</p>
+<p>下面介绍如何使用 <code>radare2</code> patch程序。首先需要在打开文件时使用 <code>r2 -w</code> 来以可写模式打开文件，这样 <code>pathch</code> 才能应用到文件 ( 或者在 <code>radare2</code> 下使用 <code>e io.cache=true</code>, 来允许进行 <code>patch</code>, 不过这样的话文件的修改不会影响原文件 )</p>
+<p><code>w</code> 系列命令用于修改文件。</p>
+<p>使用 <code>wa</code> 可以使用 汇编指令进行 <code>patch</code><br><img src="http://oy9h5q2k4.bkt.clouddn.com/1509461504180vks7xzbj.png?imageslim" alt="paste image"></p>
+<p>使用 <code>&quot;wa nop;nop;nop;nop;&quot;</code> 可以同时写入多条指令。<br><code>双引号不能省</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509461564911w4lzfklw.png?imageslim" alt="paste image"><br>或者可以使用 <code>wx</code> 写入 16进制数据<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1509461691131dl2qawda.png?imageslim" alt="paste image"><br>其他的请看 <code>w?</code> ，查看帮助。</p>
+<p>还可以 <code>可视化汇编/patch</code> 程序</p>
+<p>输入 <code>Vp</code> ，然后输入 <code>A</code>, 就可以了。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509461967246b3yfuntc.png?imageslim" alt="paste image"></p>
+<p>使用 <code>/</code> 系列命令可以搜索字符串， rop gadgets等</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15094620829681a9ko1pz.png?imageslim" alt="paste image"></p>
+<p>查询字符串交叉引用可以依次使用下列方法。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509462186812m98x995a.png?imageslim" alt="paste image"></p>
+<p><code>ax?</code> 系列命令用于管理交叉引用。 <code>/r</code> 可以搜索交叉引用,  <code>aae</code>  是使用<code>radare2</code>中的模拟执行功能，动态的检测交叉引用。</p>
+<p><strong>下面画重点</strong></p>
+<p><code>radare2</code>中其实也是有 <code>反编译功能</code>, 使用 <code>pdc</code>  就可以查看伪代码，虽然和 <code>ida</code> 的还有很大的差距，但是在一些  <code>ida</code>  不支持 <code>f5</code> 的情况下这个功能还是不错的，可以用来看程序的大概逻辑。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509462614283a92qwc4d.png?imageslim" alt="paste image"></p>
+<p>在图形化模式下，按下 <code>$</code> 看看，有惊喜。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1509462803351x6n0h9gz.png?imageslim" alt="paste image"><br>帮我们解析汇编指令，用 c 代码的格式来显示。妈妈再也不用担心我不会汇编了。</p>
+<p><code>radare2</code>和  <code>ida</code> 相比还有一个最大的优势，那就是它自带模拟执行功能。它使用了一种 <code>esil</code> 语言，来定义程序的行为，并且可以根据这个来模拟执行程序代码。 </p>
+<p><code>ESIL</code> 的具体语法可以去看官方文档。下面列举两个示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mov ecx, ebx -&gt; ebx,ecx,=</div><div class="line">add ebx, edi -&gt;edi,ebx,+=,$o,of,=,$s,sf,=,$z,zf,=,$c31,cf,=,$p,</div></pre></td></tr></table></figure>
+<p>可以使用 <code>e asm.esil = true</code>显示 <code>esil</code> 代码</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509464681373qlis3k0v.png?imageslim" alt="paste image"><br>和 <code>ESIL</code>相关的命令是 </p>
+<p><code>ae?</code>这一类指令。这个我也不熟悉，大概的用法是，使用 <code>ae?</code>这一类指令设置好 指令执行虚拟机的状态，然后设置好模拟执行的终止状态，在停止时，做一些操作，主要用于解密字符串，脱壳等等。</p>
+<p>具体事例可以看：</p>
+<p><a href="https://blog.xpnsec.com/radare2-using-emulation-to-unpack-metasploit-encoders/" target="_blank" rel="external">https://blog.xpnsec.com/radare2-using-emulation-to-unpack-metasploit-encoders/</a></p>
+<p>此外 <code>radare2</code>还支持各种语言对他进行调用， 以及拥有大量的插件。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p> <code>radare2</code>还是很强大的，特别是全平台反编译，全平台模拟执行，各种文件的patch, 修改。感觉在 ida 没法 <code>f5</code>的平台上首选 <code>radare2</code></p>
+<p> 参考：</p>
+<p> <a href="http://radare.org/r/talks.html" target="_blank" rel="external">http://radare.org/r/talks.html</a></p>
+<p> <a href="https://github.com/radare/radare2book" target="_blank" rel="external">https://github.com/radare/radare2book</a></p>
+<p> <a href="https://codeload.github.com/radareorg/r2con/" target="_blank" rel="external">https://codeload.github.com/radareorg/r2con/</a></p>
+]]></content>
+      
+        <categories>
+            
+            <category> 路由器安全 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> radare2 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[一步一步pwn路由器之wr940栈溢出漏洞分析与利用]]></title>
       <url>/2017/10/29/step_by_step_pwn_router_part5.html</url>
-      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>这个是最近爆出来的漏洞，漏洞编号：<a href="https://www.fidusinfosec.com/tp-link-remote-code-execution-cve-2017-13772/" target="_blank" rel="external">CVE-2017-13772</a></p>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>这个是最近爆出来的漏洞，漏洞编号：<a href="https://www.fidusinfosec.com/tp-link-remote-code-execution-cve-2017-13772/" target="_blank" rel="external">CVE-2017-13772</a></p>
 <p>固件链接：<a href="http://static.tp-link.com/TL-WR940N(US)_V4_160617_1476690524248q.zip" target="_blank" rel="external">http://static.tp-link.com/TL-WR940N(US)_V4_160617_1476690524248q.zip</a></p>
 <p>之前使用 <code>firmadyn</code> 可以正常模拟运行，但是调试不了，就没有仔细看这个漏洞。今天突然想起 他会启动一个 <code>ssh</code> 服务，那我们是不是就可以通过<code>ssh</code> 连上去进行调试，正想试试，又不能正常模拟了。。。。。下面看具体漏洞。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>漏洞位与 管理员用来     <code>ping</code> 的功能，程序在获取<code>ip</code> 地址时没有验证长度，然后复制到栈上，造成栈溢出。搜索关键字符串 <code>ping_addr</code> 定位到函数 <code>sub_453C50</code></p>
@@ -439,7 +640,10 @@
     <entry>
       <title><![CDATA[一步一步pwn路由器之uClibc中malloc&&free分析]]></title>
       <url>/2017/10/28/step_by_step_pwn_router_part6.html</url>
-      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>栈溢出告一段落。本文介绍下 <code>uClibc</code> 中的 <code>malloc</code> 和 <code>free</code> 实现。为堆溢出的利用准备基础。<code>uClibc</code> 是 <code>glibc</code> 的一个精简版，主要用于嵌入式设备，比如路由器就基本使用的是 <code>uClibc</code>， 简单自然效率高。所以他和一般的<code>x86</code>的堆分配机制会有些不一样。</p>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>栈溢出告一段落。本文介绍下 <code>uClibc</code> 中的 <code>malloc</code> 和 <code>free</code> 实现。为堆溢出的利用准备基础。<code>uClibc</code> 是 <code>glibc</code> 的一个精简版，主要用于嵌入式设备，比如路由器就基本使用的是 <code>uClibc</code>， 简单自然效率高。所以他和一般的<code>x86</code>的堆分配机制会有些不一样。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>uClibc 的 <code>malloc</code> 有三种实现，分别为：</p>
 <p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509164969446w1f222m1.png?imageslim" alt="paste image"><br>其中 <code>malloc-standard</code> 是最近更新的。它就是把 <code>glibc</code> 的 <code>dlmalloc</code> 移植到了 <code>uClibc</code>中。<code>malloc</code> 是<code>uClibc</code>最开始版本用的 <code>malloc</code>。本文分析的也是<code>malloc</code>目录下的<code>uClibc</code>自己最初实现的 <code>malloc</code>。 因为如果是 <code>malloc-standard</code> 我们可以直接按照 一般 <code>linux</code> 中的堆漏洞相关的利用技巧来利用它。</p>
 <p>现在编译 <code>uClibc</code> 的话默认使用的是  <code>malloc-standard</code> ，我也不知道该怎么切换，所以就纯静态看看 <code>malloc</code>目录下的实现了。</p>
@@ -497,7 +701,10 @@
     <entry>
       <title><![CDATA[一步一步pwn路由器之rop技术实战]]></title>
       <url>/2017/10/28/step_by_step_pwn_router_part4.html</url>
-      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>这次程序也是 DVRF 里面的，他的路径是 <code>pwnable/ShellCode_Required/stack_bof_02</code> , 同样是一个简单的栈溢出，不过这个程序里面没有提供 <code>getshell</code> 的函数，需要我们执行shellcode来实现。这个正好实战下前文: <a href="https://jinyu00.github.io/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/2017-10-26-%E4%B8%80%E6%AD%A5%E4%B8%80%E6%AD%A5pwn%E8%B7%AF%E7%94%B1%E5%99%A8%E4%B9%8B%E8%B7%AF%E7%94%B1%E5%99%A8%E7%8E%AF%E5%A2%83%E4%BF%AE%E5%A4%8D-rop%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90.html">一步一步pwn路由器之路由器环境修复&amp;&amp;rop技术分析</a>,中分析的在mips下的通用的rop技术。</p>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>这次程序也是 DVRF 里面的，他的路径是 <code>pwnable/ShellCode_Required/stack_bof_02</code> , 同样是一个简单的栈溢出，不过这个程序里面没有提供 <code>getshell</code> 的函数，需要我们执行shellcode来实现。这个正好实战下前文: <a href="https://jinyu00.github.io/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/2017-10-26-%E4%B8%80%E6%AD%A5%E4%B8%80%E6%AD%A5pwn%E8%B7%AF%E7%94%B1%E5%99%A8%E4%B9%8B%E8%B7%AF%E7%94%B1%E5%99%A8%E7%8E%AF%E5%A2%83%E4%BF%AE%E5%A4%8D-rop%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90.html">一步一步pwn路由器之路由器环境修复&amp;&amp;rop技术分析</a>,中分析的在mips下的通用的rop技术。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先使用 <code>qemu</code> 运行目标程序，并等待 <code>gdb</code> 来调试。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo chroot . ./qemu-mipsel-static -g 1234 ./pwnable/ShellCode_Required/stack_bof_02  &quot;`cat ./pwnable/Intro/input`&quot;</div></pre></td></tr></table></figure></p>
 <p>使用pwntools的 cyclic 功能，找到偏移<br><img src="http://oy9h5q2k4.bkt.clouddn.com/15091628511130mev14fe.png?imageslim" alt="paste image"><br>验证一下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">payload = &quot;A&quot; * 508 + &apos;B&apos; * 4</div><div class="line"></div><div class="line">with open(&quot;input&quot;, &quot;wb&quot;) as f:</div><div class="line">    f.write(payload)</div></pre></td></tr></table></figure></p>
 <p><img src="http://oy9h5q2k4.bkt.clouddn.com/1509163815793mv4b39p0.png?imageslim" alt="paste image"><br>OK, 现在我们已经可以控制程序的 <code>$pc</code>寄存器了，下一步就是利用的方法了。使用前文的那个 rop 链，我们需要可以控制 <code>$s1</code>寄存器。但是这里我们并没有办法控制。不过在 <a href="https://jinyu00.github.io/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/2017-10-27-MIPS-rop-gadgets%E8%AE%B0%E5%BD%95%E8%B4%B4-%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0.html">这里</a>提到，在 <code>uclibc</code> 的 <code>scandir</code> 或者 <code>scandir64</code> 的函数末尾有一个<code>gadgets</code> 可以操控几乎所有寄存器。</p>
@@ -568,7 +775,10 @@
     <entry>
       <title><![CDATA[一步一步pwn路由器之栈溢出实战]]></title>
       <url>/2017/10/27/step_by_step_pwn_router_part3.html</url>
-      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本文以 <a href="https://github.com/praetorian-inc/DVRF" target="_blank" rel="external">DVRF</a> 中的第一个漏洞程序 <code>stack_bof_01</code> 为例，在实战 <code>MIPS</code> 架构中栈溢出的简单利用。</p>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>本文以 <a href="https://github.com/praetorian-inc/DVRF" target="_blank" rel="external">DVRF</a> 中的第一个漏洞程序 <code>stack_bof_01</code> 为例，在实战 <code>MIPS</code> 架构中栈溢出的简单利用。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>去github上面把 DVRF 下载下来，然后用 <code>binwalk</code> 解开</p>
 <p><img src="http://oy9h5q2k4.bkt.clouddn.com/15090843759335sjlc5jz.png?imageslim" alt="paste image"></p>
 <p>在 <code>pwnable</code> 目录下就是相应的示例程序</p>
@@ -659,7 +869,10 @@
     <entry>
       <title><![CDATA[一步一步pwn路由器之路由器环境修复&&rop技术分析]]></title>
       <url>/2017/10/26/step_by_step_pwn_router_part2.html</url>
-      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>拿到路由器的固件后，第一时间肯定是去运行目标程序，一般是web服务程序。我们可以去 <code>/etc/init.d/</code> 找启动文件，或者看看一些有可能的目录。一般来说路由器的程序很少的情况下是可以直接用qemu运行起来的。我们需要做一些修复的工作，本文会介绍一个常用的方法，后面会分析在 <code>mips uclibc</code> 中常用的 <code>rop</code> 手法。</p>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>拿到路由器的固件后，第一时间肯定是去运行目标程序，一般是web服务程序。我们可以去 <code>/etc/init.d/</code> 找启动文件，或者看看一些有可能的目录。一般来说路由器的程序很少的情况下是可以直接用qemu运行起来的。我们需要做一些修复的工作，本文会介绍一个常用的方法，后面会分析在 <code>mips uclibc</code> 中常用的 <code>rop</code> 手法。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><strong>运行环境修复</strong></p>
 <p>由于路由器运行时会去 nvram中获取配置信息，而我们的qemu中是没有该设备，路由器中的程序可能会因为没法获取配置信息而退出。我们可以使用    <code>https://github.com/zcutlip/nvram-faker</code> 配合着设置 <code>LD_PRELOAD</code> 环境变量来使用( 类似于一种 <code>hook</code> )。如果你的mips交叉编译工具链和它脚本里面的不一样就要修改它的脚本，比如</p>
 <p><img src="http://oy9h5q2k4.bkt.clouddn.com/15090309370211cupr2kg.png?imageslim" alt="paste image"><br>编译后把 <code>libnvram-faker.so</code> 和 <code>nvram.ini</code> 放到 <code>/</code> 目录，然后使用 <code>LD_PRELOAD</code>来加载。即可</p>
@@ -721,7 +934,10 @@
     <entry>
       <title><![CDATA[一步一步pwn路由器之环境搭建]]></title>
       <url>/2017/10/26/step_by_step_pwn_router_part1.html</url>
-      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>正式进入路由器的世界了。感觉路由器这块就是固件提取，运行环境修复比较麻烦，其他部分和一般的 pwn 差不多。由于大多数路由器是 mips 架构的，本文就以搭建  <code>MIPS运行、调试平台</code> 为例介绍环境的搭建。其他架构类似。</p>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>正式进入路由器的世界了。感觉路由器这块就是固件提取，运行环境修复比较麻烦，其他部分和一般的 pwn 差不多。由于大多数路由器是 mips 架构的，本文就以搭建  <code>MIPS运行、调试平台</code> 为例介绍环境的搭建。其他架构类似。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><h6 id="安装-与-配置-Qemu"><a href="#安装-与-配置-Qemu" class="headerlink" title="安装 与 配置 Qemu:"></a>安装 与 配置 Qemu:</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install qemu </div><div class="line">sudo apt-get install qemu-user-static</div><div class="line">sudo apt-get install qemu-system</div></pre></td></tr></table></figure>
 <p>配置网络</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apt-get install bridge-utils uml-utilities</div></pre></td></tr></table></figure>
