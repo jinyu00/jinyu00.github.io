@@ -4,6 +4,28 @@
 
     
   <url>
+    <loc>http://jinyu00.github.io/2017/08/14/android_kernel_explit_part1.html</loc>
+    <lastmod>2017-11-30T15:50:24.928Z</lastmod>
+    <data>
+        <display>
+        <title>Android内核漏洞利用技术实战：环境搭建&栈溢出实战</title>
+        <pubTime>2017-08-14T15:31:00.000Z</pubTime>
+        
+        <tag>kernel_exploit</tag>
+         
+        <tag>android_kernel</tag>
+         
+         
+           
+             
+              <breadCrumb title="安卓安全" url="http://jinyu00.github.io/categories/%E5%AE%89%E5%8D%93%E5%AE%89%E5%85%A8/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://jinyu00.github.io/2017/11/01/step_by_step_pwn_router_part8.html</loc>
     <lastmod>2017-11-27T05:36:29.848Z</lastmod>
     <data>
