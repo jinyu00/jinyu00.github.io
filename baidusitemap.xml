@@ -3,6 +3,48 @@
 
 
     
+  <url>
+    <loc>http://jinyu00.github.io/2017/12/16/syscall_to_rop.html</loc>
+    <lastmod>2017-12-16T06:36:59.381Z</lastmod>
+    <data>
+        <display>
+        <title>syscall to rop</title>
+        <pubTime>2017-12-16T06:22:00.000Z</pubTime>
+        
+        <tag>rop</tag>
+         
+        <tag>syscall</tag>
+         
+         
+           
+             
+              <breadCrumb title="ctf" url="http://jinyu00.github.io/categories/ctf/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://jinyu00.github.io/2017/11/27/have_fun_with_chrome_part1.html</loc>
+    <lastmod>2017-12-14T13:00:09.708Z</lastmod>
+    <data>
+        <display>
+        <title>Play-with-chrome之环境搭建</title>
+        <pubTime>2017-11-27T14:49:00.000Z</pubTime>
+        
+        <tag>pwn chrome</tag>
+         
+         
+           
+             
+              <breadCrumb title="chrome" url="http://jinyu00.github.io/categories/chrome/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
     
   <url>
     <loc>http://jinyu00.github.io/2017/08/14/android_kernel_explit_part1.html</loc>

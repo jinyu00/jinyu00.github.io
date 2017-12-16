@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://jinyu00.github.io/2017/12/16/syscall_to_rop.html</loc>
+    
+    <lastmod>2017-12-16T06:36:59.381Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://jinyu00.github.io/2017/11/27/have_fun_with_chrome_part1.html</loc>
+    
+    <lastmod>2017-12-14T13:00:09.708Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://jinyu00.github.io/about/index.html</loc>
     
     <lastmod>2017-11-30T16:03:02.327Z</lastmod>
