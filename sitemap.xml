@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://jinyu00.github.io/2017/12/16/pwn_with_srop.html</loc>
+    
+    <lastmod>2017-12-16T10:20:37.097Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://jinyu00.github.io/2017/12/16/syscall_to_rop.html</loc>
     
     <lastmod>2017-12-16T06:40:19.853Z</lastmod>

