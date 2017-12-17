@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://jinyu00.github.io/2017/12/17/pwn_with_format_0ctf_easyprintf.html</loc>
+    
+    <lastmod>2017-12-17T10:28:40.796Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://jinyu00.github.io/2017/12/17/pwn_with_format_decoder.html</loc>
     
-    <lastmod>2017-12-17T02:27:28.907Z</lastmod>
+    <lastmod>2017-12-17T10:20:02.291Z</lastmod>
     
   </url>
   

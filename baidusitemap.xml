@@ -4,11 +4,31 @@
 
     
   <url>
-    <loc>http://jinyu00.github.io/2017/12/17/pwn_with_format_decoder.html</loc>
-    <lastmod>2017-12-17T02:27:28.907Z</lastmod>
+    <loc>http://jinyu00.github.io/2017/12/17/pwn_with_format_0ctf_easyprintf.html</loc>
+    <lastmod>2017-12-17T10:28:40.796Z</lastmod>
     <data>
         <display>
-        <title>格式化字符串漏洞利用实战</title>
+        <title>格式化字符串漏洞利用实战之 0ctf-easyprintf</title>
+        <pubTime>2017-12-17T10:20:00.000Z</pubTime>
+        
+        <tag>format string</tag>
+         
+         
+           
+             
+              <breadCrumb title="ctf" url="http://jinyu00.github.io/categories/ctf/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://jinyu00.github.io/2017/12/17/pwn_with_format_decoder.html</loc>
+    <lastmod>2017-12-17T10:20:02.291Z</lastmod>
+    <data>
+        <display>
+        <title>格式化字符串漏洞利用实战之 njctf-decoder</title>
         <pubTime>2017-12-17T01:51:00.000Z</pubTime>
         
         <tag>format string</tag>
