@@ -246,7 +246,7 @@
 
     
         <meta property="article:published_time" content="Sun Dec 17 2017 09:51:00 GMT+0800" />
-        <meta property="article:modified_time" content="Sun Dec 17 2017 10:23:37 GMT+0800" />
+        <meta property="article:modified_time" content="Sun Dec 17 2017 10:27:28 GMT+0800" />
     
 
     <!-- The Twitter Card protocol -->
@@ -273,7 +273,7 @@
     "mainEntityOfPage": "http://jinyu00.github.io/2017/12/17/pwn_with_format_decoder.html",
     "headline": "格式化字符串漏洞利用实战",
     "datePublished": "Sun Dec 17 2017 09:51:00 GMT+0800",
-    "dateModified": "Sun Dec 17 2017 10:23:37 GMT+0800",
+    "dateModified": "Sun Dec 17 2017 10:27:28 GMT+0800",
     "author": {
         "@type": "Person",
         "name": "hac425",
@@ -539,11 +539,14 @@
 <p>部分函数已经进行了标注，看程序打印出来的提示信息就知道这个是一个 <code>base64</code> 解码的程序，然后可以通过 <code>猜测 + 验证</code> 的方式，找到那个 用于 <code>base64</code> 解码的函数。</p>
 <p>这个程序的漏洞在于将 <code>base64</code> 解码后的字符串直接传入 <code>snprintf</code>, 作为 <code>format</code> 进行处理， 格式化漏洞。</p>
 <p><img src="http://oy9h5q2k4.bkt.clouddn.com/15134762004787vfa2tjp.png?imageslim" alt="paste image"></p>
-<p>通过格式化串可以 <strong>任意写/任意读</strong> ， 不过这里一次格式化之后就会往下一种走到程序末尾。所以这里我采用 修改 <code>printf got</code>的值 为 <code>rop gadgets</code>,然后进行 <code>rop</code>.</p>
+<p>通过格式化串可以 <strong>任意写/任意读</strong> ， 不过这里一次格式化之后就会往下一种走到程序末尾。所以这里我采用 修改 <code>printf@got</code>的值 为 <code>rop gadgets</code>,然后进行 <code>rop</code>.</p>
 <p>还需要注意前面还有<code>check</code> ,不满足 <code>base64</code> 的格式规范的字符串是触发不了漏洞的。不过我们可以绕过这些 <code>check</code>。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513477638571o34ns4rx.png?imageslim" alt="paste image"></p>
 <p>程序程序获取输入时使用的是 <code>read</code> 函数，然而后面的 <code>base64_check</code> 和 <code>base64_decode</code> 用到的输入的长度都是使用 <code>strlen</code> 获取的。<code>strlen</code> 是通过搜索 <code>\x00</code> 来确定字符串的长度， 而通过 <code>read</code> 我们可以输入 <code>\x00</code>， 所以我们在正常 <code>base64</code> 后面加上 <code>\x00</code> 然后布置 <code>rop chain</code> 即可。<br>还有一个小技巧，触发漏洞时 , <code>printf</code> 函数还没有被调用，所以 <code>got</code> 表中保存的值还是没有经过 <code>重绑定</code> 的值。</p>
-<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513476750593syzw31hb.png?imageslim" alt="paste image"><br>为了绕过栈里面的 <code>base64</code> 字符串 ，我们需要一个 <code>add esp</code> 的 <code>gadgets</code> 可以使用 <code>ROPgadget</code>.</p>
-<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513476881379j7em7v3w.png?imageslim" alt="paste image"><br>找到一个 <code>0x08048b31</code>, 和 <code>printf</code>在 <code>got</code> 表中的值只有 <code>2</code>个字节的差距，所以使用 <code>%hn</code> 可以写两个字节，写的数据为 <code>0x8b31</code>,地址为 <code>0x0804B010</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">%35633c%7$hn</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513476750593syzw31hb.png?imageslim" alt="paste image"></p>
+<p>为了绕过栈里面的 <code>base64</code> 字符串 ，我们需要一个 <code>add esp</code> 的 <code>gadgets</code> 可以使用 <code>ROPgadget</code>.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513476881379j7em7v3w.png?imageslim" alt="paste image"></p>
+<p>找到一个 <code>0x08048b31</code>, 和 <code>printf@got</code> 的值只有 <code>2</code>个字节的差距，所以使用 <code>%hn</code> 可以写两个字节，写的数据为 <code>0x8b31</code>,地址为 <code>0x0804B010</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">%35633c%7$hn</div></pre></td></tr></table></figure></p>
 <p>然后后面调用 <code>printf</code> 时就会进入 <code>rop chain</code>, 首先通过 <code>rop</code> 调用 <code>puts</code> 打印 <code>read@got</code> 泄露 <code>libc</code></p>
 <p><img src="http://oy9h5q2k4.bkt.clouddn.com/15134770899859p7k76ct.png?imageslim" alt="paste image"></p>
 <p>然后再次触发漏洞，用刚刚 <code>leak</code>的数据，布置 <code>rop</code> 调用 <code>system(&#39;/bin/sh&#39;)</code></p>
