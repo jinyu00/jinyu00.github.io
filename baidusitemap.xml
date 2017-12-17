@@ -4,6 +4,28 @@
 
     
   <url>
+    <loc>http://jinyu00.github.io/2017/12/17/pwn_with_format_decoder.html</loc>
+    <lastmod>2017-12-17T02:23:37.186Z</lastmod>
+    <data>
+        <display>
+        <title>格式化字符串漏洞利用实战</title>
+        <pubTime>2017-12-17T01:51:00.000Z</pubTime>
+        
+        <tag>format string</tag>
+         
+        <tag>exploit</tag>
+         
+         
+           
+             
+              <breadCrumb title="ctf" url="http://jinyu00.github.io/categories/ctf/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://jinyu00.github.io/2017/12/16/pwn_with_srop.html</loc>
     <lastmod>2017-12-16T10:20:37.097Z</lastmod>
     <data>

