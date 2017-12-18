@@ -4,6 +4,28 @@
 
     
   <url>
+    <loc>http://jinyu00.github.io/2017/12/18/linux_kernel_uaf_exploit.html</loc>
+    <lastmod>2017-12-18T05:32:59.292Z</lastmod>
+    <data>
+        <display>
+        <title>linux_kernel_uaf漏洞利用实战</title>
+        <pubTime>2017-12-18T03:41:00.000Z</pubTime>
+        
+        <tag>modify cred</tag>
+         
+        <tag>kernel rop</tag>
+         
+         
+           
+             
+              <breadCrumb title="kernel" url="http://jinyu00.github.io/categories/kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://jinyu00.github.io/2017/12/17/pwn_with_format_0ctf_easyprintf.html</loc>
     <lastmod>2017-12-17T10:28:40.796Z</lastmod>
     <data>
