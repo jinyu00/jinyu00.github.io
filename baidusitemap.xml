@@ -3,6 +3,29 @@
 
 
     
+    
+  <url>
+    <loc>http://jinyu00.github.io/2017/12/18/0ctf2017_babyheap.html</loc>
+    <lastmod>2017-12-18T13:19:07.918Z</lastmod>
+    <data>
+        <display>
+        <title>0ctf2017-babyheap</title>
+        <pubTime>2017-12-18T11:46:00.000Z</pubTime>
+        
+        <tag>fastbin attack</tag>
+         
+        <tag>uaf</tag>
+         
+         
+           
+             
+              <breadCrumb title="ctf" url="http://jinyu00.github.io/categories/ctf/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
   <url>
     <loc>http://jinyu00.github.io/2017/12/18/linux_kernel_uaf_exploit.html</loc>
     <lastmod>2017-12-18T05:36:57.737Z</lastmod>
@@ -130,7 +153,6 @@
     </data>
     </url>
 
-    
     
   <url>
     <loc>http://jinyu00.github.io/2017/08/14/android_kernel_explit_part1.html</loc>
