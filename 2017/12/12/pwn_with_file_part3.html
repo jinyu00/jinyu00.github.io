@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html style="display: none;" lang="zh">
+    <head>
+    <meta charset="utf-8">
+    <meta name="baidu-site-verification" content="RC70b8mZ9A" />
+    <meta name="msvalidate.01" content="325714A6172A8D425D843D8163893A54" />
+    <meta name="google-site-verification" content="QgUuEnRKG0PKdnDrOxnq55x7VxQbCiprrMJpfakMlow" />
+    <!--
+        © Material Theme
+        https://github.com/viosey/hexo-theme-material
+        Version: 1.5.0 -->
+    <script>
+        window.materialVersion = "1.5.0"
+        // Delete localstorage with these tags
+        window.oldVersion = [
+            'codestartv1',
+            '1.3.4',
+            '1.4.0',
+            '1.4.0b1'
+        ]
+    </script>
+
+
+    <!-- dns prefetch -->
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+
+
+
+    <link rel="dns-prefetch" href="https://busuanzi.ibruce.info"/>
+
+
+
+        <link rel="dns-prefetch" href="https://cdn-city.livere.com"/>
+
+
+
+
+
+
+
+
+
+
+    <!-- Title -->
+    
+    <title>
+        
+            Pwn with File结构体（三） | 
+        
+        穷则变，变则通，通则久
+    </title>
+
+    <!-- Meta & Info -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="theme-color" content="#0097A7">
+    <meta name="author" content="hac425">
+    <meta name="description" itemprop="description" content="">
+    <meta name="keywords" content=",file struct,off-by-null,heap learning">
+
+    <!-- Import lsloader -->
+    <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
+
+    <!-- Import queue -->
+    <script>function Queue(){this.dataStore=[];this.offer=b;this.poll=d;this.execNext=a;this.debug=false;this.startDebug=c;function b(e){if(this.debug){console.log("Offered a Queued Function.")}if(typeof e==="function"){this.dataStore.push(e)}else{console.log("You must offer a function.")}}function d(){if(this.debug){console.log("Polled a Queued Function.")}return this.dataStore.shift()}function a(){var e=this.poll();if(e!==undefined){if(this.debug){console.log("Run a Queued Function.")}e()}}function c(){this.debug=true}}var queue=new Queue();</script>
+
+    <!-- Favicons -->
+    <link rel="icon shortcut" type="image/ico" href="/img/girl.png">
+    <link rel="icon" sizes="192x192" href="/img/girl.png">
+    <link rel="apple-touch-icon" href="/img/girl.png">
+
+    <!--iOS -->
+    <meta name="apple-mobile-web-app-title" content="Title">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="480">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="穷则变，变则通，通则久">
+
+    <!-- Site Verification -->
+    
+    
+
+    <!-- RSS -->
+    
+
+    <!--[if lte IE 9]>
+        <link rel="stylesheet" href="/css/ie-blocker.css">
+
+        
+            <script src="/js/ie-blocker.zhCN.js"></script>
+        
+    <![endif]-->
+
+    <!-- Import CSS -->
+    
+        <style id="material_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("material_css","/css/material.min.css?Z7a72R1E4SxzBKR/WGctOA==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+        <style id="style_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("style_css","/css/style.min.css?MKetZV3cUTfDxvMffaOezg==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+
+        
+
+    
+
+    
+
+    <!-- Config CSS -->
+
+<!-- Other Styles -->
+<style>
+  body, html {
+    font-family: Roboto, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    overflow-x: hidden !important;
+  }
+  
+  code {
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  }
+
+  a {
+    color: #00838F;
+  }
+
+  .mdl-card__media,
+  #search-label,
+  #search-form-label:after,
+  #scheme-Paradox .hot_tags-count,
+  #scheme-Paradox .sidebar_archives-count,
+  #scheme-Paradox .sidebar-colored .sidebar-header,
+  #scheme-Paradox .sidebar-colored .sidebar-badge{
+    background-color: #0097A7 !important;
+  }
+
+  /* Sidebar User Drop Down Menu Text Color */
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:hover,
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:focus {
+    color: #0097A7 !important;
+  }
+
+  #post_entry-right-info,
+  .sidebar-colored .sidebar-nav li:hover > a,
+  .sidebar-colored .sidebar-nav li:hover > a i,
+  .sidebar-colored .sidebar-nav li > a:hover,
+  .sidebar-colored .sidebar-nav li > a:hover i,
+  .sidebar-colored .sidebar-nav li > a:focus i,
+  .sidebar-colored .sidebar-nav > .open > a,
+  .sidebar-colored .sidebar-nav > .open > a:hover,
+  .sidebar-colored .sidebar-nav > .open > a:focus,
+  #ds-reset #ds-ctx .ds-ctx-entry .ds-ctx-head a {
+    color: #0097A7 !important;
+  }
+
+  .toTop {
+    background: #757575 !important;
+  }
+
+  .material-layout .material-post>.material-nav,
+  .material-layout .material-index>.material-nav,
+  .material-nav a {
+    color: #757575;
+  }
+
+  #scheme-Paradox .MD-burger-layer {
+    background-color: #757575;
+  }
+
+  #scheme-Paradox #post-toc-trigger-btn {
+    color: #757575;
+  }
+
+  .post-toc a:hover {
+    color: #00838F;
+    text-decoration: underline;
+  }
+
+</style>
+
+
+<!-- Theme Background Related-->
+
+    <style>
+      body{
+        background-color: #F5F5F5;
+      }
+
+      /* blog_info bottom background */
+      #scheme-Paradox .material-layout .something-else .mdl-card__supporting-text{
+        background-color: #fff;
+      }
+    </style>
+
+
+
+
+<!-- Fade Effect -->
+
+    <style>
+      .fade {
+        transition: all 800ms linear;
+        -webkit-transform: translate3d(0,0,0);
+        -moz-transform: translate3d(0,0,0);
+        -ms-transform: translate3d(0,0,0);
+        -o-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+        opacity: 1;
+      }
+
+      .fade.out{
+        opacity: 0;
+      }
+    </style>
+
+
+<!-- Import Font -->
+<!-- Import Roboto -->
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+
+
+<!-- Import Material Icon -->
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+
+
+    <!-- Import jQuery -->
+    
+        <script>lsloader.load("jq_js","/js/jquery.min.js?ezyEvm8ST5CGfpA+kFFi1g==", true)</script>
+    
+
+    <!-- The Open Graph protocol -->
+    <meta property="og:url" content="http://jinyu00.github.io">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Pwn with File结构体（三） | 穷则变，变则通，通则久">
+    <meta property="og:image" content="http://jinyu00.github.io/img/girl.png" />
+    <meta property="og:description" content="">
+    <meta property="og:article:tag" content="file struct"> <meta property="og:article:tag" content="off-by-null"> <meta property="og:article:tag" content="heap learning"> 
+
+    
+        <meta property="article:published_time" content="Tue Dec 12 2017 12:12:00 GMT+0800" />
+        <meta property="article:modified_time" content="Sat Dec 23 2017 13:44:39 GMT+0800" />
+    
+
+    <!-- The Twitter Card protocol -->
+    <meta name="twitter:title" content="Pwn with File结构体（三） | 穷则变，变则通，通则久">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="http://jinyu00.github.io/img/girl.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="http://jinyu00.github.io" />
+
+    <!-- Add canonical link for SEO -->
+    
+        <link rel="canonical" href="http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html" />
+    
+
+    <!-- Structured-data for SEO -->
+    
+        
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": "http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html",
+    "headline": "Pwn with File结构体（三）",
+    "datePublished": "Tue Dec 12 2017 12:12:00 GMT+0800",
+    "dateModified": "Sat Dec 23 2017 13:44:39 GMT+0800",
+    "author": {
+        "@type": "Person",
+        "name": "hac425",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/img/girl.png"
+        },
+        "description": "纵横捭阖，冷心为上"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "穷则变，变则通，通则久",
+        "logo": {
+            "@type":"ImageObject",
+            "url": "/img/girl.png"
+        }
+    },
+    "keywords": ",file struct,off-by-null,heap learning",
+    "description": "",
+}
+</script>
+
+
+    
+
+    <!-- Analytics -->
+    
+    
+        <script>
+    var _hmt = _hmt || [];
+    (function() {var hm = document.createElement('script');
+    hm.src = 'https://hm.baidu.com/hm.js?99747687c69d73d9102f032f78f03e96';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+    
+    
+
+    <!-- Custom Head -->
+    
+
+</head>
+
+
+    
+        <body id="scheme-Paradox" class="lazy">
+            <div class="material-layout  mdl-js-layout has-drawer is-upgraded">
+                
+
+                <!-- Main Container -->
+                <main class="material-layout__content" id="main">
+
+                    <!-- Top Anchor -->
+                    <div id="top"></div>
+
+                    
+                        <!-- Hamburger Button -->
+                        <button class="MD-burger-icon sidebar-toggle">
+                            <span class="MD-burger-layer"></span>
+                        </button>
+                    
+
+                    <!-- Post TOC -->
+
+    
+    <!-- Back Button -->
+    <!--
+    <div class="material-back" id="backhome-div" tabindex="0">
+        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+           href="#" onclick="window.history.back();return false;"
+           target="_self"
+           role="button"
+           data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">arrow_back</i>
+            <span class="mdl-button__ripple-container">
+                <span class="mdl-ripple"></span>
+            </span>
+        </a>
+    </div>
+    -->
+
+
+    <!-- Left aligned menu below button -->
+    
+    
+    <button id="post-toc-trigger-btn"
+        class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">format_list_numbered</i>
+    </button>
+
+    <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#正文"><span class="post-toc-number">2.</span> <span class="post-toc-text">正文</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#总结"><span class="post-toc-number">3.</span> <span class="post-toc-text">总结</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#参考"><span class="post-toc-number">4.</span> <span class="post-toc-text">参考</span></a></li></ol>
+    </ul>
+    
+
+
+
+
+<!-- Layouts -->
+
+    <!-- Post Module -->
+    <div class="material-post_container">
+
+        <div class="material-post mdl-grid">
+            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+
+                <!-- Post Header(Thumbnail & Title) -->
+                
+    <!-- Paradox Post Header -->
+    
+        
+            <!-- Random Thumbnail -->
+            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
+            <script type="text/ls-javascript" id="post-thumbnail-script">
+    var randomNum = Math.floor(Math.random() * 19 + 1);
+
+    $('.post_thumbnail-random').attr('data-original', '/img/random/material-' + randomNum + '.png');
+    $('.post_thumbnail-random').addClass('lazy');
+</script>
+
+        
+    
+            <p class="article-headline-p">
+                Pwn with File结构体（三）
+            </p>
+        </div>
+
+
+
+
+
+                
+                    <!-- Paradox Post Info -->
+                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+
+    <!-- Author Avatar -->
+    <div id="author-avatar">
+        <img src="/img/girl.png" width="44px" height="44px" alt="Author Avatar"/>
+    </div>
+    <!-- Author Name & Date -->
+    <div>
+        <strong>hac425</strong>
+        <span>12月 12, 2017</span>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <!-- Favorite -->
+    <!--
+        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
+            <i class="material-icons" role="presentation">favorite</i>
+            <span class="visuallyhidden">favorites</span>
+        </button>
+    -->
+
+    <!-- Qrcode -->
+    
+        <button id="article-functions-qrcode-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">devices other</i>
+    <span class="visuallyhidden">devices other</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
+    <li class="mdl-menu__item">在其它设备中阅读本文章</li>
+    
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACbUlEQVR42u3aQW7jMBAEQP//09nrAgvL3UOR1galUwATEksHDdMzr59ffb3w8PDw8PDw8PAexnvF1/X6v399++B/1r+752xveHh4eCd5Hz61bx55vbnr+0cbLfeGh4eHd56Xf+7v2tzstX7YGx4eHt7DeC3+ek1SPPDw8PD+d9715t4VidmveHh4eM/nFf/wx6Uij4aT527PWvDw8PBiXtsAO/n3F/p7eHh4eJe8lWi1bXTlxWZph3h4eHibebOxgHtD2JUQZJi14OHh4S3zkiZWEsXmReKaujSygIeHh/cl3voruC4JbchbHM3x8PDwjvCSg/KZkayVQzYeHh7eGd56fNDerV2ZH8Hx8PDwzvDujQaSArASN0TxMR4eHt5x3koDbFYwksA3Hy/Aw8PD281rP/SzRlfbKpsNeOHh4eGd4b3iaz2waBtg7WEaDw8P7wxvZZSqDSPWX+swpcbDw8PbwGvb/LPhgNmh/IbCgIeHh7eNl0S0Oand7ko0jIeHh3eSl3/o89eRl4S2eCQBMR4eHt5JXhvatsMEs2e1wwd4eHh4u3nt8beltkFwUoQ+xMd4eHh4R3jtQMDP6Mqj2PzVFKMDeHh4eDfx2g/xrP1/132S4BgPDw9vN2/9496WkFlkXBzc8fDw8DbzZmOjeRMrjxvaQSs8PDy87/JmIcIshG1HB+r2GB4eHt5BXt7QahltA2w2poCHh4f3TF4+IrA+vDUca8DDw8N7JC9vZSUlYWXNzUdqPDw8vJKXDzy1K/MAty0YS5MReHh4eAu8NgjI19wbeURhMR4eHt5m3u+78PDw8PDw8PDwHnD9AYeNzkr/OBULAAAAAElFTkSuQmCC">
+    
+</ul>
+
+    
+
+    <!-- Tags (bookmark) -->
+    
+    <button id="article-functions-viewtags-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+        <i class="material-icons" role="presentation">bookmark</i>
+        <span class="visuallyhidden">bookmark</span>
+    </button>
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
+        <li class="mdl-menu__item">
+        <a class="post_tag-link" href="/tags/file-struct/">file struct</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/heap-learning/">heap learning</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/off-by-null/">off-by-null</a>
+    </ul>
+    
+
+    <!-- Share -->
+    <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">share</i>
+    <span class="visuallyhidden">share</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
+    
+
+    
+        
+            <!-- Busuanzi Views -->
+            <a class="post_share-link" href="#">
+                <li class="mdl-menu__item">
+                    <span id="busuanzi_container_page_pv">
+                        <span id="busuanzi_value_page_pv"></span>&nbsp;浏览量
+                    </span>
+                </li>
+            </a>
+        
+    
+
+    <!-- Share Weibo -->
+    
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=Pwn with File结构体（三）&url=http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html&pic=http://jinyu00.github.io/img/girl.png&searchPic=false&style=simple" target="_blank">
+            <li class="mdl-menu__item">
+                分享到微博
+            </li>
+        </a>
+    
+
+    <!-- Share Twitter -->
+    
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=Pwn with File结构体（三）&url=http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html&via=hac425" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Twitter
+            </li>
+        </a>
+    
+
+    <!-- Share Facebook -->
+    
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Facebook
+            </li>
+        </a>
+    
+
+    <!-- Share Google+ -->
+    
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Google+
+            </li>
+        </a>
+    
+
+    <!-- Share LinkedIn -->
+    
+
+    <!-- Share QQ -->
+    
+
+    <!-- Share Telegram -->
+    
+</ul>
+
+</div>
+
+                
+
+                <!-- Post Content -->
+                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+    
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>前面介绍了几种 <code>File</code> 结构体的攻击方式，其中包括修改 <code>vtable</code>的攻击，以及在最新版本 <code>libc</code> 中 通过 修改 <code>File</code> 结构体中的一些缓冲区的指针来进行攻击的例子。</p>
+<p>本文以 <code>hitcon 2017</code> 的 <code>ghost_in_the_heap</code> 为例子，介绍一下在实际中的利用方式。</p>
+<p>不过我觉得这个题的精华不仅仅是在最后利用 <code>File</code> 结构体 <code>getshell</code> 那块， 前面的通过堆布局，<code>off-by-null</code> 进行堆布局的部分更是精华中的精华，通过这道题可以对 <code>ptmalloc</code> 的内存分配机制有一个更加深入的了解。</p>
+<p>分析的 <code>idb</code> 文件，题目，exp:</p>
+<p><a href="https://gitee.com/hac425/blog_data/tree/master/pwn_file" target="_blank" rel="external">https://gitee.com/hac425/blog_data/tree/master/pwn_file</a></p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>拿到一道题，首先看看保护措施，这里是全开。然后看看所给的各个功能的作用。</p>
+<ul>
+<li><code>new_heap</code>, 最多分配 3个 <code>0xb0</code> 大小的chunk ( <code>malloc(0xA8)</code>)然后可以输入 <code>0xa8</code>个字符，注意调用的 <code>_isoc99_scanf(&quot;%168s&quot;, heap_table[i]);</code> 会在输入串的末尾 添 <code>\x00</code>, 可以 <code>off-by-one</code>.</li>
+<li><code>delete_heap</code> free掉指定的 heap</li>
+<li><code>add_ghost</code> 最多分配一个 <code>0x60</code> 的 chunk (<code>malloc(0x50)</code>), 随后调用 <code>read</code> 获取输入，末尾没有增加 <code>\x00</code> ,可以 <code>leak</code></li>
+<li><code>watch_ghost</code> 调用 <code>printf</code> 打印 <code>ghost</code> 的内容</li>
+<li><code>remove_ghost</code>  free掉 <code>ghost</code> 指针</li>
+</ul>
+<p>总结一下， 我们可以 最多分配 3个 <code>0xb0</code> 大小的 <code>chunk</code>， 以及 一个 <code>0x60</code> 的 <code>chunk</code>，然后 在 分配 <code>heap</code> 有 <code>off-by-one</code> 可以修改下一块的 <code>size</code> 位（细节后面说）， 分配 <code>ghost</code> 时，在输入数据后没有在数据末尾添 <code>\x00</code> ，同时有一个可以获取 <code>ghost</code> 的函数，可以 <code>leak</code> 数据。</p>
+<p>有一个细节需要提一下：</p>
+<p>在程序中 <code>new_heap</code> 时是通过 <code>malloc(0xa8)</code>, 这样系统会分配 <code>0xb0</code> 字节的 <code>chunk</code>, 原因是对齐导致的， 剩下需要的那8个字节由下一个堆块的 <code>pre_size</code> 提供。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15130630121102mpker2n.png?imageslim" alt="paste image"><br><code>0x5555557571c0</code> 是一个 <code>heap</code> 所在 <code>chunk</code> 的基地址， 他分配了 <code>0xb0</code> 字节，位于 <code>0x555555757270</code> 的 8 字节也是给他用的。</p>
+<p><strong>信息泄露绕过 aslr &amp;&amp; 获得 heap 和 libc 的地址</strong></p>
+<p>先放一张信息泄露的草图压压惊</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15130538118666xsytph2.png?imageslim" alt="paste image"></p>
+<p>在堆中进行信息泄露我们可以充分利用堆的分配机制，在堆的分配释放过程中会用到双向链表，这些链表就是通过 <code>chunk</code> 中的指针链接起来的。如果是 <code>bin</code> 的第一个块里面的指针就全是 <code>libc</code> 中的地址，如果 <code>chunk</code> 所属的 <code>bin</code> 有多个 <code>chunk</code> 那么<code>chunk</code> 中的指针就会指向 <code>heap</code> 中的地址。 利用这两个 <code>tips</code> , 加上上面所说的 ，  <code>watch_ghost</code>可以 <code>leak</code> 内存中的数据，再通过精心的堆布局，我们就可以拿到 <code>libc</code> 和 <code>heap</code> 的基地址</p>
+<p>回到这个题目来看，我们条件其实是比较苛刻的，我们只有 <code>ghost</code> 的内存是能够读取的。而 分配 <code>ghost</code> 所得到的 <code>chunk</code> 的大小是 <code>0x60</code> 字节的，这是在 <code>fastbin</code> 的大小范围的， 所以我们释放后，他会进入 <code>fastbin</code> ,由于该<code>chunk</code>是其 所属 <code>fastbin</code> 的第一项， 此时 <code>chunk-&gt;fd</code> 会被设置为 <code>0</code>,  <code>chunk-&gt;bk</code> 内容不变。</p>
+<p>测试一下即可<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">add_ghost(12345, &quot;s&quot;*0x20)</div><div class="line">new_heap(&quot;s&quot;)</div><div class="line">remove_ghost()</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513055921831mi7kjy5z.png?imageslim" alt="paste image"></p>
+<p>所以单单靠 <code>ghost</code> 是不能实现信息泄露的。</p>
+<p>下面看看正确的思路。</p>
+<p><strong>leak libc</strong></p>
+<p>首先<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">add_ghost(12345, &quot;ssssssss&quot;)</div><div class="line">new_heap(&quot;b&quot;)   # heap 0</div><div class="line">new_heap(&quot;b&quot;)   # heap 1   </div><div class="line">new_heap(&quot;b&quot;)   # heap 2</div><div class="line"></div><div class="line"># ghost ---&gt; fastbin (0x60)</div><div class="line">remove_ghost()</div><div class="line">del_heap(0)</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/151305653826347lnu79m.png?imageslim" alt="paste image"></p>
+<p>然后</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">del_heap(2)  #触发 malloc cosolidate ， 清理 fastbin --&gt; unsorted, 此时 ghost + heap 0 合并</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513056836802uafbdk5q.png?imageslim" alt="paste image"></p>
+<p>可以看到 <code>fastbin</code> 和 <code>unsorted bin</code> 合并了，具体原因在 <code>_int_free</code> 函数的代码里面。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513056961189b78zrtlx.png?imageslim" alt="paste image"></p>
+<p><code>FASTBIN_CONSOLIDATION_THRESHOLD</code> 的值为 <code>0x10000</code> ,当 <code>free</code>掉  <code>heap2</code> 后，会和 <code>top chunnk</code> 合并，此时的 <code>size</code> 明显大于  <code>0x10000</code>， 所以会进入 <code>malloc_consolidate</code> 清理 <code>fastbin</code> ,所以会和<code>unsorted bin</code> 合并形成了大的 <code>unsorted bin</code>. </p>
+<p>然后<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">new_heap(&quot;b&quot;)   # heap 0, 切割上一步生成的 大的 unsorted bin, 剩下 0x60 , 其中包含 main_arean 的指针</div><div class="line">add_ghost(12345, &quot;ssssssss&quot;)  # 填满 fd 的 8 个字节， 调用 printf 时就会打印 main_arean 地址</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513057843165e2wv43ea.png?imageslim" alt="paste image"></p>
+<p>先分配 <code>heap</code> 得到 <code>heap_0</code>, 此时原来的 <code>unsorted bin</code> 被切割， 剩下一个小的的 <code>unsorted bin</code>, 其中有指针 <code>fd</code>, <code>bk</code> 都是指向 <code>main_arean</code>, 然后我们在 分配一个 <code>ghost</code> ，填满 <code>fd</code> 的 <code>8</code> 个字节， 然后调用 <code>printf</code>时就会打印 <code>main_arean</code> 地址。</p>
+<p>调试看看。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513059144543s1cj722q.png?imageslim" alt="paste image"></p>
+<p><code>0x00005555557570c0</code> 是 <code>add_ghost</code> 返回的地址，然后使用 <code>watch_ghost</code>  就能 <code>leak libc</code> 的地址了。具体可以看文末的 <code>exp</code></p>
+<p><strong>leak heap</strong></p>
+<p>如果要 <code>leak heap</code> 的地址，我们需要使某一个 <code>bin</code>中有两个 <code>chunk</code>, 这里选择构造两个 <code>unsorted bin</code>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">new_heap(&quot;b&quot;)   # heap 2</div><div class="line"></div><div class="line">remove_ghost()</div><div class="line">del_heap(0)</div><div class="line">del_heap(2)  # malloc cosolidate ， 清理 fastbin --&gt; unsorted, 此时 ghost + heap 0 合并</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513059632175y6rm23it.png?imageslim" alt="paste image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">new_heap(&quot;b&quot;)   # heap 0</div><div class="line">new_heap(&quot;b&quot;)   # heap 2</div><div class="line"># |unsorted bin 0xb0|heap 1|unsorted bin 0x60|heap 2|top chunk|</div><div class="line"># 两个 unsorted bin  使用双向链表，链接到一起</div><div class="line">del_heap(1)</div><div class="line">new_heap(&quot;b&quot;)   # heap 1 </div><div class="line">del_heap(0)</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513060635255jf7cl5sx.png?imageslim" alt="paste image"><br>构造了两个 <code>unsorted bin</code>, 当 <code>add_ghost</code> 时就会拿到 下面那个 <code>unsorted bin</code>, 它的 <code>bk</code> 时指向 上面那个 <code>unsorted bin</code> 的，这样就可以 <code>leak heap</code> 了，具体看代码（这一步还有个小 <code>tips</code>, 代码里有）。</p>
+<p>我们来谈谈 第一步到第二步为啥会出现 <code>smallbin</code> ,内存分配时，首先会去 <code>fastbin</code> , <code>smallbin</code> 中分配内存，不能分配就会 遍历· <code>unsorted bin</code>, 然后再去 <code>smallbin</code> 找。</p>
+<p>具体流程如下( <a href="http://brieflyx.me/2016/heap/glibc-heap/" target="_blank" rel="external">来源</a> )：</p>
+<ul>
+<li><p>逐个迭代 <code>unsorted bin</code>中的块，如果发现 <code>chunk</code> 的大小正好是需要的大小，则迭代过程中止，直接返回此块;否则将此块放入到对应的 <code>small bin</code> 或者 <code>large bin</code> 中，这也是整个 <code>heap</code> 管理中唯一会将 <code>chunk</code> 放入 <code>small bin</code> 与 <code>large bin</code> 中的代码。</p>
+</li>
+<li><p>迭代过程直到 <code>unsorted bin</code> 中没有 <code>chunk</code> 或超过最大迭代次数( <code>10000</code> )为止。</p>
+</li>
+<li>随后开始在 <code>small bins</code> 与 <code>large bins</code> 中寻找 <code>best-fit</code>，即满足需求大小的最小块，如果能够找到，则分裂后将前一块返回给用户，剩下的块放入 <code>unsorted bin</code> 中。</li>
+<li>如果没能找到，则回到开头，继续迭代过程，直到 <code>unsorted bin</code> 空为止</li>
+</ul>
+<p>所以在第一次 <code>new heap</code> 时 ，<code>unsorted bin</code>进入 <code>smallbin</code> ,然后 被切割，剩下一个 <code>0x60</code> 的<code>unsorted bin</code> ， 再次 <code>new heap</code> ，<code>unsorted bin</code>进入 <code>smallbin</code>，然后在分配 <code>new heap</code> 需要的内存 <code>0xb0</code> , 然后会从 <code>top chunk</code> 分配，于是 出现了 <code>smallbin</code>。</p>
+<p>下面继续</p>
+<p><strong>构造exploit之 off-by-one</strong></p>
+<p>经过上一步我们已经 拿到了 <code>libc</code> 和 <code>heap</code> 的地址。下面讲讲怎么 <code>getshell</code><br>首先清理一下 <code>heap</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">remove_ghost()</div><div class="line">del_heap(1)</div><div class="line">del_heap(2)</div></pre></td></tr></table></figure></p>
+<p>然后初始化一下堆状态<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">add_ghost(12345, &quot;ssssssss&quot;)</div><div class="line">new_heap(&quot;b&quot;)   # heap 0</div><div class="line">new_heap(&quot;b&quot;)   # heap 1   </div><div class="line">new_heap(&quot;b&quot;)   # heap 2</div></pre></td></tr></table></figure></p>
+<p>现在的 <code>heap</code> 是这样的</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513061917788zaualfd9.png?imageslim" alt="paste image"></p>
+<p>然后构建一个较大的 <code>unsorted bin</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">remove_ghost()</div><div class="line">del_heap(0)</div><div class="line">del_heap(2)</div><div class="line">new_heap(&quot;s&quot;)</div><div class="line">new_heap(&quot;s&quot;)</div><div class="line">log.info(&quot;create unsorted bin: |heap 0|unsorted_bin(0x60)|heap 1|heap 2|top chunk|&quot;)</div><div class="line"># pause()</div><div class="line"></div><div class="line">del_heap(0)</div><div class="line">del_heap(1)</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15130621045925vya3mql.png?imageslim" alt="paste image"></p>
+<p>下面使用 <code>off-by-null</code> 进行攻击，先说说这种攻击为啥可以实现，文章开头就说， <code>new_heap</code> 时获取输入，最多可以读取 <code>0xa8</code> 个字节的数据，最后会在末尾添加 <code>0x00</code> ,所以实际上是 <code>0xa9</code> 字节 , 因为  <code>0xa8</code> 字节 时已经用完了 下一个 <code>chunk</code> 的 <code>presize</code> 区域 ， 第<code>0xa9</code>字节就会覆盖 下一个 <code>chunk</code> 的 <code>size</code> 位， 这就是 <code>off-by-null</code>, 具体细节比较复杂，下面一一道来。</p>
+<p>首先触发 <code>off-by-one</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">new_heap(&quot;a&quot;*0xa8)</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513063756553bwp90599.png?imageslim" alt="paste image"></p>
+<p>可以看到，在调用 <code>malloc</code> 分配内存后， <code>heap_0</code> 在 <code>heap</code>  的开头分配，然后在 偏移 <code>0xb0</code> 位置处有一个 <code>0x110</code> 大小的 <code>unsorted bin</code>，  此时 <code>heap_2</code> 的 <code>pre_size</code> 为 <code>0x110</code>,  <code>pre_inuse</code> 为 <code>0</code>。所以通过 <code>heap_2</code>  找到的 <code>pre chunk</code> 为 <code>0xb0</code> 处开始的 <code>0x110</code> 大小的 <code>chunk</code>.</p>
+<p>然后 <code>off-by-null</code> 后， <code>unsorted bin</code> 的 <code>size</code> 域 变成了 <code>0x100</code> 这就造成了 <code>0x10</code> 大小的 <code>hole</code>.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/151306437410482kehtxq.png?imageslim" alt="paste image"></p>
+<p><code>0x5555557571b0</code> 就是 hole.<br>此时 <code>heap_2</code> 的 <code>pre_size</code>  与 <code>pre_inuse</code>没变化。</p>
+<p>在清理下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">new_heap(&quot;s&quot;)</div><div class="line">del_heap(0)</div><div class="line">del_heap(1)</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513065626592mlsrd8by.png?imageslim" alt="paste image"></p>
+<p>这里那两个 <code>unsorted bin</code> 不合并的原因是，系统判定下面那个 <code>unsorted bin</code> ，找到 hole 里面的 第二个 8字节，取它的最低位，为0表示已经释放，为1则未被释放。由于那里值 为 <code>0x3091</code> (不知道从哪来的）,所以系统会认为它还没有被释放。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15130658619712j52ggc3.png?imageslim" alt="paste image"></p>
+<p>此时 <code>heap_2</code> 的 <code>pre_size</code> 为 <code>0x110</code>,  <code>pre_inuse</code> 为 <code>0</code>。如果我们释放掉 <code>heap2</code> ,系统根据  <code>pre_size</code> 找到 偏移 <code>0xb0</code> ，并且会认为 这个块已经释放（ <code>pre_inuse</code> 为 <code>0</code>）， 然后就会与 <code>heap2</code> 合并，这样就会有 <code>unsorted bin</code> 的交叉情况了。</p>
+<p>要能成功 <code>free heap_2</code> 还需要 偏移 <code>0xb0</code> 处伪造一个 <code>free chunk</code> 来过掉 <code>unlink check</code>.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># fake free chunk</div><div class="line">add_ghost(12345, p64(heap + 0xb0)*2)</div><div class="line">new_heap(p64(0)*8 + p64(0) + p64(0x111) + p64(heap) + p64(heap)) # 0</div><div class="line">new_heap(&quot;s&quot;)  #防止和 top chunk 合并</div><div class="line"></div><div class="line">del_heap(2)</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513066961579hq1ooo7i.png?imageslim" alt="paste image"></p>
+<p>首先分配 <code>ghost</code> ,它的 <code>fd</code> 和 <code>bk</code> 域都是 <code>偏移 0xb0</code> , 然后在 分配 <code>heap</code> ,在 伪造<code>偏移 0xb0</code> <code>free chunk</code> , 使他的 <code>fd</code> 和 <code>bk</code> 都指向 <code>ghost</code> 所在块的基地址。<br>这样就能过掉 <code>unlink</code> 的 检查<br>然后  <code>del_heap(2)</code>, 获得一个 <code>0x1c0</code> 的 <code>unsorted bin</code> , 可以看到此时已经有 <code>free chunk</code> 的交叉情况了。</p>
+<p>下一步，在交叉区域内构造 <code>unsorted bin</code>, 然后 分配内存，修改其中的 <code>bk</code> 进行 <code>unsorted bin</code>攻击</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">del_heap(0)</div><div class="line">new_heap(&quot;s&quot;)  # 0</div><div class="line">new_heap(&quot;s&quot;)  # 2</div><div class="line"></div><div class="line">del_heap(0)</div><div class="line">del_heap(2)</div></pre></td></tr></table></figure>
+<p>首先释放掉 <code>heap0</code> 增加两个<code>heap</code>. ,会出现交叉的。原因有两个 <code>unsorted bin</code>.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513070134752abydywfr.png?imageslim" alt="paste image"></p>
+<p>然后分别释放 <code>heap 0</code>, <code>heap 2</code>,注意在释放 <code>heap 0</code> 的时候，由于画红圈标注的那个 <code>smallbin</code> 中的 <code>pre_inuse</code> 为 1， 所以 它上面的那个 <code>smallbin</code>  没有和 <code>unsorted bin</code> 合并， 原因在于，上一步 <code>new_heap(&quot;s&quot;)  # 2</code> 时 ， 切割完后，剩下 <code>chunk</code> 开头正好是 画红圈标注的那个 <code>smallbin</code>, 就会设置 它的 <code>pre_inuse</code> 为 1。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513070709047o8ozvocv.png?imageslim" alt="paste image"></p>
+<p>最后我们有了两个 <code>unsorted bin</code>.再次分配 <code>heap</code> 时，会先分配到位于 <code>0x60</code>,大小为 <code>0xb0</code> 的 <code>unsorted bin</code>,此时我们就可以修改 位于 <code>0xb0</code> 大小为 <code>0x1c0</code> 的  <code>unsorted bin</code>的首部，进而 进行  <code>unsorted bin</code> 攻击。</p>
+<p><strong>unsorted bin attack</strong></p>
+<p>现在我们已经有了 <code>unsorted bin</code> 攻击的能力了，目前我知道的攻击方式如下。</p>
+<ul>
+<li>修改 <code>global_max_fast</code> ，之后使用 <code>fastbin</code> 攻击, 条件不满足 （x）</li>
+<li>house_of_orange , 新版 libc 校验 (x)</li>
+<li>修改 <code>stdin-&gt;_IO_base_end</code>, 修改 <code>malloc_hook</code>. ( ok )</li>
+</ul>
+<p>在调用 <code>scanf</code> 获取输入时，首先会把输入的东西复制到 <code>[_IO_base_base, _IO_base_end]</code>, 最大大小为 <code>_IO_base_end - _IO_base_base</code>。<br>修改  <code>unsorted bin</code>  的 <code>bck</code> 为 <code>_IO_base_end-0x10</code> ,就可以使 <code>_IO_base_end=main_arens+0x88</code>,我们就能修改很多东西了，而且 <code>malloc_hook</code> 就在这里面。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># 修改 unsorted bin </div><div class="line">new_heap(p64(0)*8 + p64(0) + p64(0xb1) + p64(0) + p64(buf_end-0x10))</div><div class="line"># 触发unsorted bin attack, 然后输入内容，修改 malloc_hook 为 magic</div><div class="line">new_heap((&quot;\x00&quot;*5 + p64(lock) + p64(0)*9 + p64(vtable)).ljust(0x1ad,&quot;\x00&quot;)+ p64(magic))</div></pre></td></tr></table></figure>
+<p>注意 <code>unsorted bin</code> 的 <code>size</code> 域 一定要修改为 <code>0xb1</code>, 原因是 分配内存时如果 <code>smallbin</code>, <code>fastbin</code>都不能分配，就会遍历 <code>unsorted bin</code> ,如果找到大小完全匹配的就直接返回，停止遍历，否则会持续性遍历，此时的 <code>bck</code> 已经被修改为 <code>_IO_base_end-0x10</code>, 如果遍历到这个, 会 <code>check</code> ,具体原因可以自行调试看。</p>
+<p>我们接下来需要分配<code>heap</code> 大小 为 <code>0xb0</code>, 设置<code>size</code> 域为 <code>0xb1</code>，  会在 <code>unsorted bin</code> 第一次遍历后直接返回。不会报错。此时<code>unsorted bin</code>完成。</p>
+<p><code>magic</code> 可用 <code>one_gadget</code> 查找。<br>最后 <code>del_heap(2)</code> 触发 <code>malloc</code>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"># 此时 unsorted bin 已经损坏， del heap 2触发</div><div class="line"># 堆 unsorted bin的操作</div><div class="line"># 触发 malloc_printerr </div><div class="line"># malloc_printerr 里面会调用 malloc </div><div class="line">del_heap(2)</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15130721693589g8lyo0h.png?imageslim" alt="paste image"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>这道题非常不错，不仅学到了利用 <code>file</code> 结构体的新型攻击方式，还可以通过这道题深入理解堆分配的流程。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="http://brieflyx.me/2016/heap/glibc-heap/" target="_blank" rel="external">http://brieflyx.me/2016/heap/glibc-heap/</a></p>
+<p><a href="https://github.com/scwuaptx/CTF/tree/master/2017-writeup/hitcon/ghost_in_the_heap" target="_blank" rel="external">https://github.com/scwuaptx/CTF/tree/master/2017-writeup/hitcon/ghost_in_the_heap</a></p>
+<p><a href="https://tradahacking.vn/hitcon-2017-ghost-in-the-heap-writeup-ee6384cd0b7" target="_blank" rel="external">https://tradahacking.vn/hitcon-2017-ghost-in-the-heap-writeup-ee6384cd0b7</a></p>
+
+        
+                <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
+                    <p><strong>
+                         
+                            <a>本站文章均原创， 转载注明来源</a>
+                        </strong>
+                        <br>
+                        <strong>本文链接：</strong><a href="http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html">http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html</a>
+                    </p>
+                </blockquote>
+        
+    
+
+    
+</div>
+
+
+                
+
+                <!-- Post Comments -->
+                
+                    
+    <!-- 使用 来必力 -->
+<div id="livere-comment">
+    <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zMTQ2OC84MDMy">
+<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+</div>
+<style>
+    #livere-comment{
+        background-color: #eee;
+        padding: 2pc;
+    }
+</style>
+
+                
+            </div>
+
+            <!-- Post Prev & Next Nav -->
+            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
+    <!-- Prev Nav -->
+    
+        <a href="/2017/12/14/exim_CVE_2017_16943_uaf_pwn.html" id="post_nav-newer" class="prev-content">
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_back</i>
+            </button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            新篇
+        </a>
+    
+
+    <!-- Section Spacer -->
+    <div class="section-spacer"></div>
+
+    <!-- Next Nav -->
+    
+        <a href="/2017/12/07/pwn_with_file_part2.html" id="post_nav-older" class="next-content">
+            旧篇
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </a>
+    
+</nav>
+
+        </div>
+    </div>
+
+
+
+                    
+                        <!-- Overlay For Active Sidebar -->
+<div class="sidebar-overlay"></div>
+
+<!-- Material sidebar -->
+<aside id="sidebar" class="sidebar sidebar-colored sidebar-fixed-left" role="navigation">
+    <div id="sidebar-main">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header header-cover" style="background-image: url(/img/sidebar_header.png);">
+    <!-- Top bar -->
+    <div class="top-bar"></div>
+
+    <!-- Sidebar toggle button -->
+    <button type="button" class="sidebar-toggle mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" style="display: initial;" data-upgraded=",MaterialButton,MaterialRipple">
+        <i class="material-icons">clear_all</i>
+        <span class="mdl-button__ripple-container">
+            <span class="mdl-ripple">
+            </span>
+        </span>
+    </button>
+
+    <!-- Sidebar Avatar -->
+    <div class="sidebar-image">
+        <img src="/img/girl.png" alt="hac425's avatar">
+    </div>
+
+    <!-- Sidebar Email -->
+    <a data-toggle="dropdown" class="sidebar-brand" href="#settings-dropdown">
+        327164983@qq.com
+        <b class="caret"></b>
+    </a>
+</div>
+
+
+        <!-- Sidebar Navigation  -->
+        <ul class="nav sidebar-nav">
+    <!-- User dropdown  -->
+    <li class="dropdown">
+        <ul id="settings-dropdown" class="dropdown-menu">
+            
+                <li>
+                    <a href="#" target="_blank" title="Email Me">
+                        
+                            <i class="material-icons sidebar-material-icons sidebar-indent-left1pc-element">email</i>
+                        
+                        Email Me
+                    </a>
+                </li>
+            
+        </ul>
+    </li>
+
+    <!-- Homepage -->
+    
+        <li id="sidebar-first-li">
+            <a href="/">
+                
+                    <i class="material-icons sidebar-material-icons">home</i>
+                
+                主页
+            </a>
+        </li>
+        
+    
+
+    <!-- Archives  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">inbox</i>
+                
+                    归档
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+            <li>
+                <a class="sidebar_archives-link" href="/archives/2017/12/">十二月 2017<span class="sidebar_archives-count">12</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/11/">十一月 2017<span class="sidebar_archives-count">8</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/10/">十月 2017<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/08/">八月 2017<span class="sidebar_archives-count">1</span></a>
+            </ul>
+        </li>
+        
+    
+
+    <!-- Categories  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">chrome_reader_mode</i>
+                
+                分类
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                <a class="sidebar_archives-link" href="/categories/Vulnerability-analysis/">Vulnerability analysis<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/chrome/">chrome<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/ctf/">ctf<span class="sidebar_archives-count">9</span></a></li><li><a class="sidebar_archives-link" href="/categories/java应用破解思路/">java应用破解思路<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/jeb破解/">jeb破解<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/categories/kernel/">kernel<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/pwn/">pwn<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/安卓安全/">安卓安全<span class="sidebar_archives-count">5</span></a></li><li><a class="sidebar_archives-link" href="/categories/文件patch/">文件patch<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/渗透测试/">渗透测试<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/路由器安全/">路由器安全<span class="sidebar_archives-count">9</span></a>
+            </ul>
+        </li>
+        
+            <li class="divider"></li>
+        
+    
+
+    <!-- Pages  -->
+    
+        <li>
+            <a href="/about" title="关于我">
+                
+                    <i class="material-icons sidebar-material-icons">person</i>
+                
+                关于我
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/timeline" title="时间轴">
+                
+                    <i class="material-icons sidebar-material-icons">timeline</i>
+                
+                时间轴
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/links" title="友情链接">
+                
+                    <i class="material-icons sidebar-material-icons">people</i>
+                
+                友情链接
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/tags" title="标签云">
+                
+                    <i class="material-icons sidebar-material-icons">invert_colors</i>
+                
+                标签云
+            </a>
+        </li>
+        
+    
+
+    <!-- Article Number  -->
+    
+        <li>
+            <a href="/archives">
+                文章总数
+                <span class="sidebar-badge">32</span>
+            </a>
+        </li>
+        
+    
+</ul>
+
+
+        <!-- Sidebar Footer -->
+        <!--
+I'm glad you use this theme, the development is no so easy, I hope you can keep the copyright, I will thank you so much.
+If you still want to delete the copyrights, could you still retain the first one? Which namely "Theme Material"
+It will not impact the appearance and can give developers a lot of support :)
+
+很高兴您使用并喜欢该主题，开发不易 十分谢谢与希望您可以保留一下版权声明。
+如果您仍然想删除的话 能否只保留第一项呢？即 "Theme Material"
+它不会影响美观并可以给开发者很大的支持和动力。 :)
+-->
+
+<!-- Sidebar Divider -->
+
+
+<!-- Theme Material -->
+
+
+<!-- Help & Support -->
+<!--
+
+-->
+
+<!-- Feedback -->
+<!--
+
+-->
+
+<!-- About Theme -->
+<!--
+
+-->
+
+    </div>
+
+    <!-- Sidebar Image -->
+    
+
+</aside>
+
+                    
+
+                    
+                        <!-- Footer Top Button -->
+                        <div id="back-to-top" class="toTop-wrap">
+    <a href="#top" class="toTop">
+        <i class="material-icons footer_top-i">expand_less</i>
+    </a>
+</div>
+
+                    
+
+                    <!--Footer-->
+<footer class="mdl-mini-footer" id="bottom">
+    
+        <!-- Paradox Footer Left Section -->
+        <div class="mdl-mini-footer--left-section sns-list">
+    <!-- Twitter -->
+    
+
+    <!-- Facebook -->
+    
+
+    <!-- Google + -->
+    
+
+    <!-- Weibo -->
+    
+        <a href="http://weibo.com/u/5691483590" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-weibo">
+                <span class="visuallyhidden">Weibo</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Instagram -->
+    
+
+    <!-- Tumblr -->
+    
+
+    <!-- Github -->
+    
+        <a href="https://github.com/jinyu00" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-github">
+                <span class="visuallyhidden">Github</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- LinkedIn -->
+    
+
+    <!-- Zhihu -->
+    
+
+    <!-- Bilibili -->
+    
+
+    <!-- Telegram -->
+    
+    
+    <!-- V2EX -->
+    
+</div>
+
+
+        <!--Copyright-->
+        <div id="copyright">
+            Copyright&nbsp;©<script type="text/javascript">var fd = new Date();document.write("&nbsp;" + fd.getFullYear() + "&nbsp;");</script>穷则变，变则通，通则久
+            
+        </div>
+
+        <!-- Paradox Footer Right Section -->
+
+    
+</footer>
+
+
+                    <!-- Import JS File -->
+
+    <script>lsloader.load("lazyload_js","/js/lazyload.min.js?wgjW/HuQG9JDgvPDPoRAng==", true)</script>
+
+
+
+    <script>lsloader.load("js_js","/js/js.min.js?V/53wGualMuiPM3xoetD5Q==", true)</script>
+
+
+
+    <script>lsloader.load("np_js","/js/nprogress.js?pl3Qhb9lvqR1FlyLUna1Yw==", true)</script>
+
+
+<script type="text/ls-javascript" id="NProgress-script">
+    NProgress.configure({
+        showSpinner: true
+    });
+    NProgress.start();
+    $('#nprogress .bar').css({
+        'background': '#29d'
+    });
+    $('#nprogress .peg').css({
+        'box-shadow': '0 0 10px #29d, 0 0 15px #29d'
+    });
+    $('#nprogress .spinner-icon').css({
+        'border-top-color': '#29d',
+        'border-left-color': '#29d'
+    });
+    setTimeout(function() {
+        NProgress.done();
+        $('.fade').removeClass('out');
+    }, 800);
+</script>
+
+
+
+
+
+
+
+    <!-- Busuanzi -->
+    <script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+   
+
+
+
+
+
+<!-- UC Browser Compatible -->
+<script>
+	var agent = navigator.userAgent.toLowerCase();
+	if(agent.indexOf('ucbrowser')>0) {
+		document.write('<link rel="stylesheet" href="/css/uc.css">');
+	   alert('由于 UC 浏览器使用极旧的内核，而本网站使用了一些新的特性。\n为了您能更好的浏览，推荐使用 Chrome 或 Firefox 浏览器。');
+	}
+</script>
+
+<!-- Import prettify js  -->
+
+
+
+<!-- Window Load -->
+<!-- add class for prettify -->
+<script type="text/ls-javascript" id="window-load">
+    $(window).on('load', function() {
+        // Post_Toc parent position fixed
+        $('.post-toc-wrap').parent('.mdl-menu__container').css('position', 'fixed');
+    });
+
+    
+    
+</script>
+
+<!-- MathJax Load-->
+
+
+<!-- Bing Background -->
+
+
+<script type="text/ls-javascript" id="lazy-load">
+    // Offer LazyLoad
+    queue.offer(function(){
+        $('.lazy').lazyload({
+            effect : 'show'
+        });
+    });
+
+    // Start Queue
+    $(document).ready(function(){
+        setInterval(function(){
+            queue.execNext();
+        },200);
+    });
+</script>
+
+<!-- Custom Footer -->
+
+
+
+<script>
+    (function(){
+        var scriptList = document.querySelectorAll('script[type="text/ls-javascript"]')
+
+        for (var i = 0; i < scriptList.length; ++i) {
+            var item = scriptList[i];
+            lsloader.runInlineScript(item.id,item.id);
+        }
+    })()
+console.log('\n %c © Material Theme | Version: 1.5.0 | https://github.com/viosey/hexo-theme-material %c \n', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-left-radius:5px;border-bottom-left-radius:5px;', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-right-radius:5px;border-bottom-right-radius:5px;');
+</script>
+
+                </main>
+            </div>
+        </body>
+    
+</html>

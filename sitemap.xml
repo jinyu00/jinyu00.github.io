@@ -2,6 +2,104 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://jinyu00.github.io/2017/12/07/pwn_with_file_part1.html</loc>
+    
+    <lastmod>2017-12-23T05:44:51.575Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://jinyu00.github.io/2017/12/07/pwn_with_file_part2.html</loc>
+    
+    <lastmod>2017-12-23T05:44:45.176Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html</loc>
+    
+    <lastmod>2017-12-23T05:44:39.182Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://jinyu00.github.io/2017/12/14/exim_CVE_2017_16943_uaf_pwn.html</loc>
+    
+    <lastmod>2017-12-23T05:44:32.412Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://jinyu00.github.io/2017/12/15/legu_android_readboy_burp.html</loc>
+    
+    <lastmod>2017-12-23T05:44:25.670Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://jinyu00.github.io/2017/11/01/step_by_step_pwn_router_part8.html</loc>
+    
+    <lastmod>2017-12-23T05:44:16.297Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://jinyu00.github.io/2017/10/29/step_by_step_pwn_router_part5.html</loc>
+    
+    <lastmod>2017-12-23T05:44:01.271Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part6.html</loc>
+    
+    <lastmod>2017-12-23T05:43:53.610Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part4.html</loc>
+    
+    <lastmod>2017-12-23T05:43:38.401Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://jinyu00.github.io/2017/10/27/step_by_step_pwn_router_part3.html</loc>
+    
+    <lastmod>2017-12-23T05:43:28.020Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://jinyu00.github.io/2017/10/26/step_by_step_pwn_router_part2.html</loc>
+    
+    <lastmod>2017-12-23T05:43:03.202Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://jinyu00.github.io/2017/10/26/step_by_step_pwn_router_part1.html</loc>
+    
+    <lastmod>2017-12-23T05:42:55.598Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://jinyu00.github.io/2017/10/31/step_by_step_pwn_router_part7.html</loc>
+    
+    <lastmod>2017-12-23T05:42:41.305Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://jinyu00.github.io/2017/12/23/defense_pwn_with_ld_preload.html</loc>
+    
+    <lastmod>2017-12-23T05:32:13.040Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://jinyu00.github.io/about/index.html</loc>
     
     <lastmod>2017-12-18T13:20:19.313Z</lastmod>
@@ -61,62 +159,6 @@
     <loc>http://jinyu00.github.io/2017/08/14/android_kernel_explit_part1.html</loc>
     
     <lastmod>2017-11-30T15:50:24.928Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://jinyu00.github.io/2017/11/01/step_by_step_pwn_router_part8.html</loc>
-    
-    <lastmod>2017-11-27T05:36:29.848Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://jinyu00.github.io/2017/10/31/step_by_step_pwn_router_part7.html</loc>
-    
-    <lastmod>2017-11-27T05:36:15.364Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://jinyu00.github.io/2017/10/29/step_by_step_pwn_router_part5.html</loc>
-    
-    <lastmod>2017-11-27T05:35:51.654Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part6.html</loc>
-    
-    <lastmod>2017-11-27T05:35:19.309Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part4.html</loc>
-    
-    <lastmod>2017-11-27T05:35:12.152Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://jinyu00.github.io/2017/10/27/step_by_step_pwn_router_part3.html</loc>
-    
-    <lastmod>2017-11-27T05:35:03.996Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://jinyu00.github.io/2017/10/26/step_by_step_pwn_router_part2.html</loc>
-    
-    <lastmod>2017-11-27T05:34:55.621Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://jinyu00.github.io/2017/10/26/step_by_step_pwn_router_part1.html</loc>
-    
-    <lastmod>2017-11-27T05:34:25.198Z</lastmod>
     
   </url>
   
