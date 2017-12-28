@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://jinyu00.github.io/2017/12/28/cve_2017_17215_hg532.html</loc>
+    
+    <lastmod>2017-12-28T12:58:52.290Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://jinyu00.github.io/2017/12/23/defense_pwn_with_ld_preload.html</loc>
     
     <lastmod>2017-12-23T06:22:16.895Z</lastmod>
