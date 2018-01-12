@@ -237,10 +237,10 @@
     
 
     <!-- The Open Graph protocol -->
-    <meta property="og:url" content="http://jinyu00.github.io">
+    <meta property="og:url" content="http://blog.hac425.top">
     <meta property="og:type" content="blog">
     <meta property="og:title" content="Pwn with File结构体（三） | 穷则变，变则通，通则久">
-    <meta property="og:image" content="http://jinyu00.github.io/img/girl.png" />
+    <meta property="og:image" content="http://blog.hac425.top/img/girl.png" />
     <meta property="og:description" content="">
     <meta property="og:article:tag" content="file struct"> <meta property="og:article:tag" content="off-by-null"> <meta property="og:article:tag" content="heap learning"> 
 
@@ -252,13 +252,13 @@
     <!-- The Twitter Card protocol -->
     <meta name="twitter:title" content="Pwn with File结构体（三） | 穷则变，变则通，通则久">
     <meta name="twitter:description" content="">
-    <meta name="twitter:image" content="http://jinyu00.github.io/img/girl.png">
+    <meta name="twitter:image" content="http://blog.hac425.top/img/girl.png">
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="http://jinyu00.github.io" />
+    <meta name="twitter:url" content="http://blog.hac425.top" />
 
     <!-- Add canonical link for SEO -->
     
-        <link rel="canonical" href="http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html" />
+        <link rel="canonical" href="http://blog.hac425.top/2017/12/12/pwn_with_file_part3.html" />
     
 
     <!-- Structured-data for SEO -->
@@ -270,7 +270,7 @@
 {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "mainEntityOfPage": "http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html",
+    "mainEntityOfPage": "http://blog.hac425.top/2017/12/12/pwn_with_file_part3.html",
     "headline": "Pwn with File结构体（三）",
     "datePublished": "Tue Dec 12 2017 12:12:00 GMT+0800",
     "dateModified": "Sat Dec 23 2017 13:48:01 GMT+0800",
@@ -439,7 +439,7 @@
 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
     <li class="mdl-menu__item">在其它设备中阅读本文章</li>
     
-        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACbUlEQVR42u3aQW7jMBAEQP//09nrAgvL3UOR1galUwATEksHDdMzr59ffb3w8PDw8PDw8PAexnvF1/X6v399++B/1r+752xveHh4eCd5Hz61bx55vbnr+0cbLfeGh4eHd56Xf+7v2tzstX7YGx4eHt7DeC3+ek1SPPDw8PD+d9715t4VidmveHh4eM/nFf/wx6Uij4aT527PWvDw8PBiXtsAO/n3F/p7eHh4eJe8lWi1bXTlxWZph3h4eHibebOxgHtD2JUQZJi14OHh4S3zkiZWEsXmReKaujSygIeHh/cl3voruC4JbchbHM3x8PDwjvCSg/KZkayVQzYeHh7eGd56fNDerV2ZH8Hx8PDwzvDujQaSArASN0TxMR4eHt5x3koDbFYwksA3Hy/Aw8PD281rP/SzRlfbKpsNeOHh4eGd4b3iaz2waBtg7WEaDw8P7wxvZZSqDSPWX+swpcbDw8PbwGvb/LPhgNmh/IbCgIeHh7eNl0S0Oand7ko0jIeHh3eSl3/o89eRl4S2eCQBMR4eHt5JXhvatsMEs2e1wwd4eHh4u3nt8beltkFwUoQ+xMd4eHh4R3jtQMDP6Mqj2PzVFKMDeHh4eDfx2g/xrP1/132S4BgPDw9vN2/9496WkFlkXBzc8fDw8DbzZmOjeRMrjxvaQSs8PDy87/JmIcIshG1HB+r2GB4eHt5BXt7QahltA2w2poCHh4f3TF4+IrA+vDUca8DDw8N7JC9vZSUlYWXNzUdqPDw8vJKXDzy1K/MAty0YS5MReHh4eAu8NgjI19wbeURhMR4eHt5m3u+78PDw8PDw8PDwHnD9AYeNzkr/OBULAAAAAElFTkSuQmCC">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACWklEQVR42u3aQXLDIBAEQP3/08kL5MwsAjuu1snlKBLNgcXDXj9ffV14eHh4eHh4eHgfxrviK3p0cP/dPXfftGPDw8PDO8NLBn33zVVeOXI4Njw8PLyDvNdDuRtW8jlZ7pOnvb4fDw8P77/wckBSJPDw8PC+ldduu9uigoeHh/dfeMkP/tmA2il4W9aCh4eHF/Pa7e/Jz0fP9/Dw8PACXt3SFDcWzI7NHm66wsPDw9vAyxfiJFaYAWaFAQ8PD+9dvKcC3NmR2LNBMB4eHt4Z3kq0mkS0SUlIWhPyeBcPDw9vN29lQOtRb/vXYd3Dw8PD28BbaXjKt9QrkW4e9eLh4eHt5rVNTm2pmDUltJOCh4eH917e0qIcR7Qrk/hHrIyHh4e3mZe/PglqVxb3lTvx8PDwTvLaje/K8dXswKyePjw8PLzNvHYLm2+v29D2qRZYPDw8vN286Of9aLFui0EyKckPADw8PLyTvByZNwqslIQ2+MDDw8M7w8sbAvIA4vVwZ+FvETfj4eHhbebNooGWNzs2a7faeHh4eCd57YH9Svw6e3IxfXh4eHgHeW3TwGw7/mwUUh+A4eHh4W3gtVFs2yiQT8ostsDDw8PbzWuv5DX58VjbvhA1LuDh4eFt5q0vx3nT1SzyqKcPDw8P7wgvKQbRohxHD/lUPlAY8PDw8Lbx8gV6PWydsZOR4OHh4X0yLw9nZ0Nv/wsPDw/v83ltGDGLd/Mn4OHh4Z3n5S+etRe0LVbDUoSHh4d3hDfb7ObFoC0nbbMCHh4e3kne9114eHh4eHh4eHgfcP0CEpqvWz+9jfwAAAAASUVORK5CYII=">
     
 </ul>
 
@@ -480,7 +480,7 @@
 
     <!-- Share Weibo -->
     
-        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=Pwn with File结构体（三）&url=http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html&pic=http://jinyu00.github.io/img/girl.png&searchPic=false&style=simple" target="_blank">
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=Pwn with File结构体（三）&url=http://blog.hac425.top/2017/12/12/pwn_with_file_part3.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
             <li class="mdl-menu__item">
                 分享到微博
             </li>
@@ -489,7 +489,7 @@
 
     <!-- Share Twitter -->
     
-        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=Pwn with File结构体（三）&url=http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html&via=hac425" target="_blank">
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=Pwn with File结构体（三）&url=http://blog.hac425.top/2017/12/12/pwn_with_file_part3.html&via=hac425" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Twitter
             </li>
@@ -498,7 +498,7 @@
 
     <!-- Share Facebook -->
     
-        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html" target="_blank">
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2017/12/12/pwn_with_file_part3.html" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Facebook
             </li>
@@ -507,7 +507,7 @@
 
     <!-- Share Google+ -->
     
-        <a class="post_share-link" href="https://plus.google.com/share?url=http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html" target="_blank">
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2017/12/12/pwn_with_file_part3.html" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Google+
             </li>
@@ -648,7 +648,7 @@
                             <a>本站文章均原创， 转载注明来源</a>
                         </strong>
                         <br>
-                        <strong>本文链接：</strong><a href="http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html">http://jinyu00.github.io/2017/12/12/pwn_with_file_part3.html</a>
+                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2017/12/12/pwn_with_file_part3.html">http://blog.hac425.top/2017/12/12/pwn_with_file_part3.html</a>
                     </p>
                 </blockquote>
         

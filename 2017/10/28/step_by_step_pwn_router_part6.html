@@ -237,10 +237,10 @@
     
 
     <!-- The Open Graph protocol -->
-    <meta property="og:url" content="http://jinyu00.github.io">
+    <meta property="og:url" content="http://blog.hac425.top">
     <meta property="og:type" content="blog">
     <meta property="og:title" content="一步一步pwn路由器之uClibc中malloc&amp;&amp;free分析 | 穷则变，变则通，通则久">
-    <meta property="og:image" content="http://jinyu00.github.io/img/girl.png" />
+    <meta property="og:image" content="http://blog.hac425.top/img/girl.png" />
     <meta property="og:description" content="">
     <meta property="og:article:tag" content="uclibc源码分析"> <meta property="og:article:tag" content="malloc &amp;&amp; free"> 
 
@@ -252,13 +252,13 @@
     <!-- The Twitter Card protocol -->
     <meta name="twitter:title" content="一步一步pwn路由器之uClibc中malloc&amp;&amp;free分析 | 穷则变，变则通，通则久">
     <meta name="twitter:description" content="">
-    <meta name="twitter:image" content="http://jinyu00.github.io/img/girl.png">
+    <meta name="twitter:image" content="http://blog.hac425.top/img/girl.png">
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="http://jinyu00.github.io" />
+    <meta name="twitter:url" content="http://blog.hac425.top" />
 
     <!-- Add canonical link for SEO -->
     
-        <link rel="canonical" href="http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part6.html" />
+        <link rel="canonical" href="http://blog.hac425.top/2017/10/28/step_by_step_pwn_router_part6.html" />
     
 
     <!-- Structured-data for SEO -->
@@ -270,7 +270,7 @@
 {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "mainEntityOfPage": "http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part6.html",
+    "mainEntityOfPage": "http://blog.hac425.top/2017/10/28/step_by_step_pwn_router_part6.html",
     "headline": "一步一步pwn路由器之uClibc中malloc&&free分析",
     "datePublished": "Sat Oct 28 2017 12:21:00 GMT+0800",
     "dateModified": "Sat Dec 23 2017 13:43:53 GMT+0800",
@@ -439,7 +439,7 @@
 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
     <li class="mdl-menu__item">在其它设备中阅读本文章</li>
     
-        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAACzUlEQVR42u3aS3YiQQwEQO5/6ZkLGMiUzDymKnrlh/tT0QtEKfX4c+XxwMbGxsbGxsbGxv5K9iM+frjRk3NeX/XsnNdP2a8ZGxsb+2z2m6/+J6RkQTk4v1u7ZmxsbOx72O1j2mtn5Wr/XGxsbGzsZ6Ul3yq8LmD5dgUbGxsbe89Othl5ydlsUbCxsbGxNw2aBJYsMWrrB598vJeGjY2N/fXsfCnf8/c/zbexsbGxv5i9P5LRnLZhNCtab9aJjY2NfSh7FsrOBi6TNlAbJ+QvCBsbG/tU9oaxiQry1n97VdRUwsbGxj6UnYSySfnJwZthzTaKxsbGxj6V3bZ1ZgHtbz1l0+TCxsbGvpndPngWJCcvsR3HxMbGxr6B3YapLT5vTm3KXhQbYGNjY1/AbgtYvtz8nA14NXyJjY2N/d+yP1GQkq3ILGzIm03Y2NjYd7I3gzs5Mr82L1FR+cTGxsY+mr0ZoMwD2uRFtGcOm0rY2NjYh7JnP/2TIchZPJA3m4ZNJWxsbOyD2HmbKTl/vzlpS2NUdLGxsbEPZbfFYDYiOdvS7MMJbGxs7BvYeas9H3mc4WeBRLE2bGxs7EPZbWNoX6Lytn4bLdQzp9jY2NiHsjftnjwkbp+yKXjY2NjYZ7PbmLZdVtvAysthvU3CxsbGPpS9WW67kUjKXnvnfPODjY2NfSo7+Vn/iQB4H0jUQ6LY2NjYh7Jnzfd2e9COVM5aVHXdxsbGxj6C3S6lHV6fxbebVWFjY2Pfxm6PzTDlpgjtAwNsbGzsU9mzotU2lfJIOG9g/cJWBBsbG/sg9j7czbcQs3smBQwbGxsbe9Pon/03f9H7Jhc2NjY29n6Ip42TN4Xzh/OxsbGxsctRm3zpbemaRRHY2NjYN7BnG4PZUM6bBlAZVCQibGxs7LPZs7LUlro2VEheTR4nYGNjY5/KvufAxsbGxsbGxsbG/prjL4GPr/J/DvVxAAAAAElFTkSuQmCC">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAAC30lEQVR42u3aQXLbMBAEQP3/0841VXHRMwsyloDmKWXLJJqHrDCD19eR1wsbGxsbGxsbGxv7Ldmv+PrmRn/9/N9Pzu6Q/Ha2ZmxsbOy92T/81x9/5nqh15+/vuf13ZI1Y2NjY5/ATh6TD5JoezD6ZLtmbGxsbOx8g7HyIu7almBjY2Njz9h5qJS8rOvxho2NjY29EiolvBbQxk+/kKVhY2Njvz07L03f59//td/GxsbGfmN2e62HTflovPfCxsbG3pW9UtzO/rYNmGabH2xsbOzT2O3Rmfal5OFU8sS8PMDGxsY+hz2LmZ6oDdoYq9j2YGNjYx/Ajr7QB4tuB1IbJA3HJzY2Nvam7Fnon7+glb9tNzB10YuNjY29BTv50j/bbCT1QB4bJfdZKnqxsbGxP5Z9V7SUx0x5oN8OrSJUwsbGxt6InX+VT4KeZLPRFsPtSpayNGxsbOwPZ7dRfvuakm3M+iZn2G9jY2Njb8SejZ9ZibtSG+fxEzY2NvYJ7HwkJKH/bJi1Q+6GUAkbGxt7C3YyzPJSdjaEZuwbDl9iY2Njb8Fuj8u0R2eeOLjTDktsbGzsvdmzR7YDbEbKh2sdKmFjY2NvxJ4NrVklnA+2WeRUZ2nY2NjYG7FnBx/b7UpSNrSDKt+cYGNjY5/Afu545awwWB9v2NjY2Nj5I9siIQn922Lgh3GLjY2NvTW7LQPyQD+veGcDNR+32NjY2GeykwGW85KAaVZCR8UwNjY29jHsGx4QRz/tGHtwgGFjY2N/LLu96oMy8U/aqqAOxbCxsbE3ZbdDYiVUSkZXu03K14yNjY29N7s9iNPG/flobH9bvFxsbGzsA9hJqDSrBGax0SxgwsbGxsZeYecbles7z9bzYNGLjY2NvTW7PayTL3dWNj/Sb2NjY2N/CDsPdGZF76zKbWuAeoBhY2Njb8G+7YDjTeVufohn6cwpNjY29hbscy5sbGxsbGxsbGzst7n+ALPKNDbe8ORPAAAAAElFTkSuQmCC">
     
 </ul>
 
@@ -480,7 +480,7 @@
 
     <!-- Share Weibo -->
     
-        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=一步一步pwn路由器之uClibc中malloc&amp;&amp;free分析&url=http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part6.html&pic=http://jinyu00.github.io/img/girl.png&searchPic=false&style=simple" target="_blank">
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=一步一步pwn路由器之uClibc中malloc&amp;&amp;free分析&url=http://blog.hac425.top/2017/10/28/step_by_step_pwn_router_part6.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
             <li class="mdl-menu__item">
                 分享到微博
             </li>
@@ -489,7 +489,7 @@
 
     <!-- Share Twitter -->
     
-        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=一步一步pwn路由器之uClibc中malloc&amp;&amp;free分析&url=http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part6.html&via=hac425" target="_blank">
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=一步一步pwn路由器之uClibc中malloc&amp;&amp;free分析&url=http://blog.hac425.top/2017/10/28/step_by_step_pwn_router_part6.html&via=hac425" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Twitter
             </li>
@@ -498,7 +498,7 @@
 
     <!-- Share Facebook -->
     
-        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part6.html" target="_blank">
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2017/10/28/step_by_step_pwn_router_part6.html" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Facebook
             </li>
@@ -507,7 +507,7 @@
 
     <!-- Share Google+ -->
     
-        <a class="post_share-link" href="https://plus.google.com/share?url=http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part6.html" target="_blank">
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2017/10/28/step_by_step_pwn_router_part6.html" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Google+
             </li>
@@ -578,7 +578,7 @@
                             <a>本站文章均原创， 转载注明来源</a>
                         </strong>
                         <br>
-                        <strong>本文链接：</strong><a href="http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part6.html">http://jinyu00.github.io/2017/10/28/step_by_step_pwn_router_part6.html</a>
+                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2017/10/28/step_by_step_pwn_router_part6.html">http://blog.hac425.top/2017/10/28/step_by_step_pwn_router_part6.html</a>
                     </p>
                 </blockquote>
         
