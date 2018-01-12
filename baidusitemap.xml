@@ -3,6 +3,72 @@
 
 
     
+  <url>
+    <loc>http://blog.hac425.top/2018/01/05/pwn_with_routeros_ctf.html</loc>
+    <lastmod>2018-01-12T15:22:56.494Z</lastmod>
+    <data>
+        <display>
+        <title>一步一步 Pwn RouterOS之ctf题练手</title>
+        <pubTime>2018-01-05T13:38:00.000Z</pubTime>
+        
+        <tag>alloca</tag>
+         
+        <tag>ctf</tag>
+         
+         
+           
+             
+              <breadCrumb title="pwn_router_os" url="http://blog.hac425.top/categories/pwn-router-os/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://blog.hac425.top/2018/01/05/pwn_routeros_step_2_poc.html</loc>
+    <lastmod>2018-01-12T15:22:43.435Z</lastmod>
+    <data>
+        <display>
+        <title>一步一步 Pwn RouterOS之调试环境搭建&&漏洞分析&&poc</title>
+        <pubTime>2018-01-05T15:13:00.000Z</pubTime>
+        
+        <tag>diff</tag>
+         
+        <tag>setup env</tag>
+         
+         
+           
+             
+              <breadCrumb title="pwn_router_os" url="http://blog.hac425.top/categories/pwn-router-os/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://blog.hac425.top/2018/01/06/pwn_router_os_step_exp.html</loc>
+    <lastmod>2018-01-12T15:22:36.779Z</lastmod>
+    <data>
+        <display>
+        <title>一步一步 Pwn RouterOS之exploit构造</title>
+        <pubTime>2018-01-05T16:48:00.000Z</pubTime>
+        
+        <tag>rop by dlsym</tag>
+         
+        <tag>rop by strncpy</tag>
+         
+         
+           
+             
+              <breadCrumb title="pwn_router_os" url="http://blog.hac425.top/categories/pwn-router-os/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
     
   <url>
     <loc>http://blog.hac425.top/2017/12/28/cve_2017_17215_hg532.html</loc>

