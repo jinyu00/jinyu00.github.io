@@ -320,9 +320,9 @@
         
         <tags>
             
-            <tag> rop </tag>
-            
             <tag> srop </tag>
+            
+            <tag> rop </tag>
             
         </tags>
         
@@ -1224,6 +1224,8 @@
         
         <tags>
             
+            <tag> ctf </tag>
+            
             <tag> patch </tag>
             
             <tag> elf patch </tag>
@@ -1231,8 +1233,6 @@
             <tag> pe patch </tag>
             
             <tag> mach-o patch </tag>
-            
-            <tag> ctf </tag>
             
         </tags>
         
