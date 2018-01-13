@@ -6,7 +6,7 @@
       <title><![CDATA[一步一步 Pwn RouterOS之exploit构造]]></title>
       <url>/2018/01/06/pwn_router_os_step_exp.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p>前面已经分析完漏洞，并且搭建好了调试环境，本文将介绍如何利用漏洞写出 <code>exploit</code></p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><strong>控制 eip</strong></p>
@@ -89,7 +89,7 @@
       <title><![CDATA[一步一步 Pwn RouterOS之调试环境搭建&&漏洞分析&&poc]]></title>
       <url>/2018/01/05/pwn_routeros_step_2_poc.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p>本文分析 <code>Vault 7</code> 中泄露的 <code>RouterOs</code> 漏洞。漏洞影响 <code>6.38.5</code> 以下的版本。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">What&apos;s new in 6.38.5 (2017-Mar-09 11:32):</div><div class="line">!) www - fixed http server vulnerability;</div></pre></td></tr></table></figure>
@@ -176,7 +176,7 @@
       <title><![CDATA[一步一步 Pwn RouterOS之ctf题练手]]></title>
       <url>/2018/01/05/pwn_with_routeros_ctf.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p>本文目的是以一道比较简单的 <code>ctf</code> 的练手，为后面的分析  <code>RouterOs</code> 的 漏洞和写 <code>exploit</code> 打基础。</p>
 <p><code>Seccon CTF quals 2016</code> 的一道题。</p>
@@ -602,7 +602,7 @@
       <title><![CDATA[安卓脱壳&&协议分析&&burp辅助分析插件编写]]></title>
       <url>/2017/12/15/legu_android_readboy_burp.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p>本文以一个 <code>app</code> 为例，演示对 <code>app</code>脱壳，然后分析其 协议加密和签名方法，然后编写 <code>burp</code> 脚本以方便后面的测试。</p>
 <p>文中涉及的文件，脱壳后的 dex 都在：</p>
@@ -673,7 +673,7 @@
       <title><![CDATA[exim CVE-2017-16943 uaf漏洞分析]]></title>
       <url>/2017/12/14/exim_CVE_2017_16943_uaf_pwn.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p>这是最近爆出来的 <code>exim</code> 的一个 <code>uaf</code> 漏洞，可以进行远程代码执行。本文对该漏洞和作者给出的 <code>poc</code> 进行分析。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><strong>环境搭建</strong></p>
@@ -788,7 +788,7 @@
       <title><![CDATA[Pwn with File结构体（三）]]></title>
       <url>/2017/12/12/pwn_with_file_part3.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p>前面介绍了几种 <code>File</code> 结构体的攻击方式，其中包括修改 <code>vtable</code>的攻击，以及在最新版本 <code>libc</code> 中 通过 修改 <code>File</code> 结构体中的一些缓冲区的指针来进行攻击的例子。</p>
 <p>本文以 <code>hitcon 2017</code> 的 <code>ghost_in_the_heap</code> 为例子，介绍一下在实际中的利用方式。</p>
@@ -921,7 +921,7 @@
       <title><![CDATA[Pwn with File结构体（二）]]></title>
       <url>/2017/12/07/pwn_with_file_part2.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p>最新版的 <code>libc</code> 中会对 <code>vtable</code> 检查，所以之前的攻击方式，告一段落。下面介绍一种，通过修改 <code>_IO_FILE</code> 实现任意地址读和任意地址写的方式。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><code>_IO_FILE</code> 通过这些指针，来读写数据。</p>
@@ -965,7 +965,7 @@
       <title><![CDATA[Pwn with File结构体（一）]]></title>
       <url>/2017/12/07/pwn_with_file_part1.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p>利用 <code>FILE</code> 结构体进行攻击，在现在的 <code>ctf</code> 比赛中也经常出现，最近的 <code>hitcon2017</code> 又提出了一种新的方式。本文对该攻击进行总结。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先来一张 <code>_IO_FILE</code> 结构体的结构</p>
@@ -1536,7 +1536,7 @@
       <title><![CDATA[一步一步pwn路由器之radare2使用实战]]></title>
       <url>/2017/11/01/step_by_step_pwn_router_part8.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p>前文讲了一些 <code>radare2</code> 的特性相关的操作方法。本文以一个 <code>crackme</code> 来具体介绍下 <code>radare2</code> 的使用</p>
 <p>程序的地址： <a href="https://gitee.com/hac425/blog_data/blob/master/crackme0x03" target="_blank" rel="external">在这里</a></p>
@@ -1591,7 +1591,7 @@
       <title><![CDATA[一步一步pwn路由器之radare2使用全解]]></title>
       <url>/2017/10/31/step_by_step_pwn_router_part7.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p><code>radare2</code> 最近越来越流行，已经进入 <code>github</code> 前 25了，看到大佬们纷纷推荐，为了紧跟时代潮流，我也决定探究探究这款 <code>神器</code> 。下面画画重点，以便以后需要用了，可以方便查找。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先是安装 <code>radare2</code> ,直接去官方 <code>github</code> 安照指示安装即可。先把源代码下载下来</p>
@@ -1734,7 +1734,7 @@
       <title><![CDATA[一步一步pwn路由器之wr940栈溢出漏洞分析与利用]]></title>
       <url>/2017/10/29/step_by_step_pwn_router_part5.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p>这个是最近爆出来的漏洞，漏洞编号：<a href="https://www.fidusinfosec.com/tp-link-remote-code-execution-cve-2017-13772/" target="_blank" rel="external">CVE-2017-13772</a></p>
 <p>固件链接：<a href="http://static.tp-link.com/TL-WR940N(US)_V4_160617_1476690524248q.zip" target="_blank" rel="external">http://static.tp-link.com/TL-WR940N(US)_V4_160617_1476690524248q.zip</a></p>
@@ -1773,7 +1773,7 @@
       <title><![CDATA[一步一步pwn路由器之uClibc中malloc&&free分析]]></title>
       <url>/2017/10/28/step_by_step_pwn_router_part6.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p>栈溢出告一段落。本文介绍下 <code>uClibc</code> 中的 <code>malloc</code> 和 <code>free</code> 实现。为堆溢出的利用准备基础。<code>uClibc</code> 是 <code>glibc</code> 的一个精简版，主要用于嵌入式设备，比如路由器就基本使用的是 <code>uClibc</code>， 简单自然效率高。所以他和一般的<code>x86</code>的堆分配机制会有些不一样。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>uClibc 的 <code>malloc</code> 有三种实现，分别为：</p>
@@ -1834,7 +1834,7 @@
       <title><![CDATA[一步一步pwn路由器之rop技术实战]]></title>
       <url>/2017/10/28/step_by_step_pwn_router_part4.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p>这次程序也是 DVRF 里面的，他的路径是 <code>pwnable/ShellCode_Required/stack_bof_02</code> , 同样是一个简单的栈溢出，不过这个程序里面没有提供 <code>getshell</code> 的函数，需要我们执行shellcode来实现。这个正好实战下前文: <a href="https://jinyu00.github.io/%E8%B7%AF%E7%94%B1%E5%99%A8%E5%AE%89%E5%85%A8/2017-10-26-%E4%B8%80%E6%AD%A5%E4%B8%80%E6%AD%A5pwn%E8%B7%AF%E7%94%B1%E5%99%A8%E4%B9%8B%E8%B7%AF%E7%94%B1%E5%99%A8%E7%8E%AF%E5%A2%83%E4%BF%AE%E5%A4%8D-rop%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90.html" target="_blank" rel="external">一步一步pwn路由器之路由器环境修复&amp;&amp;rop技术分析</a>,中分析的在mips下的通用的rop技术。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先使用 <code>qemu</code> 运行目标程序，并等待 <code>gdb</code> 来调试。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo chroot . ./qemu-mipsel-static -g 1234 ./pwnable/ShellCode_Required/stack_bof_02  &quot;`cat ./pwnable/Intro/input`&quot;</div></pre></td></tr></table></figure></p>
@@ -1908,7 +1908,7 @@
       <title><![CDATA[一步一步pwn路由器之栈溢出实战]]></title>
       <url>/2017/10/27/step_by_step_pwn_router_part3.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p>本文以 <a href="https://github.com/praetorian-inc/DVRF" target="_blank" rel="external">DVRF</a> 中的第一个漏洞程序 <code>stack_bof_01</code> 为例，在实战 <code>MIPS</code> 架构中栈溢出的简单利用。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>去github上面把 DVRF 下载下来，然后用 <code>binwalk</code> 解开</p>
@@ -2002,7 +2002,7 @@
       <title><![CDATA[一步一步pwn路由器之路由器环境修复&&rop技术分析]]></title>
       <url>/2017/10/26/step_by_step_pwn_router_part2.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p>拿到路由器的固件后，第一时间肯定是去运行目标程序，一般是web服务程序。我们可以去 <code>/etc/init.d/</code> 找启动文件，或者看看一些有可能的目录。一般来说路由器的程序很少的情况下是可以直接用qemu运行起来的。我们需要做一些修复的工作，本文会介绍一个常用的方法，后面会分析在 <code>mips uclibc</code> 中常用的 <code>rop</code> 手法。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><strong>运行环境修复</strong></p>
@@ -2067,7 +2067,7 @@
       <title><![CDATA[一步一步pwn路由器之环境搭建]]></title>
       <url>/2017/10/26/step_by_step_pwn_router_part1.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274/" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274/</a></p>
+<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
 <hr>
 <p>正式进入路由器的世界了。感觉路由器这块就是固件提取，运行环境修复比较麻烦，其他部分和一般的 pwn 差不多。由于大多数路由器是 mips 架构的，本文就以搭建  <code>MIPS运行、调试平台</code> 为例介绍环境的搭建。其他架构类似。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><h6 id="安装-与-配置-Qemu"><a href="#安装-与-配置-Qemu" class="headerlink" title="安装 与 配置 Qemu:"></a>安装 与 配置 Qemu:</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install qemu </div><div class="line">sudo apt-get install qemu-user-static</div><div class="line">sudo apt-get install qemu-system</div></pre></td></tr></table></figure>
