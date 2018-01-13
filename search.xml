@@ -227,9 +227,9 @@
         
         <tags>
             
-            <tag> alloca </tag>
-            
             <tag> ctf </tag>
+            
+            <tag> alloca </tag>
             
         </tags>
         
@@ -1457,8 +1457,6 @@
         
         <tags>
             
-            <tag> ctf </tag>
-            
             <tag> patch </tag>
             
             <tag> elf patch </tag>
@@ -1466,6 +1464,8 @@
             <tag> pe patch </tag>
             
             <tag> mach-o patch </tag>
+            
+            <tag> ctf </tag>
             
         </tags>
         
