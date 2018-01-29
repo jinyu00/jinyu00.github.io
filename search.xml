@@ -3,6 +3,50 @@
   
     
     <entry>
+      <title><![CDATA[DNS隧道实战&&cobaltstrike利用dns隧道]]></title>
+      <url>/2018/01/29/dns_tunnel_and_cobaltstrike.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>使用 <code>dns</code> 隧道进行 <code>tcp</code> 通信。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先配置域名<br><img src="http://oy9h5q2k4.bkt.clouddn.com/15172148015952uy4uray.png?imageslim" alt="paste image"><br>配置一个 <code>A</code> 记录指向我们的 <code>vps</code>, 然后配置几个 <code>ns</code> 记录，指向刚刚设置的 <code>A</code> 记录</p>
+<p>然后在服务端安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">wget https://launchpad.net/ubuntu/+archive/primary/+files/dns2tcp_0.5.2.orig.tar.gz</div><div class="line">tar xvf dns2tcp_0.5.2.orig.tar.gz </div><div class="line">cd dns2tcp-0.5.2/</div><div class="line">./configure </div><div class="line">make</div><div class="line">sudo make install</div></pre></td></tr></table></figure>
+<p>新建一个配置文件</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1517215201286y5cu2j3q.png?imageslim" alt="paste image"></p>
+<p>然后<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dns2tcpd -f my.conf -F -d 2</div></pre></td></tr></table></figure></p>
+<p>接着在客户端  也安装好。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dns2tcpc -r socks -z ns10.hac425.top vps_ip -l 8888 -d 2</div></pre></td></tr></table></figure>
+<p>然后访问 <code>B:8888</code>  —&gt;  <code>vps_ip:1082</code></p>
+<p><strong>cobaltstrike</strong></p>
+<p>把下好的 <code>cobaltstrike</code> 传到 <code>vps</code>, 装好 <code>jdk</code>, 运行 <code>./teamserver vps_ip password</code><br><img src="http://oy9h5q2k4.bkt.clouddn.com/1517215742775dhwda0r3.png?imageslim" alt="paste image"></p>
+<p>然后本地运行 <code>cobaltstrike.jar</code>, 连接上去，用户名随便写，密码就是运行 <code>teamserver</code> 设置的 <code>password</code>, 在这里就是 <code>1234</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/151721591922608ib7g6k.png?imageslim" alt="paste image"></p>
+<p>首先新建一个 <code>listener</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1517215994257ia7ltvgn.png?imageslim" alt="paste image"></p>
+<p>host就是 vps的 ip</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1517216014106wl2ef6b8.png?imageslim" alt="paste image"><br>填写设置好 <code>ns</code> 记录的 域名，以 <code>,</code>  分割</p>
+<p>然后新建 <code>payload</code><br><img src="http://oy9h5q2k4.bkt.clouddn.com/15172160811438a91f4lb.png?imageslim" alt="paste image"></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1517216117092996s1kwu.png?imageslim" alt="paste image"></p>
+<p>生成文件，运行，过一会儿应该就有了。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1517216212117wldi6k2d.png?imageslim" alt="paste image"></p>
+<p>此时还得等一会（ <code>dns</code> 比较慢）<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1517216409998fpale0vr.png?imageslim" alt="paste image"></p>
+<p>变成这个样子就可以进行操作了。</p>
+]]></content>
+      
+        <categories>
+            
+            <category> 渗透测试 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> DNS隧道 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[ew代理实战]]></title>
       <url>/2018/01/29/ew_use.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>渗透内网代理必不可少，本文做个记录</p>

@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.hac425.top/2018/01/29/dns_tunnel_and_cobaltstrike.html</loc>
+    
+    <lastmod>2018-01-29T09:00:39.977Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.hac425.top/2018/01/28/ssh_to_msf.html</loc>
     
     <lastmod>2018-01-29T07:58:56.568Z</lastmod>
