@@ -3,6 +3,78 @@
   
     
     <entry>
+      <title><![CDATA[c#应用破解实战之PDFelement]]></title>
+      <url>/2018/02/03/crack_PDFelement.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在知乎上发现一款不错的 <code>pdf</code> 处理软件 <code>PDFelement</code>，功能比较强大，格式转换，pdf编辑，ocr，在网上搜了一遍没找到能用的破解版，于是自己动手。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>最开始我是拿的 <code>6.0</code> 版本破解的，破解完后发现，这个版本的 <code>bug</code> 特别严重，不能 编辑 <code>pdf</code>（也许是我改坏了， <code>6.4</code>就没问题）, 于是后来又下了最新的 <code>6.4</code>. 老版的还有混淆，新版本连混淆都没有。为了总结更多的经验，先写 <code>6.0</code> 版本的破解，然后写 <code>6.4</code> 的破解。</p>
+<p>工具</p>
+<ul>
+<li>dnSpy  .net 应用反编译，调试工具</li>
+<li>de4dot .net 去混淆</li>
+</ul>
+<p><strong>6.0版本破解</strong></p>
+<p>首先安装好，对于应用破解可以搜关键字符串，像这种比较大的程序，一般会有单独一个目录放置语言文件便于多语言的支持。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1517643655618dem7rbha.png?imageslim" alt="paste image"></p>
+<p>不过该程序的资源文件貌似不是文本格式的，故我放弃了这条路。<br>接着我去分析了 <code>PDFelement.exe</code> ，想看看能不能根据函数名找到关键的函数。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1517643819865pk0ze64a.png?imageslim" alt="paste image"><br>发现它里面没有啥东西，估计关键逻辑都在 <code>dll</code> 里面，于是决定调试他，然后在调试的时候去 <code>dll</code> 里面找找。</p>
+<p>运行程序，然后用 dnspy 附件上去<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1517644211341z2iwjjrs.png?imageslim" alt="paste image"></p>
+<p>然后在 模块 窗口查看加载的 <code>dll</code>,可以在 <code>调试</code> - <code>窗口</code> -<code>模块</code> 调出该窗口<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1517644287010jvaehj92.png?imageslim" alt="paste image"></p>
+<p>最后在 <code>PEStudio.PDFElement.Base.dll</code> 里面找到了有意思的函数。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/151764444508180snrsc0.png?imageslim" alt="paste image"><br>看这些函数名，估计这里是在注册时，用来校验的函数了。在这里下个断点</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1517644596257dtefmpbr.png?imageslim" alt="paste image"><br>然后我们去注册，触发这个逻辑然后看看她是在哪里被调用的</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1517644733330ufjfn6r1.png?imageslim" alt="paste image"></p>
+<p>断下来后查看调用堆栈信息<br><img src="http://oy9h5q2k4.bkt.clouddn.com/151764477522444w6vgc0.png?imageslim" alt="paste image"><br>转到调用者这里，发现各种跳转，看起来是做了混淆，于是使用 <code>de4dot</code> 去混淆，如果不去混淆的话修改代码保存会出很多的错。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">修改代码的方式很简单，进入方法内部，右键-修改方法，然后按照 `c#` 的语法进行修改即可，最后点击 编译 就可以保存了。</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1517644994707601hgrk9.png?imageslim" alt="paste image"><br>对于上面的错，把出错的位置删掉即可（在这里折腾了好久，才发现直接删掉即可）。</p>
+<p>为了方便调试分析，把去掉混淆的 <code>dll</code> 替换掉安装目录里面的。</p>
+<p>根据参数和其他的特征定位到我们刚刚找到的关键函数<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1517645319157fe2i1snm.png?imageslim" alt="paste image"><br>设下断点，断下来后往上回溯<br><img src="http://oy9h5q2k4.bkt.clouddn.com/15176455213444ixtyafl.png?imageslim" alt="paste image"></p>
+<p>我们需要的逻辑就是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">if (AgentMgr.ProductType == ProductType.Professional &amp;&amp; this.method_7(text, text2))</div><div class="line">				&#123;</div><div class="line">					this.lblError.Visible = true;</div><div class="line">					this.lblError.Text = CommonLanguages.Info_StandardCodeTip;</div><div class="line">					this.lblError.Tag = &quot;Professional&quot;;</div><div class="line">					base.Height = this.int_1 + this.int_0;</div><div class="line">					return;</div><div class="line">				&#125;</div></pre></td></tr></table></figure></p>
+<p> 那么把其他的去掉，如果是前面那个逻辑正确的话，会提示是 <code>5.x</code> 版本的验证码。</p>
+<p> 那么就把那个删掉<br> <img src="http://oy9h5q2k4.bkt.clouddn.com/15176457565367n4ro44z.png?imageslim" alt="paste image"></p>
+<p><code>this.method_7</code> 最终调用的也是 <code>WSProductReg.Verify</code>,这个函数最终调用了<code>WSProductReg.Class12.smethod_0</code><br><img src="http://oy9h5q2k4.bkt.clouddn.com/1517645857765j01gzo6f.png?imageslim" alt="paste image"></p>
+<p> <code>WSProductReg.Class12.smethod_0</code>  才是真正的 校验函数，于是修改掉他的返回值。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">	// Token: 0x060003FF RID: 1023</div><div class="line">internal static bool smethod_0(uint uint_0, uint uint_1, string string_0, string string_1, string string_2, string string_3)</div><div class="line">&#123;</div><div class="line">	return true;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 为了保持修改，需要先关掉程序，然后使用 <code>dnspy</code> 的保存功能即可。</p>
+<p> <img src="http://oy9h5q2k4.bkt.clouddn.com/1517646075076plyvqwrg.png?imageslim" alt="paste image"></p>
+<p> 重启程序，随便输入 序列号 和 邮箱</p>
+<p> <img src="http://oy9h5q2k4.bkt.clouddn.com/1517646144898gk2awx63.png?imageslim" alt="paste image"></p>
+<p> 但是会提示</p>
+<p> <img src="http://oy9h5q2k4.bkt.clouddn.com/151764620318152bf08bb.png?imageslim" alt="paste image"></p>
+<p> 估计是他有在线校验，断网使用就没问题了。最后使用了 <code>idea</code> 破解一样的办法，抓到 验证包， 修改 <code>host</code> 是他无法验证。</p>
+<p> <img src="http://oy9h5q2k4.bkt.clouddn.com/151764631362740ers5gm.png?imageslim" alt="paste image"></p>
+<p> 然后把这个 <code>0.0.0.0 platform.wondershare.com</code> 放到 <code>host</code> 文件里面。</p>
+<p> 然后应该就没有问题了。</p>
+<p> <strong>6.4最新版破解</strong></p>
+<p> 最新版连混淆都没有，逻辑更加的清晰。</p>
+<p> <img src="http://oy9h5q2k4.bkt.clouddn.com/15176467493903918z8t3.png?imageslim" alt="paste image"></p>
+<p> 调试找到了 <code>6.0</code> 中的相对应的 校验函数 <code>WSProductReg.RSAKeyCodec.VerifySN</code></p>
+<p> <img src="http://oy9h5q2k4.bkt.clouddn.com/1517646888263emgkdxth.png?imageslim" alt="paste image"></p>
+<p> 修改掉<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"> internal static bool VerifySN(uint n, uint d, string sn, string email, string product, string version)</div><div class="line">&#123;</div><div class="line">    return true;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p> 同时还找到了 在线校验的函数<code>ProductClient.RegCheck</code></p>
+<p> <img src="http://oy9h5q2k4.bkt.clouddn.com/1517647117772z3l9r6ka.png?imageslim" alt="paste image"></p>
+<p> 修改</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">	public static bool RegCheck(string Email, string LangID, RegCheckType CheckType)</div><div class="line">&#123;</div><div class="line">	return true;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 即可。</p>
+]]></content>
+      
+        <categories>
+            
+            <category> 破解 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> c#破解 </tag>
+            
+            <tag> dnSpy </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[DNS隧道实战&&cobaltstrike利用dns隧道]]></title>
       <url>/2018/01/29/dns_tunnel_and_cobaltstrike.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>使用 <code>dns</code> 隧道进行 <code>tcp</code> 通信。</p>
