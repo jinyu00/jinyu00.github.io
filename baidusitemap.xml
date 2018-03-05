@@ -4,6 +4,28 @@
 
     
   <url>
+    <loc>http://blog.hac425.top/2018/03/05/metinfo_5x_reset_admin_passwd.html</loc>
+    <lastmod>2018-03-05T11:54:45.105Z</lastmod>
+    <data>
+        <display>
+        <title>Metinfo 5.x 管理员密码重置漏洞</title>
+        <pubTime>2018-03-05T11:36:00.000Z</pubTime>
+        
+        <tag>变量覆盖</tag>
+         
+        <tag>逻辑漏洞</tag>
+         
+         
+           
+             
+              <breadCrumb title="代码审计" url="http://blog.hac425.top/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://blog.hac425.top/2018/02/03/crack_PDFelement.html</loc>
     <lastmod>2018-02-03T08:41:50.251Z</lastmod>
     <data>
