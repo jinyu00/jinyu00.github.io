@@ -247,7 +247,7 @@
 
     
         <meta property="article:published_time" content="Tue Mar 06 2018 09:15:00 GMT+0800" />
-        <meta property="article:modified_time" content="Tue Mar 06 2018 10:26:11 GMT+0800" />
+        <meta property="article:modified_time" content="Tue Mar 06 2018 10:36:14 GMT+0800" />
     
 
     <!-- The Twitter Card protocol -->
@@ -274,7 +274,7 @@
     "mainEntityOfPage": "http://blog.hac425.top/2018/03/06/seacms_6_45_rce.html",
     "headline": "seacms 6.45 命令执行漏洞分析",
     "datePublished": "Tue Mar 06 2018 09:15:00 GMT+0800",
-    "dateModified": "Tue Mar 06 2018 10:26:11 GMT+0800",
+    "dateModified": "Tue Mar 06 2018 10:36:14 GMT+0800",
     "author": {
         "@type": "Person",
         "name": "hac425",
@@ -554,6 +554,9 @@
 <p>然后在 <code>parseIf</code> 提取 <code>if</code>  语句对应标签内容时，可以看到我们的输入被识别成了标签。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1520302590089mokw196q.png?imageslim" alt="paste image"></p>
 <p>最后在 <code>eval</code> 时，执行的其实是</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">if(1)print_r($_POST[func]($_POST[cmd]));//)&#123;$ifFlag=true;&#125;else&#123;$ifFlag=false;&#125;</div></pre></td></tr></table></figure>
+<p>使用<code>searchtype=5</code> 是为了使用 <code>cascade.html</code> 最为模板，因为这里面才有 <code>if</code> 标签</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1520303663308anyh9hsf.png?imageslim" alt="paste image"></p>
+<p>而用 <code>order</code> 来传递 <code>payload</code>, 原因在于 <code>order</code> 变量没有做过滤处理，而且 <code>order</code> 的值会用来替换掉  <code>{searchpage:ordername}</code>.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$content = str_replace(&quot;&#123;searchpage:ordername&#125;&quot;,$order,$content);</div></pre></td></tr></table></figure></p>
 <p><strong>参考</strong></p>
 <p><a href="https://bbs.ichunqiu.com/thread-35085-1-1.html" target="_blank" rel="external">https://bbs.ichunqiu.com/thread-35085-1-1.html</a></p>
 
