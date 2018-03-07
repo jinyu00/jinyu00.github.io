@@ -3,6 +3,54 @@
   
     
     <entry>
+      <title><![CDATA[ZZCMS8.2 用户密码重置漏洞]]></title>
+      <url>/2018/03/07/zzcms_8_2_rest_user_passwd.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>一个找回密码处的逻辑漏洞， 还是有点意思的。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先是定位找回密码功能对应的代码位置，使用找回密码的功能，然后抓包即可</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1520411700740whbjpyux.png?imageslim" alt="paste image"></p>
+<p>下面去 <code>getpassword.php</code> 里面看看， 首先包含了一些文件</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15204117674606tv8u2l0.png?imageslim" alt="paste image"></p>
+<p>在 <code>conn.php</code> 中，包含了 <code>stopsqlin.php</code> 会对参数进行过滤操作。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1520411794040jozslsh6.png?imageslim" alt="paste image"></p>
+<p><code>stopsqlin.php</code> 中对参数的过滤</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15204118876961npsbtjm.png?imageslim" alt="paste image"></p>
+<p>回到<code>getpassword.php</code>  , 文件后面就开始进入 密码找回 功能的业务逻辑了。</p>
+<p>找回密码功能分为3个部分</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1520412045236pai01o80.png?imageslim" alt="paste image"></p>
+<p>正常走一遍流程，期间用 <code>burp</code> 抓包</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1520412141687h9hvdcrp.png?imageslim" alt="paste image"><br>可以看到根据 <code>action</code> 来识别已经进行到了哪一步。以这个为线索去看代码，逻辑就非常清晰了。</p>
+<p>我们直接来看看最后一步的代码</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1520412238609k9mz50op.png?imageslim" alt="paste image"></p>
+<p>判断非常的简单， 只要 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$action == &quot;step3&quot; &amp;&amp; @$_SESSION[&apos;username&apos;] != &apos;&apos;</div></pre></td></tr></table></figure>
+<p>接下来找 哪里修改了 <code>$_SESSION[&#39;username&#39;]</code>, 发现在 <code>step1</code> 的时候，用 <code>POST</code> 参数修改  <code>$_SESSION[&#39;username&#39;]</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1520412374515fl3c7xd2.png?imageslim" alt="paste image"></p>
+<p>于是利用思路</p>
+<ul>
+<li>首先进入 <code>step1</code> , 设置 <code>$_SESSION[&#39;username&#39;]</code>为需要重置的用户名</li>
+<li>然后进入 <code>step3</code> , 设置密码即可</li>
+</ul>
+<p>同时该程序还有一个小问题，<code>check_username_ajax.php</code>  没有做 检查， 我们可以用它来枚举用户</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1520414950013gzfstbq5.png?imageslim" alt="paste image"></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1520414979312yttgq7lt.png?imageslim" alt="paste image"></p>
+]]></content>
+      
+        <categories>
+            
+            <category> 代码审计 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 逻辑漏洞 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[seacms 6.45 命令执行漏洞分析]]></title>
       <url>/2018/03/06/seacms_6_45_rce.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>这是一个比较老的漏洞了，不过漏洞原理还是挺有意思的。</p>
@@ -2657,7 +2705,7 @@
       
         <categories>
             
-            <category> android </category>
+            <category> 安卓安全 </category>
             
         </categories>
         
