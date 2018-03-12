@@ -4,6 +4,46 @@
 
     
   <url>
+    <loc>http://blog.hac425.top/2018/03/12/ranzhi_oa_6_4_1_sqli_to_getshell.html</loc>
+    <lastmod>2018-03-12T12:20:50.873Z</lastmod>
+    <data>
+        <display>
+        <title>然之协同系统6.4.1 SQL注入导致getshell</title>
+        <pubTime>2018-03-12T09:01:00.000Z</pubTime>
+        
+        <tag>sql注入</tag>
+         
+         
+           
+             
+              <breadCrumb title="代码审计" url="http://blog.hac425.top/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://blog.hac425.top/2018/03/10/reverse_jiakao_sign.html</loc>
+    <lastmod>2018-03-12T08:59:34.990Z</lastmod>
+    <data>
+        <display>
+        <title>驾考宝典签名算法逆向&&python脚本实现</title>
+        <pubTime>2018-03-10T06:31:00.000Z</pubTime>
+        
+        <tag>协议分析</tag>
+         
+         
+           
+             
+              <breadCrumb title="安卓安全" url="http://blog.hac425.top/categories/%E5%AE%89%E5%8D%93%E5%AE%89%E5%85%A8/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://blog.hac425.top/2018/03/11/csv_inject.html</loc>
     <lastmod>2018-03-11T10:50:56.825Z</lastmod>
     <data>
@@ -17,26 +57,6 @@
            
              
               <breadCrumb title="渗透测试" url="http://blog.hac425.top/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://blog.hac425.top/2018/03/10/reverse_jiakao_sign.html</loc>
-    <lastmod>2018-03-11T10:21:38.871Z</lastmod>
-    <data>
-        <display>
-        <title>驾考宝典签名算法逆向&&python脚本实现</title>
-        <pubTime>2018-03-10T06:31:00.000Z</pubTime>
-        
-        <tag>协议分析</tag>
-         
-         
-           
-             
-              <breadCrumb title="安卓安全" url="http://blog.hac425.top/categories/%E5%AE%89%E5%8D%93%E5%AE%89%E5%85%A8/"/>
           
         </display>
     </data>

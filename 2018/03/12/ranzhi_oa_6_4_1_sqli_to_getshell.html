@@ -46,7 +46,7 @@
     
     <title>
         
-            使用LD_PRELOAD防御pwn | 
+            然之协同系统6.4.1 SQL注入导致getshell | 
         
         穷则变，变则通，通则久
     </title>
@@ -58,7 +58,7 @@
     <meta name="theme-color" content="#0097A7">
     <meta name="author" content="hac425">
     <meta name="description" itemprop="description" content="">
-    <meta name="keywords" content=",awd,pwn_defense">
+    <meta name="keywords" content=",sql注入">
 
     <!-- Import lsloader -->
     <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
@@ -240,18 +240,18 @@
     <!-- The Open Graph protocol -->
     <meta property="og:url" content="http://blog.hac425.top">
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="使用LD_PRELOAD防御pwn | 穷则变，变则通，通则久">
+    <meta property="og:title" content="然之协同系统6.4.1 SQL注入导致getshell | 穷则变，变则通，通则久">
     <meta property="og:image" content="http://blog.hac425.top/img/girl.png" />
     <meta property="og:description" content="">
-    <meta property="og:article:tag" content="awd"> <meta property="og:article:tag" content="pwn_defense"> 
+    <meta property="og:article:tag" content="sql注入"> 
 
     
-        <meta property="article:published_time" content="Sat Dec 23 2017 11:31:00 GMT+0800" />
-        <meta property="article:modified_time" content="Sat Dec 23 2017 14:22:16 GMT+0800" />
+        <meta property="article:published_time" content="Mon Mar 12 2018 17:01:00 GMT+0800" />
+        <meta property="article:modified_time" content="Mon Mar 12 2018 20:20:50 GMT+0800" />
     
 
     <!-- The Twitter Card protocol -->
-    <meta name="twitter:title" content="使用LD_PRELOAD防御pwn | 穷则变，变则通，通则久">
+    <meta name="twitter:title" content="然之协同系统6.4.1 SQL注入导致getshell | 穷则变，变则通，通则久">
     <meta name="twitter:description" content="">
     <meta name="twitter:image" content="http://blog.hac425.top/img/girl.png">
     <meta name="twitter:card" content="summary_large_image" />
@@ -259,7 +259,7 @@
 
     <!-- Add canonical link for SEO -->
     
-        <link rel="canonical" href="http://blog.hac425.top/2017/12/23/defense_pwn_with_ld_preload.html" />
+        <link rel="canonical" href="http://blog.hac425.top/2018/03/12/ranzhi_oa_6_4_1_sqli_to_getshell.html" />
     
 
     <!-- Structured-data for SEO -->
@@ -271,10 +271,10 @@
 {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "mainEntityOfPage": "http://blog.hac425.top/2017/12/23/defense_pwn_with_ld_preload.html",
-    "headline": "使用LD_PRELOAD防御pwn",
-    "datePublished": "Sat Dec 23 2017 11:31:00 GMT+0800",
-    "dateModified": "Sat Dec 23 2017 14:22:16 GMT+0800",
+    "mainEntityOfPage": "http://blog.hac425.top/2018/03/12/ranzhi_oa_6_4_1_sqli_to_getshell.html",
+    "headline": "然之协同系统6.4.1 SQL注入导致getshell",
+    "datePublished": "Mon Mar 12 2018 17:01:00 GMT+0800",
+    "dateModified": "Mon Mar 12 2018 20:20:50 GMT+0800",
     "author": {
         "@type": "Person",
         "name": "hac425",
@@ -292,7 +292,7 @@
             "url": "/img/girl.png"
         }
     },
-    "keywords": ",awd,pwn_defense",
+    "keywords": ",sql注入",
     "description": "",
 }
 </script>
@@ -367,7 +367,7 @@
     </button>
 
     <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
-        <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#正文"><span class="post-toc-number">2.</span> <span class="post-toc-text">正文</span></a></li></ol>
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#正文"><span class="post-toc-number">2.</span> <span class="post-toc-text">正文</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-5"><a class="post-toc-link" href="#分析软件运行的流程"><span class="post-toc-number">2.0.1.</span> <span class="post-toc-text">分析软件运行的流程</span></a></li><li class="post-toc-item post-toc-level-5"><a class="post-toc-link" href="#SQL-注入分析"><span class="post-toc-number">2.0.2.</span> <span class="post-toc-text">SQL 注入分析</span></a></li><li class="post-toc-item post-toc-level-5"><a class="post-toc-link" href="#任意文件下载-amp-amp-任意文件删除"><span class="post-toc-number">2.0.3.</span> <span class="post-toc-text">任意文件下载 && 任意文件删除</span></a></li><li class="post-toc-item post-toc-level-5"><a class="post-toc-link" href="#getshell"><span class="post-toc-number">2.0.4.</span> <span class="post-toc-text">getshell</span></a></li></ol></li></ol></li></ol>
     </ul>
     
 
@@ -399,7 +399,7 @@
         
     
             <p class="article-headline-p">
-                使用LD_PRELOAD防御pwn
+                然之协同系统6.4.1 SQL注入导致getshell
             </p>
         </div>
 
@@ -418,7 +418,7 @@
     <!-- Author Name & Date -->
     <div>
         <strong>hac425</strong>
-        <span>12月 23, 2017</span>
+        <span>3月 12, 2018</span>
     </div>
 
     <div class="section-spacer"></div>
@@ -440,7 +440,7 @@
 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
     <li class="mdl-menu__item">在其它设备中阅读本文章</li>
     
-        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAAC1klEQVR42u3aS27bQBAEUN7/0skBFMtV01RAzTyuDEEi59GLQn+uP0deFzY2NjY2NjY2NvYj2Vd8/eNGP3zn9fvv7xAd+uX+7ZmxsbGx92bnj3x98E+ftJ+396zPjI2NjX0AOwmkSbAlsfT+bmtnxsbGxsbOy4A8TtpXgI2NjY39CfbaJ217qG0wYWNjY5/MbqNlUmYkzaac9PFeGjY2Nvbj2XmQPOfv/zrfxsbGxn4wu73aaEm+Pwmq4uTY2NjYm7Inrf+8nFhbBpqUK9jY2NjYeXTlCz1rbf1k9BudHxsbG3trdhtCbREyGRvcNSTGxsbG3pXdjkvb495QQpQxGQ16sbGxsTdiT8qDyQghD7b3vy2CExsbG3trdtKySR48AefrQYv/DGxsbOxN2e3YddKsz8uGeXurqMCwsbGxv5ydN9nzZZpJNE7C9Zf7Y2NjYx/DnpQB+a+u8mrDrA4wbGxs7K9lt4VE/sh8iLsWS3ngYWNjY+/Nztv9kzJgDbz29MVBLzY2NvbXstea9cmD176/FlrRb7GxsbEPZiexdBdgEqi/vGJsbGzsrdnJgHZScqyR8hcXFTbY2NjYm7Lb5ch2oSdfmszjanFZHxsbG3tT9loT/94xcLse1K6BYmNjY+/Nnjw4j7Q8MtvFymJhFBsbG/sw9ieaO5PFoHatM2oqYWNjY2/Ezpv7a1HUvo42FKPTYmNjYx/Dzke8+XHz5n77xNsCDBsbG3sL9lVek5Hw2qLPaMyAjY2NvSm7vdp2Tz4waOOw/iY2Njb2puy1uMobQ0mRk7+INnSxsbGxz2HnoZUfqG1a5a2l/AVhY2Njn8ZuFxwnsHygO2ktYWNjY2NP2JMhbluW3DwVwcbGxj6SPRnl3rugUzeVsLGxsTdirw13J8ctWkJvy5XozNjY2Nhbs9eWGtvBbVvAtOPkD863sbGxsR/MPufCxsbGxsbGxsbGfsz1F1IhSUs7WBHfAAAAAElFTkSuQmCC">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAACzklEQVR42u3awY7UMBAE0Pn/n4YrEppQ1U7YyH4+odmQ9fNIFN3tz68j1wcbGxsbGxsbGxv7lexPvL79rT8/+fuZ6+ev35C8rdgzNjY29tbsf/zTf0m6/uSalx9WfkBf34yNjY19ADvfaMJIwm8lwNq3YWNjY2MnQbXCa4MNGxsbG/uJAGsBdx0QNjY2NnbeoHkulpLW/4/10rCxsbFfz86Hpu/583+db2NjY2O/mN2uby9NftqOE5KgKnaOjY2NvSk7D4bkv/uzsqTdQ7tPbGxs7L3ZbQPoeqybPJkUQncND7CxsbHPYee/si02rsuM9sm2tYSNjY19DnvWEmpHufnFzTZc60EvNjY29kbsvHmUhMfssHJYfvUTGxsb+0z2ylA2b0Xlx9de3CyaStjY2NjbsVeGsm0zaBacN3wB2NjY2Juy24HrXc39WctpVvZgY2Nj782eNZXyN+St/JVrl9E+sbGxsTdl5wGQFwkrcbX+PDY2NvZp7E+8ZtGVNJ7ygmepjYWNjY29KXtWlqy0ftqLPuthiY2Njb03uw2hfLWtn9lY9zoOsbGxsU9jz1o2t7XvR8FZDKGxsbGxD2CvFw+zKFqJqyIgsbGxsTdlr4RE3tZvW0V5lGJjY2Nj50PTpEho2/2zWBpeCcLGxsbelD0bnebbaguY2eWeaFyBjY2NfQx7PZbycqItNmatKGxsbOxz2O2Vmlm7f3YlaBaE2NjY2Kex84Z7cihLZUNZ6kRfGzY2Nvam7HYlJcrKkT13nQgbGxt7V3bbvmlHBXcFXj4YLnIbGxsbeyP2LLTyBv1KyykJy+hJbGxs7APY65vLm/VtFLULGxsbG7u+EPNAuZI8WXw92NjY2Nglr7002TLaUQE2Njb2Cey8nEiGtclIYOVyTz1gwMbGxt6avRI5s4Jh5VCu9/bIfBsbGxv7xexzFjY2NjY2NjY2NvZr1m8IRsOmuIYNVwAAAABJRU5ErkJggg==">
     
 </ul>
 
@@ -454,7 +454,7 @@
     </button>
     <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
         <li class="mdl-menu__item">
-        <a class="post_tag-link" href="/tags/awd/">awd</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/pwn-defense/">pwn_defense</a>
+        <a class="post_tag-link" href="/tags/sql注入/">sql注入</a>
     </ul>
     
 
@@ -481,7 +481,7 @@
 
     <!-- Share Weibo -->
     
-        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=使用LD_PRELOAD防御pwn&url=http://blog.hac425.top/2017/12/23/defense_pwn_with_ld_preload.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=然之协同系统6.4.1 SQL注入导致getshell&url=http://blog.hac425.top/2018/03/12/ranzhi_oa_6_4_1_sqli_to_getshell.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
             <li class="mdl-menu__item">
                 分享到微博
             </li>
@@ -490,7 +490,7 @@
 
     <!-- Share Twitter -->
     
-        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=使用LD_PRELOAD防御pwn&url=http://blog.hac425.top/2017/12/23/defense_pwn_with_ld_preload.html&via=hac425" target="_blank">
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=然之协同系统6.4.1 SQL注入导致getshell&url=http://blog.hac425.top/2018/03/12/ranzhi_oa_6_4_1_sqli_to_getshell.html&via=hac425" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Twitter
             </li>
@@ -499,7 +499,7 @@
 
     <!-- Share Facebook -->
     
-        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2017/12/23/defense_pwn_with_ld_preload.html" target="_blank">
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2018/03/12/ranzhi_oa_6_4_1_sqli_to_getshell.html" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Facebook
             </li>
@@ -508,7 +508,7 @@
 
     <!-- Share Google+ -->
     
-        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2017/12/23/defense_pwn_with_ld_preload.html" target="_blank">
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2018/03/12/ranzhi_oa_6_4_1_sqli_to_getshell.html" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Google+
             </li>
@@ -532,22 +532,77 @@
                 <!-- Post Content -->
                 <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
     
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本文介绍使用 <code>LD_PRELOAD</code> 防御 线下赛中常见的漏洞。</p>
-<p>github上的相关项目：</p>
-<p><code>hook</code> 了常用的函数</p>
-<p><a href="https://github.com/poliva/ldpreloadhook" target="_blank" rel="external">https://github.com/poliva/ldpreloadhook</a></p>
-<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>由于可能会不允许加载 <code>脚本</code> ,所以用 <code>c</code> 来加载（可能需要加一些没有的东西凑大小）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;  </div><div class="line">#include &lt;unistd.h&gt;  </div><div class="line">  </div><div class="line">int main(int arg,char **args)  </div><div class="line">&#123;  </div><div class="line">  </div><div class="line">    char *argv[]=&#123;&quot;test&quot;,NULL&#125;;//传递给执行文件的参数数组，这里包含执行文件的参数   </div><div class="line">  </div><div class="line">    char *envp[]=&#123;&quot;LD_PRELOAD=./libmy_printf.so&quot;,NULL&#125;;//传递给执行文件新的环境变量数组  </div><div class="line">  </div><div class="line">    execve(&quot;./test&quot;,argv,envp);  </div><div class="line">   </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>执行当前目录的 <code>test</code> 文件，同时设置 <code>LD_PRELOAD=./libmy_printf.so</code>,  运行时加载 <code>libmy_printf.so</code></p>
-<p>.</p>
-<p><strong>堆相关漏洞</strong></p>
-<p>使用 <a href="https://github.com/DhavalKapil/libdheap" target="_blank" rel="external">https://github.com/DhavalKapil/libdheap</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;  </div><div class="line">#include &lt;unistd.h&gt;  </div><div class="line">  </div><div class="line">int main(int arg,char **args)  </div><div class="line">&#123;  </div><div class="line">  </div><div class="line">    char *argv[]=&#123;&quot;test&quot;,NULL&#125;;//传递给执行文件的参数数组，这里包含执行文件的参数   </div><div class="line">  </div><div class="line">	char *envp[]=&#123;&quot;LD_PRELOAD=./libdheap.so&quot;, &quot;LIBDHEAP_EXIT_ON_ERROR=1&quot;,NULL&#125;;//传递给执行文件新的环境变量数组  </div><div class="line">    execve(&quot;./test&quot;,argv,envp);  </div><div class="line">   </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p><code>LIBDHEAP_EXIT_ON_ERROR=1</code>  检测到异常后就会退出。</p>
-<p><strong>格式化字符串</strong></p>
-<p>hook <code>printf</code>  和 <code>snprintf</code>过滤关键字</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div></pre></td><td class="code"><pre><div class="line">#define _GNU_SOURCE</div><div class="line"></div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;dlfcn.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;stdarg.h&gt;</div><div class="line">#include &lt;string.h&gt;</div><div class="line">// gcc -shared -fPIC my_printf.c -o libmy_printf.so -ldl</div><div class="line"></div><div class="line">#include &lt;unistd.h&gt;</div><div class="line">#include &lt;sys/types.h&gt;</div><div class="line">#include &lt;sys/stat.h&gt;</div><div class="line">#include &lt;fcntl.h&gt;</div><div class="line"></div><div class="line"></div><div class="line">int fd = 0;</div><div class="line"></div><div class="line">void log (char * buf) &#123;</div><div class="line"></div><div class="line">	if(!fd)&#123;</div><div class="line">		fd = open(&quot;log.txt&quot;, O_WRONLY|O_CREAT|O_APPEND);</div><div class="line">	&#125;</div><div class="line">  write(fd, buf, strlen(buf));</div><div class="line">  write(fd, &apos;\n&apos;, 1);</div><div class="line">  sync();</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">void str_remove(char *src, char *target)&#123;</div><div class="line"></div><div class="line">        char *p;    </div><div class="line">        char c[81];</div><div class="line">        char *dst[254]=&#123;0&#125;;</div><div class="line">        while((p = strstr(src,target)) != NULL) &#123; //strstr 找不到返回 NULL </div><div class="line">                *p = &apos;\0&apos;; // 指定连接下一步（连接函数）之前 a 的终止位置； </div><div class="line">                strcpy (c, p+strlen(target)); // strcat 函数中的两个传入参数的内存地址不能重叠，所以这里用 c 当作 temp </div><div class="line">                strcat (src, c);</div><div class="line">        &#125; </div><div class="line"></div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">int printf(const char *format, ...)</div><div class="line">&#123;</div><div class="line">        va_list list;</div><div class="line">        char *parg;</div><div class="line">        typeof(printf) *old_printf;</div><div class="line"></div><div class="line">        char *tmp = malloc(strlen(format) + 1);</div><div class="line">        strcpy(tmp, format);</div><div class="line"></div><div class="line">        </div><div class="line"></div><div class="line">        /*</div><div class="line"></div><div class="line">        remove some bad string</div><div class="line"></div><div class="line">        */</div><div class="line">        str_remove(tmp, &quot;$p&quot;);</div><div class="line">        str_remove(tmp, &quot;$x&quot;);</div><div class="line">        str_remove(tmp, &quot;hn&quot;);</div><div class="line">        str_remove(tmp, &quot;ln&quot;);</div><div class="line">        str_remove(tmp, &quot;$n&quot;);</div><div class="line">        log(tmp);</div><div class="line"></div><div class="line">        // format variable arguments</div><div class="line">        va_start(list, tmp);</div><div class="line">        vasprintf(&amp;parg, tmp, list);</div><div class="line">        va_end(list);</div><div class="line"></div><div class="line">        // get a pointer to the function &quot;printf&quot;</div><div class="line">        old_printf = dlsym(RTLD_NEXT, &quot;printf&quot;);</div><div class="line">        (*old_printf)(&quot;%s&quot;, parg); // and we call the function with previous arguments</div><div class="line"></div><div class="line">        free(parg);</div><div class="line">        free(tmp);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">int snprintf(char *str, size_t size, const char *format, ...)&#123;</div><div class="line">        va_list list;</div><div class="line">        char *parg;</div><div class="line">        typeof(snprintf) *old_snprintf;</div><div class="line"></div><div class="line">        char *tmp = malloc(strlen(format) + 1);</div><div class="line">        strcpy(tmp, format);</div><div class="line"></div><div class="line">        /*</div><div class="line"></div><div class="line">        remove some bad string</div><div class="line"></div><div class="line">        */</div><div class="line">        str_remove(tmp, &quot;$p&quot;);</div><div class="line">        str_remove(tmp, &quot;$x&quot;);</div><div class="line">        str_remove(tmp, &quot;hn&quot;);</div><div class="line">        str_remove(tmp, &quot;ln&quot;);</div><div class="line">        str_remove(tmp, &quot;$n&quot;);</div><div class="line">        log(tmp);</div><div class="line"></div><div class="line">        // format variable arguments</div><div class="line">        va_start(list, tmp);</div><div class="line">        vasprintf(&amp;parg, tmp, list);</div><div class="line">        va_end(list);</div><div class="line">        </div><div class="line">        // get a pointer to the function &quot;printf&quot;</div><div class="line">        old_snprintf = dlsym(RTLD_NEXT, &quot;snprintf&quot;);</div><div class="line">        (*old_snprintf)(str, size, &quot;%s&quot;, parg); // and we call the function with previous arguments</div><div class="line"></div><div class="line">        free(parg);</div><div class="line">        free(tmp);</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gcc -shared -fPIC my_printf.c -o libmy_printf.so -ldl</div></pre></td></tr></table></figure></p>
-<p>编译之（<code>32</code> 位 加 <code>-m 32</code>）</p>
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>先知上一个大佬挖的洞，也有了简单的分析</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://xianzhi.aliyun.com/forum/topic/2135</div></pre></td></tr></table></figure>
+<p>我自己复现分析过程，漏洞的原理比较简单，但是漏洞的利用方式对我而言则是一种新的利用方式。本文对分析过程做一个记录。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><h5 id="分析软件运行的流程"><a href="#分析软件运行的流程" class="headerlink" title="分析软件运行的流程"></a>分析软件运行的流程</h5><p>拿到一个需要分析的 <code>php</code> 程序，首先看看客户端的 <code>http</code> 请求是如何对应到程序中的代码的。</p>
+<p>首先得找一个分析的开始点，就以 触发漏洞 的 请求为示例把。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">GET /cash/block-printTradeBlock.html?param=eyJvcmRlckJ5IjoiaWQgbGltaXQgMCwxO3NlbGVjdCBpZigxPTIsMSxzbGVlcCgyKSkjIiB9 HTTP/1.1</div><div class="line">Host: hack.ranzhi.top</div><div class="line">Pragma: no-cache</div><div class="line">Cache-Control: no-cache</div><div class="line">Upgrade-Insecure-Requests: 1</div><div class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36</div><div class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8</div><div class="line">Accept-Encoding: gzip, deflate</div><div class="line">Accept-Language: zh-CN,zh;q=0.9</div><div class="line">Cookie: PHPSESSID=2c17fafndhnfle6j4r9dskopk3; lang=zh-cn; theme=default; rid=kcvhkos22q574sqdjiha39icl5; keepLogin=false; XDEBUG_SESSION=14822</div><div class="line">Connection: close</div></pre></td></tr></table></figure>
+<p>安装系统时我们设置 <code>www</code> 目录为虚拟主机目录， 所以当我们访问 <code>/cash/block-printTradeBlock.html</code>  时，实际上访问的是 <code>www/cash/block-printTradeBlock.html</code>， 但是 <code>cash</code> 目录中并没有相关的文件</p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520845735729x25vqn9s.png?imageslim" alt="paste image"></p>
+<p>不过该目录下有 <code>.htaccess</code> 文件，通过该文件可以重写 <code>url</code>, 根据规则我们知道，如果访问 <code>cash</code> 目录下不存在的文件，会把请求交给 <code>index.php</code> 处理。</p>
+<p><code>.htaccess</code> 文件参考</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">http://t.cn/REFVyCJ</div><div class="line">https://www.zybuluo.com/phper/note/73726</div></pre></td></tr></table></figure>
+<p>那下面就分析 <code>index.php</code> 即可，下好断点，然后发送数据包</p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520850499801odlp1fo4.png?imageslim" alt="paste image"></p>
+<p><code>f7</code> 跟进 <code>loader.php</code>, 首先加载了一些基础类。</p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/15208506581519u3fakrr.png?imageslim" alt="paste image"></p>
+<p>然后做一些初始化的操作，实例化一些基础对象，后面用来加载程序的主体</p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/15208509245953f02hwqg.png?imageslim" alt="paste image"></p>
+<p>然后是设置路由方式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$app-&gt;parseRequest();</div></pre></td></tr></table></figure></p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520851498683xrzr1k7o.png?imageslim" alt="paste image"></p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520851602860jm3fjwb4.png?imageslim" alt="paste image"><br>会对 处理后 <code>url</code> 按 <code>-</code> 分割，第一项作为 <code>module_name</code> 第二项作为 <code>method_name</code>. 以上面的数据包为例。执行完后的结果如下。</p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520851838890qze3277d.png?imageslim" alt="paste image"><br>此时我们已经设置好了 模块名 和 方法名，  下面回到 <code>loader.php</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$common-&gt;checkPriv();  # 权限校验</div><div class="line">$app-&gt;loadModule();		#  加载相关模块的方法</div></pre></td></tr></table></figure>
+<p>进入 <code>loadModule</code> 方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">public function loadModule()</div><div class="line">  &#123;</div><div class="line">      $appName    = $this-&gt;appName;</div><div class="line">      $moduleName = $this-&gt;moduleName;</div><div class="line">      $methodName = $this-&gt;methodName;</div><div class="line"></div><div class="line">      </div><div class="line">      /*</div><div class="line">       * 设置control的类名。</div><div class="line">       * Set the class name of the control.</div><div class="line">       **/</div><div class="line">      $className = class_exists(&quot;my$moduleName&quot;) ? &quot;my$moduleName&quot; : $moduleName;</div><div class="line"></div><div class="line">      /*</div><div class="line">       * 创建control类的实例。</div><div class="line">       * 根据 `$app-&gt;parseRequest()` 设置好的 模块名 实例化对应的类</div><div class="line">       * Create a instance of the control.</div><div class="line">       **/</div><div class="line">      $module = new $className();</div><div class="line">      $this-&gt;control = $module;</div><div class="line"></div><div class="line">      /* </div><div class="line">       * 使用反射机制获取函数参数的默认值</div><div class="line">       * 通过反射获取 函数的参数名称，</div><div class="line">       * 通过 `php` 的反射机制 ， 获取参数名， 并且初始化好</div><div class="line">       *</div><div class="line">       * */</div><div class="line">      $defaultParams = array();</div><div class="line">      $methodReflect = new reflectionMethod($className, $methodName);</div><div class="line">      foreach($methodReflect-&gt;getParameters() as $param)</div><div class="line">      &#123;</div><div class="line">          $name = $param-&gt;getName();</div><div class="line"></div><div class="line">          $default = &apos;_NOT_SET&apos;;</div><div class="line">          if(isset($paramDefaultValue[$appName][$className][$methodName][$name]))</div><div class="line">          &#123;</div><div class="line">              $default = $paramDefaultValue[$appName][$className][$methodName][$name];</div><div class="line">          &#125;</div><div class="line">          elseif(isset($paramDefaultValue[$className][$methodName][$name]))</div><div class="line">          &#123;</div><div class="line">              $default = $paramDefaultValue[$className][$methodName][$name];</div><div class="line">          &#125;</div><div class="line">          elseif($param-&gt;isDefaultValueAvailable())</div><div class="line">          &#123;</div><div class="line">              $default = $param-&gt;getDefaultValue();</div><div class="line">          &#125;</div><div class="line"></div><div class="line">          $defaultParams[$name] = $default; # 组成一个由 defaultParams[参数名] = &quot;&quot; 构成的字典</div><div class="line">      &#125;</div><div class="line"></div><div class="line">      /** </div><div class="line">       * 根据PATH_INFO或者GET方式设置请求的参数。</div><div class="line">         * 根据请求方式， 从请求数据包中获取需要的参数信息。</div><div class="line">       */</div><div class="line">      if($this-&gt;config-&gt;requestType != &apos;GET&apos;)</div><div class="line">      &#123;</div><div class="line">          $this-&gt;setParamsByPathInfo($defaultParams);</div><div class="line">      &#125;</div><div class="line">      else</div><div class="line">      &#123;</div><div class="line">          $this-&gt;setParamsByGET($defaultParams);</div><div class="line">      &#125;</div><div class="line">	</div><div class="line">        # 过滤数据</div><div class="line">        if($this-&gt;config-&gt;framework-&gt;filterParam == 2)</div><div class="line">      &#123;</div><div class="line">          $_GET     = validater::filterParam($_GET, &apos;get&apos;);</div><div class="line">          $_COOKIE  = validater::filterParam($_COOKIE, &apos;cookie&apos;);</div><div class="line">      &#125;</div><div class="line"></div><div class="line">      /* 调用方法，并传入参数 */</div><div class="line">      call_user_func_array(array($module, $methodName), $this-&gt;params);</div><div class="line">      return $module;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>该函数的流程为</p>
+<ul>
+<li>根据 <code>$app-&gt;parseRequest()</code> 设置好的 模块名 实例化对应的类</li>
+<li>通过 <code>php</code> 的反射机制 ， 获取方法参数名， 并且初始化好</li>
+<li>根据请求方式， 从请求包中获取需要的参数信息到 <code>$defaultParams</code> 。</li>
+<li>过滤数据</li>
+<li>调用方法，并传入参数<br>看一看设置参数的方式</li>
+</ul>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520852654628bn214iwt.png?imageslim" alt="paste image"></p>
+<p>按照 <code>-</code>  分割 <code>url</code>格式为 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">module_name-method_name-param1-param2</div></pre></td></tr></table></figure>
+<p>所以在该程序中 <code>www</code> 和 <code>app</code> 目录是相互对应的。</p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/15208528988583vhb6dnb.png?imageslim" alt="paste image"><br>当我们请求</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">/dir_name/module_name-method_name-param-...-paramN.html</div></pre></td></tr></table></figure>
+<p>最后会调用 <code>app</code> 目录下 <code>module_name</code> 中的 <code>control.php</code> 的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">module_name-&gt;method_name(param1,....,paramN)</div></pre></td></tr></table></figure>
+<p>比如 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/cash/block-printTradeBlock.html</div></pre></td></tr></table></figure>
+<p>实际就是调用  <code>app</code> 目录下 <code>cash</code> 中的 <code>control.php</code> 的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">block-&gt;printTradeBlock()</div></pre></td></tr></table></figure>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/15208533048228qnz8wlv.png?imageslim" alt="paste image"></p>
+<h5 id="SQL-注入分析"><a href="#SQL-注入分析" class="headerlink" title="SQL 注入分析"></a>SQL 注入分析</h5><p>漏洞出现在 <code>lib/base/dao/dao.class.php</code></p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520853407320m0vm6ctk.png?imageslim" alt="paste image"></p>
+<p>这里只对 <code>$order</code> 部分进行了校验， 而没有对 <code>limit</code> 后面的部分进行校验。</p>
+<p>看到 <code>printTradeBlock</code></p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520853576683rdev2ziy.png?imageslim" alt="paste image"></p>
+<p>在 <code>$this-&gt;processParams()</code> 中设置好 <code>$this-&gt;params</code></p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520853710096pp1q26bs.png?imageslim" alt="paste image"></p>
+<p>可以看到 <code>$this-&gt;params</code> 就是 <code>json_decode(base64_decode($_GET[&#39;param&#39;]))</code></p>
+<p>然后又会调用 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">orderBy($this-&gt;params-&gt;orderBy)</div></pre></td></tr></table></figure>
+<p>所以我们可以控制 <code>limit</code> 后面的部分， <strong>SQL注入</strong>。</p>
+<p>这套程序中还会执行 <code>sql</code> 语句,用的是 <code>Pdo</code>用的是 <code>$pdo-&gt;query()</code>, 这个函数可以一次执行多条 <code>sql</code> 语句。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line">   * 执行SQL语句，返回PDOStatement结果集。</div><div class="line">   * Query the sql, return the statement object.</div><div class="line">   * </div><div class="line">   * @access public</div><div class="line">   * @return object   the PDOStatement object.</div><div class="line">   */</div><div class="line">  public function query($sql = &apos;&apos;)</div><div class="line">  &#123;</div><div class="line">      /* 如果有错误，返回一个空的PDOStatement对象，确保后续方法能够执行。*/</div><div class="line">      /* If any error, return an empty statement object to make sure the remain method to execute. */</div><div class="line">      if(!empty(dao::$errors)) return new PDOStatement();   </div><div class="line"></div><div class="line">      if($sql)</div><div class="line">      &#123;</div><div class="line">          $sql       = trim($sql);</div><div class="line">          $sqlMethod = strtolower(substr($sql, 0, strpos($sql, &apos; &apos;)));</div><div class="line">          $this-&gt;setMethod($sqlMethod);</div><div class="line">          $this-&gt;sqlobj = new sql();</div><div class="line">          $this-&gt;sqlobj-&gt;sql = $sql;</div><div class="line">      &#125;</div><div class="line">      else</div><div class="line">      &#123;</div><div class="line">          $sql = $this-&gt;processSQL(); // 大概就是获取 sql 语句</div><div class="line">      &#125;</div><div class="line">      $key = md5($sql);</div><div class="line"></div><div class="line">      try</div><div class="line">      &#123;</div><div class="line">          $method = $this-&gt;method;</div><div class="line">          $this-&gt;reset();</div><div class="line"></div><div class="line">          if($this-&gt;slaveDBH and $method == &apos;select&apos;)</div><div class="line">          &#123;</div><div class="line">              if(isset(dao::$cache[$key])) return dao::$cache[$key];</div><div class="line">              $result = $this-&gt;slaveDBH-&gt;query($sql);</div><div class="line">              dao::$cache[$key] = $result;</div><div class="line">              return $result;</div><div class="line">          &#125;</div><div class="line">          else</div><div class="line">          &#123;</div><div class="line">              if($this-&gt;method == &apos;select&apos;)</div><div class="line">              &#123;</div><div class="line">                  if(isset(dao::$cache[$key])) return dao::$cache[$key];</div><div class="line">                  $result = $this-&gt;slaveDBH-&gt;query($sql);</div><div class="line">                  dao::$cache[$key] = $result;</div><div class="line">                  return $result;</div><div class="line">              &#125;</div><div class="line"></div><div class="line">              return $this-&gt;dbh-&gt;query($sql);</div><div class="line">          &#125;</div><div class="line">      &#125;</div><div class="line">      catch (PDOException $e) </div><div class="line">      &#123;</div><div class="line">          $this-&gt;sqlError($e);</div><div class="line">      &#125;</div><div class="line">  &#125;</div></pre></td></tr></table></figure></p>
+<p>这样我们的利用方式就简单了。</p>
+<ul>
+<li>闭合 limit 语句，用 <code>;</code>  连接多条语句</li>
+<li>没有回显， 使用 时间盲注</li>
+</ul>
+<p><code>poc</code></p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/15208542344545uoxyivp.png?imageslim" alt="paste image"></p>
+<h5 id="任意文件下载-amp-amp-任意文件删除"><a href="#任意文件下载-amp-amp-任意文件删除" class="headerlink" title="任意文件下载 &amp;&amp; 任意文件删除"></a>任意文件下载 &amp;&amp; 任意文件删除</h5><p>由于可以一次执行多条 <code>sql</code> 语句 ，我们实质上已经可以控制数据库了。</p>
+<p>在 <code>app/sys/file/control.php</code> ,有两个函数  <code>delete</code> 和 <code>download</code>, 分别用于删除文件和下载文件。</p>
+<p>以  <code>delete</code> 为例<br><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/152085455481144h6hmmy.png?imageslim" alt="paste image"></p>
+<p><code>$this-&gt;file-&gt;getById($fileID)</code>  时间就是在 <code>表前缀sys_file</code> 中查找对应 <code>id</code> 相对应的 路径。<br><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520854675973unwkhh40.png?imageslim" alt="paste image"></p>
+<p>利用 <code>sql</code> 注入修改为目标路径（用 <code>../</code> 进行目录跳转），然后选择相应 <code>id</code> 即可删除指定文件。下载文件也是类似。</p>
+<h5 id="getshell"><a href="#getshell" class="headerlink" title="getshell"></a>getshell</h5><p>删除 <code>my.php</code> 后 会要求我们重新安装系统。</p>
+<p>在重装系统的最后一步，会直接使用 <code>POST</code> 中的值，来设置 <code>my.php</code> 的内容，同时 , 访问 <code>install.php</code> 时，是不会调用参数过滤的函数的，所以可以注入 <code>php</code> 代码，<strong>getshell</strong><br><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520855153549f4o8vkva.png?imageslim" alt="paste image"><br><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520857241145n68lg8pm.png?imageslim" alt="paste image"></p>
 
         
                 <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
@@ -556,7 +611,7 @@
                             <a>本站文章均原创， 转载注明来源</a>
                         </strong>
                         <br>
-                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2017/12/23/defense_pwn_with_ld_preload.html">http://blog.hac425.top/2017/12/23/defense_pwn_with_ld_preload.html</a>
+                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2018/03/12/ranzhi_oa_6_4_1_sqli_to_getshell.html">http://blog.hac425.top/2018/03/12/ranzhi_oa_6_4_1_sqli_to_getshell.html</a>
                     </p>
                 </blockquote>
         
@@ -606,21 +661,13 @@
             <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
     <!-- Prev Nav -->
     
-        <a href="/2017/12/28/cve_2017_17215_hg532.html" id="post_nav-newer" class="prev-content">
-            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
-                <i class="material-icons">arrow_back</i>
-            </button>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            新篇
-        </a>
-    
 
     <!-- Section Spacer -->
     <div class="section-spacer"></div>
 
     <!-- Next Nav -->
     
-        <a href="/2017/12/18/0ctf2017_babyheap.html" id="post_nav-older" class="next-content">
+        <a href="/2018/03/11/csv_inject.html" id="post_nav-older" class="next-content">
             旧篇
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
