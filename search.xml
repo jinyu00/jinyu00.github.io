@@ -84,12 +84,13 @@
 <p> <code>sub_78864000</code> 看起来比较复杂，我就直接用 <code>python</code>, 照着重写了一遍。</p>
 <p> <img src="http://oy9h5q2k4.bkt.clouddn.com/152067013484257vk8yf4.png?imageslim" alt="paste image"></p>
 <p> 其中有一个有意思的地方: <code>ida</code> 无法 对 <code>clz</code> 指令进行转换，所以用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">v5 = __clz(a2) - __clz(v4);</div><div class="line"></div><div class="line">``` </div><div class="line"></div><div class="line"></div><div class="line">表示</div></pre></td></tr></table></figure>
-<p> CLZ     R2, R1<br> CLZ     R0, R3<br> SUB     R0, R2, R0</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">这使得重写造成了困扰，我的解决办法是，根据 `clz` 的作用，自己实现。</div><div class="line"></div><div class="line">![paste image](http://oy9h5q2k4.bkt.clouddn.com/15206703207513g565qy9.png?imageslim)</div><div class="line"></div><div class="line"></div><div class="line">实现的 `python` 代码如下：</div></pre></td></tr></table></figure>
-<p> def calc_clz(reg):<br>    return 32 - len(str(bin(reg))[2:])</p>
-<p>```</p>
-]]></content>
+<p><img src="http://oh1jgyw0v.bkt.clouddn.com/1521117298517w9q8htt4.png" alt="paste image"></p>
+<p> 表示 </p>
+<p><img src="http://oh1jgyw0v.bkt.clouddn.com/1521117308128jcw6y8hy.png" alt="paste image"></p>
+<p> 这使得重写造成了困扰，我的解决办法是，根据 <code>clz</code> 的作用，自己实现。</p>
+<p> <img src="http://oy9h5q2k4.bkt.clouddn.com/15206703207513g565qy9.png?imageslim" alt="paste image"></p>
+<p> 实现的 <code>python</code> 代码如下：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">def calc_clz(reg):</div><div class="line">   return 32 - len(str(bin(reg))[2:])</div></pre></td></tr></table></figure>]]></content>
       
         <categories>
             
