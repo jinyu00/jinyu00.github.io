@@ -5,7 +5,8 @@
     <entry>
       <title><![CDATA[xxxx签名算法逆向&&python脚本实现]]></title>
       <url>/2018/03/15/jiakao_rev.html</url>
-      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本文分析一下在 重置密码时对 <code>数据包</code> 进行签名来防篡改的方案。</p>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>人生中第一次被公关，不提软件的名字了~~~</p>
+<p>本文分析一下在 重置密码时对 <code>数据包</code> 进行签名来防篡改的方案。</p>
 <h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p><strong>burp抓取htttps数据</strong></p>
 <p>首先导入 <code>burp</code> 证书到手机， 装上 <code>xposed</code> , 然后安装</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/WooyunDota/DroidSSLUnpinning</div></pre></td></tr></table></figure>
