@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.hac425.top/2018/03/16/learn_ssrf.html</loc>
+    
+    <lastmod>2018-03-16T11:15:03.868Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.hac425.top/2018/03/15/play_xxe_vuln.html</loc>
     
     <lastmod>2018-03-16T01:39:24.781Z</lastmod>
