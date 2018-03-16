@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.hac425.top/2018/03/15/play_xxe_vuln.html</loc>
+    
+    <lastmod>2018-03-16T01:31:19.503Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.hac425.top/2018/03/15/jiakao_rev.html</loc>
     
     <lastmod>2018-03-15T16:26:31.829Z</lastmod>
