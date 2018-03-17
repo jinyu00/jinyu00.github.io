@@ -100,6 +100,11 @@
 <p>在 <code>javascript</code> 中可以 使用 <code>parseInt</code> 把字符串转成数字，然后用 <code>(num).toString</code> 转成字符串， 同时还有一个有意思的点，用 <code>eval</code> 执行 <code>function_name</code> 返回值就是该函数的对象。于是</p>
 <p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521273543659v91san5g.png?imageslim" alt="paste image"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">eval((630038579).toString(30))(1)</div></pre></td></tr></table></figure>
+<p><strong>参考</strong></p>
+<p><a href="https://lorexxar.cn/2015/07/02/xss-p/" target="_blank" rel="external">https://lorexxar.cn/2015/07/02/xss-p/</a></p>
+<p><a href="https://hellohxk.com/blog/prompt-1-writeup/" target="_blank" rel="external">https://hellohxk.com/blog/prompt-1-writeup/</a></p>
+<p><a href="http://blog.csdn.net/Ni9htMar3/article/details/77938899" target="_blank" rel="external">http://blog.csdn.net/Ni9htMar3/article/details/77938899</a></p>
+<p><a href="https://github.com/cure53/XSSChallengeWiki/wiki/prompt.ml" target="_blank" rel="external">https://github.com/cure53/XSSChallengeWiki/wiki/prompt.ml</a></p>
 ]]></content>
       
         <categories>
