@@ -4,6 +4,26 @@
 
     
   <url>
+    <loc>http://blog.hac425.top/2018/03/17/command_inject.html</loc>
+    <lastmod>2018-03-18T13:24:14.377Z</lastmod>
+    <data>
+        <display>
+        <title>命令注入漏洞总结</title>
+        <pubTime>2018-03-17T12:56:00.000Z</pubTime>
+        
+        <tag>命令注入</tag>
+         
+         
+           
+             
+              <breadCrumb title="渗透测试" url="http://blog.hac425.top/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://blog.hac425.top/2018/03/16/learn_xss.html</loc>
     <lastmod>2018-03-17T08:13:43.258Z</lastmod>
     <data>
