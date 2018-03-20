@@ -4,6 +4,28 @@
 
     
   <url>
+    <loc>http://blog.hac425.top/2018/03/20/pwn_with_longjmp.html</loc>
+    <lastmod>2018-03-20T13:48:53.446Z</lastmod>
+    <data>
+        <display>
+        <title>Pwn With longjmp</title>
+        <pubTime>2018-03-20T08:39:00.000Z</pubTime>
+        
+        <tag>off-by-one</tag>
+         
+        <tag>longjmp to shell</tag>
+         
+         
+           
+             
+              <breadCrumb title="ctf" url="http://blog.hac425.top/categories/ctf/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://blog.hac425.top/2018/03/17/command_inject.html</loc>
     <lastmod>2018-03-18T13:24:14.377Z</lastmod>
     <data>

@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.hac425.top/2018/03/20/pwn_with_longjmp.html</loc>
+    
+    <lastmod>2018-03-20T13:48:53.446Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.hac425.top/2018/03/17/command_inject.html</loc>
     
     <lastmod>2018-03-18T13:24:14.377Z</lastmod>
