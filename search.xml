@@ -2055,6 +2055,7 @@
 <p>之后的 <code>memcpy</code>我们就可以修改<code>main_arena</code>的数据了。</p>
 <p><img src="http://oy9h5q2k4.bkt.clouddn.com/151330875243837hyzkwi.png?imageslim" alt="paste image"></p>
 <p><code>getshell</code> 请看参考链接。（因为我没成功~_~）</p>
+<p>后来经过漏洞发现者的测试发现是因为我是 <code>debug</code> 模式编译的原因</p>
 <p><strong>参考</strong></p>
 <p><a href="https://devco.re/blog/2017/12/11/Exim-RCE-advisory-CVE-2017-16943-en/" target="_blank" rel="external">https://devco.re/blog/2017/12/11/Exim-RCE-advisory-CVE-2017-16943-en/</a></p>
 <p><a href="https://paper.seebug.org/469/" target="_blank" rel="external">https://paper.seebug.org/469/</a></p>
