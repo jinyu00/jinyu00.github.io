@@ -2568,7 +2568,9 @@
 <p>我们现在能够修改对象的 虚表指针，并且能够触发虚函数调用。我们需要在一个可预测的内存地址精准的布置我们的数据，然后把虚表指针修改到这里，在 <code>exploit</code> 中使用了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">spray_size = 0x100000</div><div class="line">spray_count = 0x10</div><div class="line"></div><div class="line">sample_table(heap_spray(spray_size) * spray_count)</div></pre></td></tr></table></figure></p>
 <p>来进行堆喷射 </p>
 <p><code>heap_spray</code> 函数 就是使用 <code>pssh</code> 来喷射的内存。每次分配 <code>0x100</code> 页，共分配了 <code>0x10</code> 次。 <code>exploit</code> 作者在 博客中写道，这样就可以在可预测的内存地址中定位到特定数据。在这里就是 用于 <code>stack_pivot</code> 的 <code>gadget</code>.</p>
-<p>对于这一点，我很疑惑，<strong>有大佬可以告诉我为什么可以这样吗？ 或者有没有相关的 <code>paper</code> 来介绍为什么可以在 可预测的地址 精确的布置我们的数据</strong></p>
+<p><strong>关于堆喷射</strong></p>
+<p>在看雪上大佬们进行了讨论</p>
+<p><a href="https://bbs.pediy.com/thread-222893-1.htm" target="_blank" rel="external">https://bbs.pediy.com/thread-222893-1.htm</a></p>
 <h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>这个 <code>exploit</code> 写的确实强悍，提示我在进行漏洞利用时，要关注各种可能分配内存的地方，灵活的使用代码中的内存分配，来布局内存。 同时研究一个漏洞要把相关知识给补齐。对于这个漏洞就是 <code>MPEG4</code> 的文件格式和 相关的处理代码了。</p>
 <p>一些tips：</p>
 <ul>
