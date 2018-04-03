@@ -115,6 +115,8 @@
 <p>利用格式化字符串漏洞，泄露 <code>libc</code> 和 程序的基地址</p>
 <p><code>off by null</code> 直接套用 <a href="https://github.com/shellphish/how2heap/blob/master/poison_null_byte.c" target="_blank" rel="external">how2heap</a> ，就可以 <code>overlap heap</code></p>
 <p>这时就可以利用 <code>raisepig</code> 的思路 或者 使用 <code>unlink</code></p>
+<p><strong>参考</strong></p>
+<p><a href="http://tacxingxing.com/2018/03/28/2018qwb/" target="_blank" rel="external">http://tacxingxing.com/2018/03/28/2018qwb/</a></p>
 ]]></content>
       
         <categories>
