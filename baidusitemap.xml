@@ -4,6 +4,50 @@
 
     
   <url>
+    <loc>http://blog.hac425.top/2018/04/29/linux_kernel_pwn_notes.html</loc>
+    <lastmod>2018-04-30T05:58:13.352Z</lastmod>
+    <data>
+        <display>
+        <title>linux kernel pwn notes</title>
+        <pubTime>2018-04-29T11:33:00.000Z</pubTime>
+        
+        <tag>ctf</tag>
+         
+        <tag>kernel</tag>
+         
+         
+           
+             
+              <breadCrumb title="ctf" url="http://blog.hac425.top/categories/ctf/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://blog.hac425.top/2018/04/23/pwn-with-glbc-heap.html</loc>
+    <lastmod>2018-04-23T13:47:02.976Z</lastmod>
+    <data>
+        <display>
+        <title>pwn with glbc heap</title>
+        <pubTime>2018-04-23T12:40:00.000Z</pubTime>
+        
+        <tag>off by one</tag>
+         
+        <tag>ctf heap</tag>
+         
+         
+           
+             
+              <breadCrumb title="ctf" url="http://blog.hac425.top/categories/ctf/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://blog.hac425.top/2018/04/02/qiangwangbei2018_pwn.html</loc>
     <lastmod>2018-04-03T07:26:28.673Z</lastmod>
     <data>

