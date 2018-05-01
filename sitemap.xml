@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.hac425.top/2018/05/01/ciscn2018-pwn-wp.html</loc>
+    
+    <lastmod>2018-05-01T07:35:33.206Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.hac425.top/2018/04/23/pwn-with-glbc-heap.html</loc>
     
     <lastmod>2018-04-30T06:10:27.373Z</lastmod>
