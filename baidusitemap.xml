@@ -4,6 +4,46 @@
 
     
   <url>
+    <loc>http://blog.hac425.top/2018/05/08/house_of_roman.html</loc>
+    <lastmod>2018-05-08T06:24:11.015Z</lastmod>
+    <data>
+        <display>
+        <title>House of Roman 实战</title>
+        <pubTime>2018-05-08T06:23:00.000Z</pubTime>
+        
+        <tag>hourse of roamn</tag>
+         
+         
+           
+             
+              <breadCrumb title="ctf" url="http://blog.hac425.top/categories/ctf/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://blog.hac425.top/2018/04/30/pwn_with_file_rop_by_vtable.html</loc>
+    <lastmod>2018-05-08T06:23:27.894Z</lastmod>
+    <data>
+        <display>
+        <title>Pwn with File结构体之利用 vtable 进行 ROP</title>
+        <pubTime>2018-04-30T05:58:00.000Z</pubTime>
+        
+        <tag>ctf</tag>
+         
+         
+           
+             
+              <breadCrumb title="ctf" url="http://blog.hac425.top/categories/ctf/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://blog.hac425.top/2018/05/01/ciscn2018-pwn-wp.html</loc>
     <lastmod>2018-05-01T07:35:33.206Z</lastmod>
     <data>

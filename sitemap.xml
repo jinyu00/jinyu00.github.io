@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.hac425.top/2018/05/08/house_of_roman.html</loc>
+    
+    <lastmod>2018-05-08T06:24:11.015Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.hac425.top/2018/04/30/pwn_with_file_rop_by_vtable.html</loc>
+    
+    <lastmod>2018-05-08T06:23:27.894Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.hac425.top/2018/05/01/ciscn2018-pwn-wp.html</loc>
     
     <lastmod>2018-05-01T07:35:33.206Z</lastmod>

