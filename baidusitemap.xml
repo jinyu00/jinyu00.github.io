@@ -4,6 +4,28 @@
 
     
   <url>
+    <loc>http://blog.hac425.top/2018/05/13/vexpress_a9_qemu_uboot_linux.html</loc>
+    <lastmod>2018-05-13T15:24:30.327Z</lastmod>
+    <data>
+        <display>
+        <title>qemu模拟vexpress-a9及u-boot引导 linux</title>
+        <pubTime>2018-05-13T15:22:00.000Z</pubTime>
+        
+        <tag>u-boot</tag>
+         
+        <tag>qemu</tag>
+         
+         
+           
+             
+              <breadCrumb title="embedded_development" url="http://blog.hac425.top/categories/embedded-development/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://blog.hac425.top/2018/05/08/house_of_roman.html</loc>
     <lastmod>2018-05-08T06:24:11.015Z</lastmod>
     <data>
@@ -1247,8 +1269,6 @@
         <title>可执行文件patch技术&&持续更新</title>
         <pubTime>2017-11-07T13:51:00.000Z</pubTime>
         
-        <tag>ctf</tag>
-         
         <tag>patch</tag>
          
         <tag>elf patch</tag>
@@ -1256,6 +1276,8 @@
         <tag>pe patch</tag>
          
         <tag>mach-o patch</tag>
+         
+        <tag>ctf</tag>
          
          
            
