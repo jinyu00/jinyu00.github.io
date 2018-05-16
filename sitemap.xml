@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.hac425.top/2018/05/16/openwrt_rpcd_acl_fail.html</loc>
+    
+    <lastmod>2018-05-16T01:14:21.536Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.hac425.top/2018/05/13/vexpress_a9_qemu_uboot_linux.html</loc>
     
     <lastmod>2018-05-13T15:24:30.327Z</lastmod>

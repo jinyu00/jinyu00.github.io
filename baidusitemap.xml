@@ -4,6 +4,21 @@
 
     
   <url>
+    <loc>http://blog.hac425.top/2018/05/16/openwrt_rpcd_acl_fail.html</loc>
+    <lastmod>2018-05-16T01:14:21.536Z</lastmod>
+    <data>
+        <display>
+        <title>【CVE-2018-11116】openwrt rpcd 配置文件错误导致访问控制失效</title>
+        <pubTime>2018-05-16T01:09:55.000Z</pubTime>
+        
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://blog.hac425.top/2018/05/13/vexpress_a9_qemu_uboot_linux.html</loc>
     <lastmod>2018-05-13T15:24:30.327Z</lastmod>
     <data>
