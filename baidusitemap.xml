@@ -4,6 +4,26 @@
 
     
   <url>
+    <loc>http://blog.hac425.top/2018/05/16/CVE-2018-10945-mongoose.html</loc>
+    <lastmod>2018-05-16T01:25:09.465Z</lastmod>
+    <data>
+        <display>
+        <title>CVE-2018-10945 mongoose越界访问</title>
+        <pubTime>2018-05-16T01:19:00.000Z</pubTime>
+        
+        <tag>CVE-2018-10945</tag>
+         
+         
+           
+             
+              <breadCrumb title="vulnerability_report" url="http://blog.hac425.top/categories/vulnerability-report/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://blog.hac425.top/2018/05/16/openwrt_rpcd_acl_fail.html</loc>
     <lastmod>2018-05-16T01:14:21.536Z</lastmod>
     <data>
