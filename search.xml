@@ -3,6 +3,157 @@
   
     
     <entry>
+      <title><![CDATA[openwrt-rpcd服务ACL配置错误风险分析]]></title>
+      <url>/2018/05/18/openwrt_rpcd_misconfig.html</url>
+      <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><code>openwrt</code> 是一个用于的 路由器 的开源系统。</p>
+<p>其他类似的路由器系统相比它的更新速度非常的快，可以看看 <code>github</code> 的更新速度</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/openwrt/openwrt</div></pre></td></tr></table></figure>
+<p>感觉以后用到 <code>openwrt</code> 的路由器会越来越多，而且 <code>openwrt</code> 可以直接用 <code>vmware</code> 来运行，也减少了学习的成本。</p>
+<p>本文介绍一下 <code>openwrt</code> 的 <code>ubus</code> 机制 以及怎么利用 <code>rpcd</code> 通过 <code>http</code> 来访问 <code>openwrt</code> 里面的 <code>ubus</code>. 最后以一个 <code>cve</code> 为例介绍 <code>rpcd</code> 配置过程失误导致的安全问题。</p>
+<h1 id="Openwrt-Helloworld"><a href="#Openwrt-Helloworld" class="headerlink" title="Openwrt Helloworld"></a>Openwrt Helloworld</h1><h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>首先安装好需要的包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">sudo apt-get update</div><div class="line">sudo  apt-get  install  subversion  git-core</div><div class="line">sudo  apt-get install  gcc g++ binutils patch bzip2 flex bison make autoconf gettext textinfo unzip	sharutils gawk	ncurses-term zliblg-dev	libncurses5-dev</div></pre></td></tr></table></figure>
+<p>然后去 <code>github</code> 下载源码包 （比较大，建议挂 <code>ss</code> 下载）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone git://git.openwrt.org/openwrt.git</div></pre></td></tr></table></figure>
+<p>更新编译依赖的包 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">scripts/feeds update -a</div><div class="line">scripts/feeds install –a</div></pre></td></tr></table></figure>
+<p>然后通过 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">make menuconfig</div></pre></td></tr></table></figure>
+<p>配置一下编译参数，使他生成 <code>vmdk</code> 镜像文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Tartget Images</div><div class="line">	[*] Build VMware image files (VMDK) </div><div class="line">	[*] ext4  ---&gt;</div></pre></td></tr></table></figure>
+<p>然后编译即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">make -j4 V=99</div></pre></td></tr></table></figure>
+<p>最后会在 <code>bin/targets/x86/generic/</code> 目录下生成编译好的文件</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1526648576052248x0pm4.png?imageslim" alt="paste image"></p>
+<p>我们使用 <code>openwrt-x86-generic-combined-ext4.vmdk</code> 即可。</p>
+<h2 id="挂载到vmware"><a href="#挂载到vmware" class="headerlink" title="挂载到vmware"></a>挂载到vmware</h2><p>然后新建一个 虚拟机， 选择目标操作系统为 <strong>其他 linux  64 位</strong> 的即可，然后后面选择硬盘时，使用刚刚生成的硬盘。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15266485888223p9p0mp9.png?imageslim" alt="paste image"></p>
+<p>然后开机启动即可。</p>
+<blockquote>
+<p>添加了那么多个网卡的原因是我这里前面几个网卡都是不能正常联网的，后面的就可以正常了~~~</p>
+</blockquote>
+<p>这时不出意外，应该可以进入 <code>shell</code> 了。</p>
+<h2 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h2><p>首先修改一下 <code>root</code> 的密码，方便 <code>ssh</code> 访问</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">passwd root</div></pre></td></tr></table></figure>
+<p>然后安装一个 <code>web</code> 界面，用来方便的管理路由器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">opkg update</div><div class="line">opkg install luci</div></pre></td></tr></table></figure>
+<p>然后启动 <code>uhttpd</code> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">/etc/init.d/uhttpd start</div><div class="line">/etc/init.d/uhttpd enable</div></pre></td></tr></table></figure>
+<p>这时由于防火墙的原因可能无法访问，由于是虚拟机，这里直接清空了 防火墙的规则</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -F</div></pre></td></tr></table></figure>
+<p>然后在浏览器上访问 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://server_ip/</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15266486100259i11eaex.png?imageslim" alt="paste image"></p>
+<h1 id="ubus"><a href="#ubus" class="headerlink" title="ubus"></a>ubus</h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p><code>ubus</code> 是 <code>openwrt</code> 引入的一个消息总线，主要作用是实现不同应用程序之间的信息交互。</p>
+<p><code>ubus</code> 启动后会在后台运行 <code>ubusd</code> 进程，该进程监听一个 <code>unix</code> 套接字用于与其他应用程序通信。</p>
+<p>其他应用程序可基于 <code>libubox</code> 提供的接口（或自己实现）与其通信。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15266486282884yy3dore.png?imageslim" alt="paste image"></p>
+<p>用户可以使用 <code>ubus</code> 的命令行工具和 <code>ubus</code> 总线进行通信， 也可以使用 <code>libubus.so</code> 里面的 <code>api</code> 来和 <code>ubus</code>总线交互， 利用 <code>uhttpd</code> 的模块 和 <code>rpcd</code> 还可以实现通过 <code>http</code> 来访问 <code>ubus</code> 总线</p>
+<p> 如下图所示：</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1526648635716om08afxp.png?imageslim" alt="paste image"></p>
+<h2 id="使用命令行工具与ubus交互"><a href="#使用命令行工具与ubus交互" class="headerlink" title="使用命令行工具与ubus交互"></a>使用命令行工具与ubus交互</h2><p>命令行工具的命令就是 <code>ubus</code> , 列举一下常用的选项</p>
+<p><strong>list</strong></p>
+<p>不加参数的话会列举出总线上所有的可用的命名空间。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">root@OpenWrt:~# ubus list</div><div class="line">dhcp</div><div class="line">dnsmasq</div><div class="line">foo</div><div class="line">log</div><div class="line">network</div><div class="line">network.device</div><div class="line">network.interface</div><div class="line">network.interface.lan</div><div class="line">network.interface.loopback</div><div class="line">network.interface.wan</div><div class="line">network.interface.wan6</div><div class="line">network.rrdns</div><div class="line">network.wireless</div><div class="line">service</div><div class="line">session</div><div class="line">system</div><div class="line">uci</div></pre></td></tr></table></figure>
+<p>使用 <code>-v</code>  选项可以列举出 命名空间内方法的详细信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">root@OpenWrt:~# ubus -v list</div><div class="line">&apos;dhcp&apos; @f236b80a</div><div class="line">	&quot;ipv4leases&quot;:&#123;&#125;</div><div class="line">	&quot;ipv6leases&quot;:&#123;&#125;</div><div class="line">&apos;dnsmasq&apos; @a7e0fefe</div><div class="line">&apos;foo&apos; @224fa516</div><div class="line">	&quot;bar&quot;:&#123;&quot;arg1&quot;:&quot;Boolean&quot;,&quot;arg2&quot;:&quot;Integer&quot;,&quot;arg3&quot;:&quot;String&quot;&#125;</div><div class="line">	&quot;toto&quot;:&#123;&#125;</div><div class="line">&apos;log&apos; @fb3f988f</div><div class="line">	&quot;read&quot;:&#123;&quot;lines&quot;:&quot;Integer&quot;,&quot;stream&quot;:&quot;Boolean&quot;,&quot;oneshot&quot;:&quot;Boolean&quot;&#125;</div><div class="line">	&quot;write&quot;:&#123;&quot;event&quot;:&quot;String&quot;&#125;</div><div class="line">&apos;network&apos; @58aebe07</div><div class="line">	&quot;restart&quot;:&#123;&#125;</div><div class="line">	&quot;reload&quot;:&#123;&#125;</div><div class="line">	&quot;add_host_route&quot;:&#123;&quot;target&quot;:&quot;String&quot;,&quot;v6&quot;:&quot;Boolean&quot;,&quot;interface&quot;:&quot;String&quot;&#125;</div><div class="line">	&quot;get_proto_handlers&quot;:&#123;&#125;</div><div class="line">	&quot;add_dynamic&quot;:&#123;&quot;name&quot;:&quot;String&quot;&#125;</div><div class="line">...............................................................</div><div class="line">...............................................................</div><div class="line">...............................................................</div></pre></td></tr></table></figure>
+<p>后面还可以加上命名空间的名字，使得只打印该命名空间内部的方法信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">root@OpenWrt:~# ubus -v list network.device</div><div class="line">&apos;network.device&apos; @61cffe58</div><div class="line">	&quot;status&quot;:&#123;&quot;name&quot;:&quot;String&quot;&#125;</div><div class="line">	&quot;set_alias&quot;:&#123;&quot;alias&quot;:&quot;Array&quot;,&quot;device&quot;:&quot;String&quot;&#125;</div><div class="line">	&quot;set_state&quot;:&#123;&quot;name&quot;:&quot;String&quot;,&quot;defer&quot;:&quot;Boolean&quot;&#125;</div></pre></td></tr></table></figure>
+<p> 这里打印了 <code>network.device</code> 命名空间内的方法的信息。可以看到它有三个方法可以被调用。</p>
+<p><strong>call</strong></p>
+<p>使用 <code>call</code> 选项就可以调用指定命名空间的方法了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">root@OpenWrt:~# ubus call  network.device status &apos;&#123;&quot;name&quot;:&quot;eth1&quot;&#125;&apos;</div><div class="line">&#123;</div><div class="line">	&quot;external&quot;: false,</div><div class="line">	&quot;present&quot;: true,</div><div class="line">	&quot;type&quot;: &quot;Network device&quot;,</div><div class="line">	&quot;up&quot;: true,</div><div class="line">	&quot;carrier&quot;: true,</div><div class="line">	&quot;link-advertising&quot;: [</div></pre></td></tr></table></figure>
+<p>调用 <code>network.device</code> 的 <code>status</code> 方法，参数通过 <code>json</code> 数据格式传递，<code>name</code> 指定设备名 ，这里的作用就是获取 <code>eth1</code> 的设备信息。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/152664867393954ia6mko.png?imageslim" alt="paste image"></p>
+<p>一些 <code>openwrt</code> 内置的命名空间以及他们的参数说明信息 , 可以看 <code>openwrt</code> 的官方 <code>wiki</code>， 其他更多的命令信息也可以查看这个 <code>wiki</code> 。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://wiki.openwrt.org/zh-cn/doc/techref/ubus?s[]=ubus</div></pre></td></tr></table></figure>
+<h2 id="通过http与ubus交互"><a href="#通过http与ubus交互" class="headerlink" title="通过http与ubus交互"></a>通过http与ubus交互</h2><h2 id="配置-uhttpd"><a href="#配置-uhttpd" class="headerlink" title="配置 uhttpd"></a>配置 uhttpd</h2><p>首先需要修改 <code>uhttpd</code> 的配置文件, 使得 <code>uhttpd</code> 支持 <code>ubus_prefix</code> </p>
+<p>修改 <code>/etc/init.d/uhttpd</code></p>
+   <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">start_instance() &#123; </div><div class="line">... </div><div class="line">	append_arg &quot;$cfg&quot; ubus_prefix &quot;-u&quot; </div><div class="line">... </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>修改 <code>/etc/config/uhttpd</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">... </div><div class="line">	option ubus_prefix /ubus </div><div class="line">...</div></pre></td></tr></table></figure>
+<p>然后重启一下 <code>uhttpd</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/etc/init.d/uhttpd restart</div></pre></td></tr></table></figure>
+<p>之后可以通过 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://server_ip/ubus</div></pre></td></tr></table></figure>
+<p>与 <code>ubus</code> 交互（使用 <code>post</code> 请求）</p>
+<h2 id="rpcd配置"><a href="#rpcd配置" class="headerlink" title="rpcd配置"></a>rpcd配置</h2><p>通过 <code>http</code> 来与 <code>ubus</code> 总线进行交互是通过 <code>rpcd</code> 进行的。 </p>
+<p><code>rpcd</code> 是有访问控制措施的。</p>
+<p>其中访问控制配置文件位于 <code>/usr/share/rpcd/acl.d</code> 目录下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@OpenWrt:/usr/share/rpcd/acl.d# ls</div><div class="line">hac425.json           luci-base.json        unauthenticated.json</div></pre></td></tr></table></figure>
+<blockquote>
+<p><code>hac425.json</code> 是我后面新建的，内容为 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">&gt; &#123;</div><div class="line">&gt;         &quot;hac425&quot;: &#123;</div><div class="line">&gt;                 &quot;description&quot;: &quot;acl for hac425&quot;,</div><div class="line">&gt;                 &quot;read&quot;: &#123;</div><div class="line">&gt;                         &quot;ubus&quot;: &#123;</div><div class="line">&gt;                                 &quot;file&quot;: [ &quot;*&quot; ],</div><div class="line">&gt;                                 &quot;log&quot;: [ &quot;*&quot; ],</div><div class="line">&gt;                                 &quot;service&quot;: [ &quot;*&quot; ],</div><div class="line">&gt;                         &#125;,</div><div class="line">&gt;                 &#125;,</div><div class="line">&gt;                 &quot;write&quot;: &#123;</div><div class="line">&gt;                         &quot;ubus&quot;: &#123;</div><div class="line">&gt;                                 &quot;file&quot;: [ &quot;*&quot; ],</div><div class="line">&gt;                                 &quot;log&quot;: [ &quot;*&quot; ],</div><div class="line">&gt;                                 &quot;service&quot;: [ &quot;*&quot; ],</div><div class="line">&gt;                         &#125;,</div><div class="line">&gt;                 &#125;</div><div class="line">&gt;         &#125;</div><div class="line">&gt; &#125;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p>这个定义就是允许 <code>hac425</code> 使用 <code>file, log, service</code> 命名空间下的所有方法。</p>
+<p>需要为其他用户增加 <code>ACL</code> ，可以根据官方提供的配置文件 <code>demo</code> 进行修改。</p>
+</blockquote>
+<p>这个目录下的文件名是没有作用的，起作用的是 <code>json</code> 文件里面的顶层元素，用于定义 访问控制针对的用户的用户名</p>
+<p>以 <code>unauthenticated.json</code> 为例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">	&quot;unauthenticated&quot;: &#123;</div><div class="line">		&quot;description&quot;: &quot;Access controls for unauthenticated requests&quot;,</div><div class="line">		&quot;read&quot;: &#123;</div><div class="line">			&quot;ubus&quot;: &#123;</div><div class="line">				&quot;session&quot;: [</div><div class="line">					&quot;access&quot;,</div><div class="line">					&quot;login&quot;</div><div class="line">				]</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个文件定义了没有登录的用户（就是所有人）都可以使用的方法是 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">session 命名空间里面的 access, login 方法</div></pre></td></tr></table></figure>
+<p>调用 <code>login</code> 进行登录后会获得一个 <code>ubus_rpc_session</code>， 用于后面的 <code>ubus</code> 调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -d &apos;&#123; &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 1, &quot;method&quot;: &quot;call&quot;, &quot;params&quot;: [ &quot;00000000000000000000000000000000&quot;, &quot;session&quot;, &quot;login&quot;, &#123; &quot;username&quot;: &quot;hac425&quot;, &quot;password&quot;: &quot;123&quot;  &#125; ] &#125;&apos;  http://192.168.31.111/ubus</div></pre></td></tr></table></figure>
+<p>如果用户名密码正确的话会返回 （默认的用户名和密码是 <code>root</code> 的用户名和密码， 后面介绍怎么修改）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    &quot;jsonrpc&quot;:&quot;2.0&quot;,</div><div class="line">    &quot;id&quot;:1,</div><div class="line">    &quot;result&quot;:[</div><div class="line">        0,</div><div class="line">        &#123;</div><div class="line">            &quot;ubus_rpc_session&quot;:&quot;749e6006d3be1149e8ef23c7dd6cb7ac&quot;,</div><div class="line">            &quot;timeout&quot;:300,</div><div class="line">            &quot;expires&quot;:300,</div><div class="line">            &quot;acls&quot;:&#123;</div><div class="line">                &quot;access-group&quot;:&#123;</div><div class="line">                    &quot;hac425&quot;:[</div><div class="line">                        &quot;read&quot;,</div><div class="line">                        &quot;write&quot;</div><div class="line">                    ],</div><div class="line">                    &quot;uci-access&quot;:[</div><div class="line">                        &quot;read&quot;,</div><div class="line">                        &quot;write&quot;</div><div class="line">                    ],</div><div class="line">                    &quot;unauthenticated&quot;:[</div><div class="line">                        &quot;read&quot;</div><div class="line">                    ]</div><div class="line">                &#125;,</div><div class="line">                &quot;ubus&quot;:&#123;</div><div class="line">                    &quot;file&quot;:[</div><div class="line">                        &quot;*&quot;</div><div class="line">                    ],</div><div class="line">                    &quot;log&quot;:[</div><div class="line">                        &quot;*&quot;</div><div class="line">                    ],</div><div class="line">                    &quot;service&quot;:[</div><div class="line">                        &quot;*&quot;</div><div class="line">                    ],</div><div class="line">                    &quot;session&quot;:[</div><div class="line">                        &quot;access&quot;,</div><div class="line">                        &quot;login&quot;</div><div class="line">                    ]</div><div class="line">                &#125;,</div><div class="line">                &quot;uci&quot;:&#123;</div><div class="line">                    &quot;*&quot;:[</div><div class="line">                        &quot;read&quot;,</div><div class="line">                        &quot;write&quot;</div><div class="line">                    ]</div><div class="line">                &#125;</div><div class="line">            &#125;,</div><div class="line">            &quot;data&quot;:&#123;</div><div class="line">                &quot;username&quot;:&quot;hac425&quot;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>里面会有一个 <code>ubus_rpc_session</code> 用于调用那些需要登录后才能调用的方法， 同时会显示所有可以通过 <code>http</code> 调用的方法。</p>
+<blockquote>
+<p>用于 <code>rpcd</code> 认证的用户名和密码在 <code>/etc/config/rpcd</code> 设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&gt; root@OpenWrt:~# cat /etc/config/rpcd </div><div class="line">&gt; </div><div class="line">&gt; config login</div><div class="line">&gt; 	option username &apos;hac425&apos;</div><div class="line">&gt; 	option password &apos;$p$hac425&apos;</div><div class="line">&gt; 	list read &apos;*&apos;</div><div class="line">&gt; 	list write &apos;*&apos;</div><div class="line">&gt; config login</div><div class="line">&gt;         option username &apos;test&apos;</div><div class="line">&gt;         option password &apos;$p$test&apos;</div><div class="line">&gt;         list read &apos;*&apos;</div><div class="line">&gt;         list write &apos;*&apos;</div><div class="line">&gt; </div><div class="line">&gt; </div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p><code>$p$test</code> 表示使用用户名为  <code>test</code> 的系统用户的密码作为 <code>rpc</code> 认证的密码</p>
+<p>所以需要增加一个用户，只需新建一个系统用户，然后增加一个 表项即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt; config login</div><div class="line">&gt;         option username &apos;xxxxx&apos;</div><div class="line">&gt;         option password &apos;$p$xxxxx&apos;</div><div class="line">&gt;         list read &apos;*&apos;</div><div class="line">&gt;         list write &apos;*&apos;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>获取到  <code>ubus_rpc_session</code>  后，就可以调用在 <code>/usr/share/rpcd/acl.d</code> 目录下设置好的允许调用的方法了。调用方法时用到的 <code>json</code> 数据的格式如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&#123; </div><div class="line">  &quot;jsonrpc&quot;: &quot;2.0&quot;,</div><div class="line">  &quot;id&quot;: &lt;unique-id-to-identify-request&gt;, </div><div class="line">  &quot;method&quot;: &quot;call&quot;,</div><div class="line">  &quot;params&quot;: [</div><div class="line">             &lt;ubus_rpc_session&gt;, &lt;ubus_object&gt;, &lt;ubus_method&gt;, </div><div class="line">             &#123; &lt;ubus_arguments&gt; &#125;</div><div class="line">            ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先使用 list 显示方法的详细信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -d &apos;&#123;&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;method&quot;:&quot;list&quot;,&quot;params&quot;:[&quot;749e6006d3be1149e8ef23c7dd6cb7ac&quot;,&quot;*&quot;],&quot;id&quot;:1&#125;&apos;  http://192.168.31.111/ubus</div></pre></td></tr></table></figure>
+<p>返回结果比较多，截个图看看</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1526648706099is1yrwhf.png?imageslim" alt="paste image"></p>
+<p>打印了方法的参数信息。</p>
+<p>接下来可以调用需要的方法，比如调用 <code>file</code> 命名空间内的 <code>read</code> 方法 读取 <code>/etc/passwd</code> 的文件内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">07:36 haclh@ubuntu:~ $ curl -d &apos;&#123; &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 1, &quot;method&quot;: &quot;call&quot;, &quot;params&quot;: [ &quot;749e6006d3be1149e8ef23c7dd6cb7ac&quot;, &quot;file&quot;, &quot;read&quot;, &#123; &quot;path&quot;: &quot;/etc/passwd&quot; &#125; ] &#125;&apos;  http://192.168.31.111/ubus</div><div class="line">&#123;&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:1,&quot;result&quot;:[0,&#123;&quot;data&quot;:&quot;root:x:0:0:root:\/root:\/bin\/ash\ndaemon:*:1:1:daemon:\/var:\/bin\/false\nftp:*:55:55:ftp:\/home\/ftp:\/bin\/false\nnetwork:*:101:101:network:\/var:\/bin\/false\nnobody:*:65534:65534:nobody:\/var:\/bin\/false\ndnsmasq:x:453:453:dnsmasq:\/var\/run\/dnsmasq:\/bin\/false\nhac425:x:1000:1000::\/home\/hac425:\ntest:x:1001:1001::\/home\/test:\n&quot;&#125;]&#125;</div></pre></td></tr></table></figure>
+<h1 id="安全风险"><a href="#安全风险" class="headerlink" title="安全风险"></a>安全风险</h1><h2 id="ACL配置问题简述"><a href="#ACL配置问题简述" class="headerlink" title="ACL配置问题简述"></a>ACL配置问题简述</h2><p><code>rpcd</code> 用于 <code>rpc</code> 调用，那么访问控制就非常重要。</p>
+<p><code>rpcd</code> 的配置就有个很大的坑，使用 <a href="https://wiki.openwrt.org/doc/techref/ubus" target="_blank" rel="external">官网 wiki</a> 上的配置，来配置用户的 <code>ACL</code> ，就会发现 <code>ACL</code> 不成功的情况，而且也没找到可以正常 配置 <code>ACL</code> 的方法 ~_~….</p>
+<p>以上面的例子为例， <code>hac425</code> 设置了 <code>ACL</code> ，允许其调用 很多方法</p>
+<p>而 <code>test</code> 用户没有配置 <code>ACL</code> 那么他应该只能调用非常有限的方法比如（<code>session</code> 中的 <code>login</code> ） </p>
+<p> 但是实际测试发现 ， <code>test</code> 也可以调用 允许 <code>hac425</code> 调用的方法，比如 <code>file</code> 命名空间内的 <code>read</code> 方法。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1526648718710uvhn6wei.png?imageslim" alt="paste image"></p>
+<p>由于一些错误配置，就会导致很多不该提供给用户调用的 方法被暴露出来，可能会造成一些问题（比如暴露 <code>file</code> 命名空间，就可能造成文件泄露等)。</p>
+<h2 id="CVE-2017-11361分析"><a href="#CVE-2017-11361分析" class="headerlink" title="CVE-2017-11361分析"></a>CVE-2017-11361分析</h2><p>这个漏洞是由于 对 <code>rpcd</code> 的错误配置（感觉是使用了官方的配置导致配置失效），导致管理 <code>web</code> 界面的普通用户可以通过 <code>rpcd</code> 暴露的大量方法，实现代码执行。（由于最新版的 <code>juci</code> 已经不使用 <code>rpcd</code> ，所以没有搭建复现环境）</p>
+<p>下面根据漏洞作者的博客，简述下漏洞发现流程。</p>
+<p>首先通过抓包，发现有 <code>rpc</code> 调用的登录包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&#123;&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;method&quot;:&quot;call&quot;,&quot;params&quot;:[&quot;00000000000000000000000000000000&quot;,&quot;session&quot;,&quot;login&quot;,&#123;&quot;username&quot;:&quot;user&quot;,&quot;password&quot;:&quot;testing&quot;&#125;],&quot;id&quot;:0&#125;</div></pre></td></tr></table></figure>
+<p>然后返回了大量的可以被调用的方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;&#123;&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:0,&quot;result&quot;:[0,&#123;&quot;ubus_rpc_session&quot;:&quot;eb3bd8e7beb01338b21533a89b678971&quot;,&quot;timeout&quot;:300,&quot;expires&quot;:299,&quot;acls&quot;:&#123;&quot;access-group&quot;:&#123;&quot;core&quot;:[&quot;read&quot;],&quot;juci-broadcom-dsl&quot;:[&quot;read&quot;],&quot;juci-broadcom-dsl-admin&quot;:[&quot;write&quot;],&quot;juci-broadcom-ethernet&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-broadcom-iptv&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-broadcom-vlan&quot;:[&quot;read&quot;],&quot;juci-broadcom-vlan-admin&quot;:[&quot;write&quot;],&quot;juci-ddns&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-diagnostics&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-dnsmasq-dhcp&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-dropbear&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-ethernet&quot;:[&quot;read&quot;],&quot;juci-event&quot;:[&quot;read&quot;],&quot;juci-firewall-fw3&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-igmpinfo&quot;:[&quot;read&quot;],&quot;juci-inteno-backup&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-inteno-provisioning&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-inteno-qos&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-inteno-voice-client&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-minidlna&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-mod-status&quot;:[&quot;read&quot;],&quot;juci-mod-system&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-natalie-dect&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-netmode&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-network-netifd&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-owsd&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-printer&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-realtime-graphs&quot;:[&quot;read&quot;],&quot;juci-samba&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-snmpd&quot;:[&quot;rea...............................</div></pre></td></tr></table></figure>
+<p>其中有可以用于文件读写的 <code>read</code> 和 <code>write</code> 方法，以及可以增加 <code>ssh_key</code> 的 <code>router.dropbear:add_ssh_key</code>  方法，组合起来就可以写 <code>ssh_key</code> , 然后 <code>ssh</code> 连过去。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>对于 <code>rpcd</code> 要限制暴露出来的方法， 避免出现严重的问题</p>
+<p><strong>参考</strong></p>
+<p><a href="http://www.cnblogs.com/nicephil/p/6768381.html#e4bdbfe794a8e696b9e6b395_2" target="_blank" rel="external">http://www.cnblogs.com/nicephil/p/6768381.html#e4bdbfe794a8e696b9e6b395_2</a></p>
+<p><a href="https://neonsea.uk/blog/2017/07/17/cve-2017-11361.html" target="_blank" rel="external">https://neonsea.uk/blog/2017/07/17/cve-2017-11361.html</a></p>
+]]></content>
+      
+        <categories>
+            
+            <category> 路由器安全 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> CVE-2017-11361 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[CVE-2018-10945 mongoose越界访问]]></title>
       <url>/2018/05/16/CVE-2018-10945-mongoose.html</url>
       <content type="html"><![CDATA[<p>Hello , I found a vulneratility in mg_handle_cgi function<br>The function is in <code>mongoose.c</code> , <code>line 8925</code> </p>
@@ -78,6 +229,18 @@
 <p>The vulneratility  may lead the rpcd acl don’t work successful.<br>This lead the evil user can call the method which <strong>is only permited call by otherone user</strong>.</p>
 ]]></content>
       
+        <categories>
+            
+            <category> vulnerability_report </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> CVE-2018-11116 </tag>
+            
+        </tags>
         
     </entry>
     

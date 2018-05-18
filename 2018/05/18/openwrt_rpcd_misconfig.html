@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html style="display: none;" lang="zh">
+    <head>
+    <meta charset="utf-8">
+    <meta name="baidu-site-verification" content="RC70b8mZ9A" />
+    <meta name="msvalidate.01" content="325714A6172A8D425D843D8163893A54" />
+    <meta name="google-site-verification" content="QAmqP2zEYaSBqoZ9w1x5RdOflLW2Fir2-yVs5LTIUxA" />
+    <meta name="google-site-verification" content="QgUuEnRKG0PKdnDrOxnq55x7VxQbCiprrMJpfakMlow" />
+    <!--
+        © Material Theme
+        https://github.com/viosey/hexo-theme-material
+        Version: 1.5.0 -->
+    <script>
+        window.materialVersion = "1.5.0"
+        // Delete localstorage with these tags
+        window.oldVersion = [
+            'codestartv1',
+            '1.3.4',
+            '1.4.0',
+            '1.4.0b1'
+        ]
+    </script>
+
+
+    <!-- dns prefetch -->
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+
+
+
+    <link rel="dns-prefetch" href="https://busuanzi.ibruce.info"/>
+
+
+
+        <link rel="dns-prefetch" href="https://cdn-city.livere.com"/>
+
+
+
+
+
+
+
+
+
+
+    <!-- Title -->
+    
+    <title>
+        
+            openwrt-rpcd服务ACL配置错误风险分析 | 
+        
+        穷则变，变则通，通则久
+    </title>
+
+    <!-- Meta & Info -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="theme-color" content="#0097A7">
+    <meta name="author" content="hac425">
+    <meta name="description" itemprop="description" content="">
+    <meta name="keywords" content=",CVE-2017-11361">
+
+    <!-- Import lsloader -->
+    <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
+
+    <!-- Import queue -->
+    <script>function Queue(){this.dataStore=[];this.offer=b;this.poll=d;this.execNext=a;this.debug=false;this.startDebug=c;function b(e){if(this.debug){console.log("Offered a Queued Function.")}if(typeof e==="function"){this.dataStore.push(e)}else{console.log("You must offer a function.")}}function d(){if(this.debug){console.log("Polled a Queued Function.")}return this.dataStore.shift()}function a(){var e=this.poll();if(e!==undefined){if(this.debug){console.log("Run a Queued Function.")}e()}}function c(){this.debug=true}}var queue=new Queue();</script>
+
+    <!-- Favicons -->
+    <link rel="icon shortcut" type="image/ico" href="/img/girl.png">
+    <link rel="icon" sizes="192x192" href="/img/girl.png">
+    <link rel="apple-touch-icon" href="/img/girl.png">
+
+    <!--iOS -->
+    <meta name="apple-mobile-web-app-title" content="Title">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="480">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="穷则变，变则通，通则久">
+
+    <!-- Site Verification -->
+    
+    
+
+    <!-- RSS -->
+    
+
+    <!--[if lte IE 9]>
+        <link rel="stylesheet" href="/css/ie-blocker.css">
+
+        
+            <script src="/js/ie-blocker.zhCN.js"></script>
+        
+    <![endif]-->
+
+    <!-- Import CSS -->
+    
+        <style id="material_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("material_css","/css/material.min.css?Z7a72R1E4SxzBKR/WGctOA==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+        <style id="style_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("style_css","/css/style.min.css?MKetZV3cUTfDxvMffaOezg==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+
+        
+
+    
+
+    
+
+    <!-- Config CSS -->
+
+<!-- Other Styles -->
+<style>
+  body, html {
+    font-family: Roboto, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    overflow-x: hidden !important;
+  }
+  
+  code {
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  }
+
+  a {
+    color: #00838F;
+  }
+
+  .mdl-card__media,
+  #search-label,
+  #search-form-label:after,
+  #scheme-Paradox .hot_tags-count,
+  #scheme-Paradox .sidebar_archives-count,
+  #scheme-Paradox .sidebar-colored .sidebar-header,
+  #scheme-Paradox .sidebar-colored .sidebar-badge{
+    background-color: #0097A7 !important;
+  }
+
+  /* Sidebar User Drop Down Menu Text Color */
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:hover,
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:focus {
+    color: #0097A7 !important;
+  }
+
+  #post_entry-right-info,
+  .sidebar-colored .sidebar-nav li:hover > a,
+  .sidebar-colored .sidebar-nav li:hover > a i,
+  .sidebar-colored .sidebar-nav li > a:hover,
+  .sidebar-colored .sidebar-nav li > a:hover i,
+  .sidebar-colored .sidebar-nav li > a:focus i,
+  .sidebar-colored .sidebar-nav > .open > a,
+  .sidebar-colored .sidebar-nav > .open > a:hover,
+  .sidebar-colored .sidebar-nav > .open > a:focus,
+  #ds-reset #ds-ctx .ds-ctx-entry .ds-ctx-head a {
+    color: #0097A7 !important;
+  }
+
+  .toTop {
+    background: #757575 !important;
+  }
+
+  .material-layout .material-post>.material-nav,
+  .material-layout .material-index>.material-nav,
+  .material-nav a {
+    color: #757575;
+  }
+
+  #scheme-Paradox .MD-burger-layer {
+    background-color: #757575;
+  }
+
+  #scheme-Paradox #post-toc-trigger-btn {
+    color: #757575;
+  }
+
+  .post-toc a:hover {
+    color: #00838F;
+    text-decoration: underline;
+  }
+
+</style>
+
+
+<!-- Theme Background Related-->
+
+    <style>
+      body{
+        background-color: #F5F5F5;
+      }
+
+      /* blog_info bottom background */
+      #scheme-Paradox .material-layout .something-else .mdl-card__supporting-text{
+        background-color: #fff;
+      }
+    </style>
+
+
+
+
+<!-- Fade Effect -->
+
+    <style>
+      .fade {
+        transition: all 800ms linear;
+        -webkit-transform: translate3d(0,0,0);
+        -moz-transform: translate3d(0,0,0);
+        -ms-transform: translate3d(0,0,0);
+        -o-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+        opacity: 1;
+      }
+
+      .fade.out{
+        opacity: 0;
+      }
+    </style>
+
+
+<!-- Import Font -->
+<!-- Import Roboto -->
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+
+
+<!-- Import Material Icon -->
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+
+
+    <!-- Import jQuery -->
+    
+        <script>lsloader.load("jq_js","/js/jquery.min.js?ezyEvm8ST5CGfpA+kFFi1g==", true)</script>
+    
+
+    <!-- The Open Graph protocol -->
+    <meta property="og:url" content="http://blog.hac425.top">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="openwrt-rpcd服务ACL配置错误风险分析 | 穷则变，变则通，通则久">
+    <meta property="og:image" content="http://blog.hac425.top/img/girl.png" />
+    <meta property="og:description" content="">
+    <meta property="og:article:tag" content="CVE-2017-11361"> 
+
+    
+        <meta property="article:published_time" content="Fri May 18 2018 21:01:00 GMT+0800" />
+        <meta property="article:modified_time" content="Fri May 18 2018 21:06:01 GMT+0800" />
+    
+
+    <!-- The Twitter Card protocol -->
+    <meta name="twitter:title" content="openwrt-rpcd服务ACL配置错误风险分析 | 穷则变，变则通，通则久">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="http://blog.hac425.top/img/girl.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="http://blog.hac425.top" />
+
+    <!-- Add canonical link for SEO -->
+    
+        <link rel="canonical" href="http://blog.hac425.top/2018/05/18/openwrt_rpcd_misconfig.html" />
+    
+
+    <!-- Structured-data for SEO -->
+    
+        
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": "http://blog.hac425.top/2018/05/18/openwrt_rpcd_misconfig.html",
+    "headline": "openwrt-rpcd服务ACL配置错误风险分析",
+    "datePublished": "Fri May 18 2018 21:01:00 GMT+0800",
+    "dateModified": "Fri May 18 2018 21:06:01 GMT+0800",
+    "author": {
+        "@type": "Person",
+        "name": "hac425",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/img/girl.png"
+        },
+        "description": "纵横捭阖，冷心为上"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "穷则变，变则通，通则久",
+        "logo": {
+            "@type":"ImageObject",
+            "url": "/img/girl.png"
+        }
+    },
+    "keywords": ",CVE-2017-11361",
+    "description": "",
+}
+</script>
+
+
+    
+
+    <!-- Analytics -->
+    
+    
+        <script>
+    var _hmt = _hmt || [];
+    (function() {var hm = document.createElement('script');
+    hm.src = 'https://hm.baidu.com/hm.js?99747687c69d73d9102f032f78f03e96';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+    
+    
+
+    <!-- Custom Head -->
+    
+
+</head>
+
+
+    
+        <body id="scheme-Paradox" class="lazy">
+            <div class="material-layout  mdl-js-layout has-drawer is-upgraded">
+                
+
+                <!-- Main Container -->
+                <main class="material-layout__content" id="main">
+
+                    <!-- Top Anchor -->
+                    <div id="top"></div>
+
+                    
+                        <!-- Hamburger Button -->
+                        <button class="MD-burger-icon sidebar-toggle">
+                            <span class="MD-burger-layer"></span>
+                        </button>
+                    
+
+                    <!-- Post TOC -->
+
+    
+    <!-- Back Button -->
+    <!--
+    <div class="material-back" id="backhome-div" tabindex="0">
+        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+           href="#" onclick="window.history.back();return false;"
+           target="_self"
+           role="button"
+           data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">arrow_back</i>
+            <span class="mdl-button__ripple-container">
+                <span class="mdl-ripple"></span>
+            </span>
+        </a>
+    </div>
+    -->
+
+
+    <!-- Left aligned menu below button -->
+    
+    
+    <button id="post-toc-trigger-btn"
+        class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">format_list_numbered</i>
+    </button>
+
+    <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Openwrt-Helloworld"><span class="post-toc-number">2.</span> <span class="post-toc-text">Openwrt Helloworld</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#编译"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">编译</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#挂载到vmware"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">挂载到vmware</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#基本配置"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">基本配置</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#ubus"><span class="post-toc-number">3.</span> <span class="post-toc-text">ubus</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#介绍"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">介绍</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#使用命令行工具与ubus交互"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">使用命令行工具与ubus交互</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#通过http与ubus交互"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">通过http与ubus交互</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#配置-uhttpd"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">配置 uhttpd</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#rpcd配置"><span class="post-toc-number">3.5.</span> <span class="post-toc-text">rpcd配置</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#安全风险"><span class="post-toc-number">4.</span> <span class="post-toc-text">安全风险</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#ACL配置问题简述"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">ACL配置问题简述</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#CVE-2017-11361分析"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">CVE-2017-11361分析</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">总结</span></a></li></ol></li></ol>
+    </ul>
+    
+
+
+
+
+<!-- Layouts -->
+
+    <!-- Post Module -->
+    <div class="material-post_container">
+
+        <div class="material-post mdl-grid">
+            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+
+                <!-- Post Header(Thumbnail & Title) -->
+                
+    <!-- Paradox Post Header -->
+    
+        
+            <!-- Random Thumbnail -->
+            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
+            <script type="text/ls-javascript" id="post-thumbnail-script">
+    var randomNum = Math.floor(Math.random() * 19 + 1);
+
+    $('.post_thumbnail-random').attr('data-original', '/img/random/material-' + randomNum + '.png');
+    $('.post_thumbnail-random').addClass('lazy');
+</script>
+
+        
+    
+            <p class="article-headline-p">
+                openwrt-rpcd服务ACL配置错误风险分析
+            </p>
+        </div>
+
+
+
+
+
+                
+                    <!-- Paradox Post Info -->
+                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+
+    <!-- Author Avatar -->
+    <div id="author-avatar">
+        <img src="/img/girl.png" width="44px" height="44px" alt="Author Avatar"/>
+    </div>
+    <!-- Author Name & Date -->
+    <div>
+        <strong>hac425</strong>
+        <span>5月 18, 2018</span>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <!-- Favorite -->
+    <!--
+        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
+            <i class="material-icons" role="presentation">favorite</i>
+            <span class="visuallyhidden">favorites</span>
+        </button>
+    -->
+
+    <!-- Qrcode -->
+    
+        <button id="article-functions-qrcode-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">devices other</i>
+    <span class="visuallyhidden">devices other</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
+    <li class="mdl-menu__item">在其它设备中阅读本文章</li>
+    
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACY0lEQVR42u3aQZbjIAwFwNz/0jPbWUyc/4Wh3XnlVb+0AxQLoQi9/nz188LDw8PDw8PDw3sY7xU//xkofv/fT969+e5b7drw8PDwzvA+hNrL5V4D8hHejVOvDQ8PD+8gLwnZyfuzQD+bCw8PD+838vKjImfj4eHhfStvliK3xQg8PDy8J/OSH/z5lHmgf1CtBQ8PDy/m5ZdM5/8+er+Hh4eHF/DqlqblwkGbWB/tKcPDw8MLeO30180B+aXXLGW/bgLDw8PDO8NbKT3UEy+UcYt2Ljw8PLzjvFnJdRbK2wMmSbvx8PDwzvBmye76CO1/hyk1Hh4e3mZeEu6T4yFpUGjT62guPDw8vM28lYLC9cRtCWOWWOPh4eGd5yWhPD8q2hQ8X0neZICHh4e3mzdrgUpCeRvcZ41ceHh4eOd5s6Ccp8v5lf9Kyo6Hh4d3ktdOk3y3bURoN+XDpuPh4eFt5q2kyzmpLUAkG1Sn1Hh4eHi38vKr+jzoz67EZmULPDw8vJO89vpqBZwfGLMCLh4eHt5JXruIlTfb6642TcfDw8M7w2uLBXnS3JZu27aD4bmHh4eHt42XJ9B5cWE9Wb+hGIGHh4d3Ey8vKKy3BbTbVLTD4uHh4W3mtU+bTLctBe0m4uHh4Z3nteH4rvQ3D/1t8o2Hh4d3hjdrBVjZgnycGw4GPDw8vG28NkDnaXcb9LfUWvDw8PAew5u1Us3AP3Aw4OHh4W07GJKUum1TGCbreHh4eAd5+ZXVysXVbHOLFgQ8PDy8I7y2BJAscVb2XT8e8PDw8Hbzvu/Bw8PDw8PDw8N7wPMXu6gWEQ2pWvUAAAAASUVORK5CYII=">
+    
+</ul>
+
+    
+
+    <!-- Tags (bookmark) -->
+    
+    <button id="article-functions-viewtags-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+        <i class="material-icons" role="presentation">bookmark</i>
+        <span class="visuallyhidden">bookmark</span>
+    </button>
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
+        <li class="mdl-menu__item">
+        <a class="post_tag-link" href="/tags/CVE-2017-11361/">CVE-2017-11361</a>
+    </ul>
+    
+
+    <!-- Share -->
+    <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">share</i>
+    <span class="visuallyhidden">share</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
+    
+
+    
+        
+            <!-- Busuanzi Views -->
+            <a class="post_share-link" href="#">
+                <li class="mdl-menu__item">
+                    <span id="busuanzi_container_page_pv">
+                        <span id="busuanzi_value_page_pv"></span>&nbsp;浏览量
+                    </span>
+                </li>
+            </a>
+        
+    
+
+    <!-- Share Weibo -->
+    
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=openwrt-rpcd服务ACL配置错误风险分析&url=http://blog.hac425.top/2018/05/18/openwrt_rpcd_misconfig.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
+            <li class="mdl-menu__item">
+                分享到微博
+            </li>
+        </a>
+    
+
+    <!-- Share Twitter -->
+    
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=openwrt-rpcd服务ACL配置错误风险分析&url=http://blog.hac425.top/2018/05/18/openwrt_rpcd_misconfig.html&via=hac425" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Twitter
+            </li>
+        </a>
+    
+
+    <!-- Share Facebook -->
+    
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2018/05/18/openwrt_rpcd_misconfig.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Facebook
+            </li>
+        </a>
+    
+
+    <!-- Share Google+ -->
+    
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2018/05/18/openwrt_rpcd_misconfig.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Google+
+            </li>
+        </a>
+    
+
+    <!-- Share LinkedIn -->
+    
+
+    <!-- Share QQ -->
+    
+
+    <!-- Share Telegram -->
+    
+</ul>
+
+</div>
+
+                
+
+                <!-- Post Content -->
+                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+    
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><code>openwrt</code> 是一个用于的 路由器 的开源系统。</p>
+<p>其他类似的路由器系统相比它的更新速度非常的快，可以看看 <code>github</code> 的更新速度</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/openwrt/openwrt</div></pre></td></tr></table></figure>
+<p>感觉以后用到 <code>openwrt</code> 的路由器会越来越多，而且 <code>openwrt</code> 可以直接用 <code>vmware</code> 来运行，也减少了学习的成本。</p>
+<p>本文介绍一下 <code>openwrt</code> 的 <code>ubus</code> 机制 以及怎么利用 <code>rpcd</code> 通过 <code>http</code> 来访问 <code>openwrt</code> 里面的 <code>ubus</code>. 最后以一个 <code>cve</code> 为例介绍 <code>rpcd</code> 配置过程失误导致的安全问题。</p>
+<h1 id="Openwrt-Helloworld"><a href="#Openwrt-Helloworld" class="headerlink" title="Openwrt Helloworld"></a>Openwrt Helloworld</h1><h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>首先安装好需要的包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">sudo apt-get update</div><div class="line">sudo  apt-get  install  subversion  git-core</div><div class="line">sudo  apt-get install  gcc g++ binutils patch bzip2 flex bison make autoconf gettext textinfo unzip	sharutils gawk	ncurses-term zliblg-dev	libncurses5-dev</div></pre></td></tr></table></figure>
+<p>然后去 <code>github</code> 下载源码包 （比较大，建议挂 <code>ss</code> 下载）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone git://git.openwrt.org/openwrt.git</div></pre></td></tr></table></figure>
+<p>更新编译依赖的包 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">scripts/feeds update -a</div><div class="line">scripts/feeds install –a</div></pre></td></tr></table></figure>
+<p>然后通过 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">make menuconfig</div></pre></td></tr></table></figure>
+<p>配置一下编译参数，使他生成 <code>vmdk</code> 镜像文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Tartget Images</div><div class="line">	[*] Build VMware image files (VMDK) </div><div class="line">	[*] ext4  ---&gt;</div></pre></td></tr></table></figure>
+<p>然后编译即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">make -j4 V=99</div></pre></td></tr></table></figure>
+<p>最后会在 <code>bin/targets/x86/generic/</code> 目录下生成编译好的文件</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1526648576052248x0pm4.png?imageslim" alt="paste image"></p>
+<p>我们使用 <code>openwrt-x86-generic-combined-ext4.vmdk</code> 即可。</p>
+<h2 id="挂载到vmware"><a href="#挂载到vmware" class="headerlink" title="挂载到vmware"></a>挂载到vmware</h2><p>然后新建一个 虚拟机， 选择目标操作系统为 <strong>其他 linux  64 位</strong> 的即可，然后后面选择硬盘时，使用刚刚生成的硬盘。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15266485888223p9p0mp9.png?imageslim" alt="paste image"></p>
+<p>然后开机启动即可。</p>
+<blockquote>
+<p>添加了那么多个网卡的原因是我这里前面几个网卡都是不能正常联网的，后面的就可以正常了~~~</p>
+</blockquote>
+<p>这时不出意外，应该可以进入 <code>shell</code> 了。</p>
+<h2 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h2><p>首先修改一下 <code>root</code> 的密码，方便 <code>ssh</code> 访问</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">passwd root</div></pre></td></tr></table></figure>
+<p>然后安装一个 <code>web</code> 界面，用来方便的管理路由器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">opkg update</div><div class="line">opkg install luci</div></pre></td></tr></table></figure>
+<p>然后启动 <code>uhttpd</code> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">/etc/init.d/uhttpd start</div><div class="line">/etc/init.d/uhttpd enable</div></pre></td></tr></table></figure>
+<p>这时由于防火墙的原因可能无法访问，由于是虚拟机，这里直接清空了 防火墙的规则</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -F</div></pre></td></tr></table></figure>
+<p>然后在浏览器上访问 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://server_ip/</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15266486100259i11eaex.png?imageslim" alt="paste image"></p>
+<h1 id="ubus"><a href="#ubus" class="headerlink" title="ubus"></a>ubus</h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p><code>ubus</code> 是 <code>openwrt</code> 引入的一个消息总线，主要作用是实现不同应用程序之间的信息交互。</p>
+<p><code>ubus</code> 启动后会在后台运行 <code>ubusd</code> 进程，该进程监听一个 <code>unix</code> 套接字用于与其他应用程序通信。</p>
+<p>其他应用程序可基于 <code>libubox</code> 提供的接口（或自己实现）与其通信。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15266486282884yy3dore.png?imageslim" alt="paste image"></p>
+<p>用户可以使用 <code>ubus</code> 的命令行工具和 <code>ubus</code> 总线进行通信， 也可以使用 <code>libubus.so</code> 里面的 <code>api</code> 来和 <code>ubus</code>总线交互， 利用 <code>uhttpd</code> 的模块 和 <code>rpcd</code> 还可以实现通过 <code>http</code> 来访问 <code>ubus</code> 总线</p>
+<p> 如下图所示：</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1526648635716om08afxp.png?imageslim" alt="paste image"></p>
+<h2 id="使用命令行工具与ubus交互"><a href="#使用命令行工具与ubus交互" class="headerlink" title="使用命令行工具与ubus交互"></a>使用命令行工具与ubus交互</h2><p>命令行工具的命令就是 <code>ubus</code> , 列举一下常用的选项</p>
+<p><strong>list</strong></p>
+<p>不加参数的话会列举出总线上所有的可用的命名空间。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">root@OpenWrt:~# ubus list</div><div class="line">dhcp</div><div class="line">dnsmasq</div><div class="line">foo</div><div class="line">log</div><div class="line">network</div><div class="line">network.device</div><div class="line">network.interface</div><div class="line">network.interface.lan</div><div class="line">network.interface.loopback</div><div class="line">network.interface.wan</div><div class="line">network.interface.wan6</div><div class="line">network.rrdns</div><div class="line">network.wireless</div><div class="line">service</div><div class="line">session</div><div class="line">system</div><div class="line">uci</div></pre></td></tr></table></figure>
+<p>使用 <code>-v</code>  选项可以列举出 命名空间内方法的详细信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">root@OpenWrt:~# ubus -v list</div><div class="line">&apos;dhcp&apos; @f236b80a</div><div class="line">	&quot;ipv4leases&quot;:&#123;&#125;</div><div class="line">	&quot;ipv6leases&quot;:&#123;&#125;</div><div class="line">&apos;dnsmasq&apos; @a7e0fefe</div><div class="line">&apos;foo&apos; @224fa516</div><div class="line">	&quot;bar&quot;:&#123;&quot;arg1&quot;:&quot;Boolean&quot;,&quot;arg2&quot;:&quot;Integer&quot;,&quot;arg3&quot;:&quot;String&quot;&#125;</div><div class="line">	&quot;toto&quot;:&#123;&#125;</div><div class="line">&apos;log&apos; @fb3f988f</div><div class="line">	&quot;read&quot;:&#123;&quot;lines&quot;:&quot;Integer&quot;,&quot;stream&quot;:&quot;Boolean&quot;,&quot;oneshot&quot;:&quot;Boolean&quot;&#125;</div><div class="line">	&quot;write&quot;:&#123;&quot;event&quot;:&quot;String&quot;&#125;</div><div class="line">&apos;network&apos; @58aebe07</div><div class="line">	&quot;restart&quot;:&#123;&#125;</div><div class="line">	&quot;reload&quot;:&#123;&#125;</div><div class="line">	&quot;add_host_route&quot;:&#123;&quot;target&quot;:&quot;String&quot;,&quot;v6&quot;:&quot;Boolean&quot;,&quot;interface&quot;:&quot;String&quot;&#125;</div><div class="line">	&quot;get_proto_handlers&quot;:&#123;&#125;</div><div class="line">	&quot;add_dynamic&quot;:&#123;&quot;name&quot;:&quot;String&quot;&#125;</div><div class="line">...............................................................</div><div class="line">...............................................................</div><div class="line">...............................................................</div></pre></td></tr></table></figure>
+<p>后面还可以加上命名空间的名字，使得只打印该命名空间内部的方法信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">root@OpenWrt:~# ubus -v list network.device</div><div class="line">&apos;network.device&apos; @61cffe58</div><div class="line">	&quot;status&quot;:&#123;&quot;name&quot;:&quot;String&quot;&#125;</div><div class="line">	&quot;set_alias&quot;:&#123;&quot;alias&quot;:&quot;Array&quot;,&quot;device&quot;:&quot;String&quot;&#125;</div><div class="line">	&quot;set_state&quot;:&#123;&quot;name&quot;:&quot;String&quot;,&quot;defer&quot;:&quot;Boolean&quot;&#125;</div></pre></td></tr></table></figure>
+<p> 这里打印了 <code>network.device</code> 命名空间内的方法的信息。可以看到它有三个方法可以被调用。</p>
+<p><strong>call</strong></p>
+<p>使用 <code>call</code> 选项就可以调用指定命名空间的方法了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">root@OpenWrt:~# ubus call  network.device status &apos;&#123;&quot;name&quot;:&quot;eth1&quot;&#125;&apos;</div><div class="line">&#123;</div><div class="line">	&quot;external&quot;: false,</div><div class="line">	&quot;present&quot;: true,</div><div class="line">	&quot;type&quot;: &quot;Network device&quot;,</div><div class="line">	&quot;up&quot;: true,</div><div class="line">	&quot;carrier&quot;: true,</div><div class="line">	&quot;link-advertising&quot;: [</div></pre></td></tr></table></figure>
+<p>调用 <code>network.device</code> 的 <code>status</code> 方法，参数通过 <code>json</code> 数据格式传递，<code>name</code> 指定设备名 ，这里的作用就是获取 <code>eth1</code> 的设备信息。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/152664867393954ia6mko.png?imageslim" alt="paste image"></p>
+<p>一些 <code>openwrt</code> 内置的命名空间以及他们的参数说明信息 , 可以看 <code>openwrt</code> 的官方 <code>wiki</code>， 其他更多的命令信息也可以查看这个 <code>wiki</code> 。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://wiki.openwrt.org/zh-cn/doc/techref/ubus?s[]=ubus</div></pre></td></tr></table></figure>
+<h2 id="通过http与ubus交互"><a href="#通过http与ubus交互" class="headerlink" title="通过http与ubus交互"></a>通过http与ubus交互</h2><h2 id="配置-uhttpd"><a href="#配置-uhttpd" class="headerlink" title="配置 uhttpd"></a>配置 uhttpd</h2><p>首先需要修改 <code>uhttpd</code> 的配置文件, 使得 <code>uhttpd</code> 支持 <code>ubus_prefix</code> </p>
+<p>修改 <code>/etc/init.d/uhttpd</code></p>
+   <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">start_instance() &#123; </div><div class="line">... </div><div class="line">	append_arg &quot;$cfg&quot; ubus_prefix &quot;-u&quot; </div><div class="line">... </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>修改 <code>/etc/config/uhttpd</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">... </div><div class="line">	option ubus_prefix /ubus </div><div class="line">...</div></pre></td></tr></table></figure>
+<p>然后重启一下 <code>uhttpd</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/etc/init.d/uhttpd restart</div></pre></td></tr></table></figure>
+<p>之后可以通过 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://server_ip/ubus</div></pre></td></tr></table></figure>
+<p>与 <code>ubus</code> 交互（使用 <code>post</code> 请求）</p>
+<h2 id="rpcd配置"><a href="#rpcd配置" class="headerlink" title="rpcd配置"></a>rpcd配置</h2><p>通过 <code>http</code> 来与 <code>ubus</code> 总线进行交互是通过 <code>rpcd</code> 进行的。 </p>
+<p><code>rpcd</code> 是有访问控制措施的。</p>
+<p>其中访问控制配置文件位于 <code>/usr/share/rpcd/acl.d</code> 目录下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@OpenWrt:/usr/share/rpcd/acl.d# ls</div><div class="line">hac425.json           luci-base.json        unauthenticated.json</div></pre></td></tr></table></figure>
+<blockquote>
+<p><code>hac425.json</code> 是我后面新建的，内容为 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">&gt; &#123;</div><div class="line">&gt;         &quot;hac425&quot;: &#123;</div><div class="line">&gt;                 &quot;description&quot;: &quot;acl for hac425&quot;,</div><div class="line">&gt;                 &quot;read&quot;: &#123;</div><div class="line">&gt;                         &quot;ubus&quot;: &#123;</div><div class="line">&gt;                                 &quot;file&quot;: [ &quot;*&quot; ],</div><div class="line">&gt;                                 &quot;log&quot;: [ &quot;*&quot; ],</div><div class="line">&gt;                                 &quot;service&quot;: [ &quot;*&quot; ],</div><div class="line">&gt;                         &#125;,</div><div class="line">&gt;                 &#125;,</div><div class="line">&gt;                 &quot;write&quot;: &#123;</div><div class="line">&gt;                         &quot;ubus&quot;: &#123;</div><div class="line">&gt;                                 &quot;file&quot;: [ &quot;*&quot; ],</div><div class="line">&gt;                                 &quot;log&quot;: [ &quot;*&quot; ],</div><div class="line">&gt;                                 &quot;service&quot;: [ &quot;*&quot; ],</div><div class="line">&gt;                         &#125;,</div><div class="line">&gt;                 &#125;</div><div class="line">&gt;         &#125;</div><div class="line">&gt; &#125;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p>这个定义就是允许 <code>hac425</code> 使用 <code>file, log, service</code> 命名空间下的所有方法。</p>
+<p>需要为其他用户增加 <code>ACL</code> ，可以根据官方提供的配置文件 <code>demo</code> 进行修改。</p>
+</blockquote>
+<p>这个目录下的文件名是没有作用的，起作用的是 <code>json</code> 文件里面的顶层元素，用于定义 访问控制针对的用户的用户名</p>
+<p>以 <code>unauthenticated.json</code> 为例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">	&quot;unauthenticated&quot;: &#123;</div><div class="line">		&quot;description&quot;: &quot;Access controls for unauthenticated requests&quot;,</div><div class="line">		&quot;read&quot;: &#123;</div><div class="line">			&quot;ubus&quot;: &#123;</div><div class="line">				&quot;session&quot;: [</div><div class="line">					&quot;access&quot;,</div><div class="line">					&quot;login&quot;</div><div class="line">				]</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个文件定义了没有登录的用户（就是所有人）都可以使用的方法是 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">session 命名空间里面的 access, login 方法</div></pre></td></tr></table></figure>
+<p>调用 <code>login</code> 进行登录后会获得一个 <code>ubus_rpc_session</code>， 用于后面的 <code>ubus</code> 调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -d &apos;&#123; &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 1, &quot;method&quot;: &quot;call&quot;, &quot;params&quot;: [ &quot;00000000000000000000000000000000&quot;, &quot;session&quot;, &quot;login&quot;, &#123; &quot;username&quot;: &quot;hac425&quot;, &quot;password&quot;: &quot;123&quot;  &#125; ] &#125;&apos;  http://192.168.31.111/ubus</div></pre></td></tr></table></figure>
+<p>如果用户名密码正确的话会返回 （默认的用户名和密码是 <code>root</code> 的用户名和密码， 后面介绍怎么修改）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    &quot;jsonrpc&quot;:&quot;2.0&quot;,</div><div class="line">    &quot;id&quot;:1,</div><div class="line">    &quot;result&quot;:[</div><div class="line">        0,</div><div class="line">        &#123;</div><div class="line">            &quot;ubus_rpc_session&quot;:&quot;749e6006d3be1149e8ef23c7dd6cb7ac&quot;,</div><div class="line">            &quot;timeout&quot;:300,</div><div class="line">            &quot;expires&quot;:300,</div><div class="line">            &quot;acls&quot;:&#123;</div><div class="line">                &quot;access-group&quot;:&#123;</div><div class="line">                    &quot;hac425&quot;:[</div><div class="line">                        &quot;read&quot;,</div><div class="line">                        &quot;write&quot;</div><div class="line">                    ],</div><div class="line">                    &quot;uci-access&quot;:[</div><div class="line">                        &quot;read&quot;,</div><div class="line">                        &quot;write&quot;</div><div class="line">                    ],</div><div class="line">                    &quot;unauthenticated&quot;:[</div><div class="line">                        &quot;read&quot;</div><div class="line">                    ]</div><div class="line">                &#125;,</div><div class="line">                &quot;ubus&quot;:&#123;</div><div class="line">                    &quot;file&quot;:[</div><div class="line">                        &quot;*&quot;</div><div class="line">                    ],</div><div class="line">                    &quot;log&quot;:[</div><div class="line">                        &quot;*&quot;</div><div class="line">                    ],</div><div class="line">                    &quot;service&quot;:[</div><div class="line">                        &quot;*&quot;</div><div class="line">                    ],</div><div class="line">                    &quot;session&quot;:[</div><div class="line">                        &quot;access&quot;,</div><div class="line">                        &quot;login&quot;</div><div class="line">                    ]</div><div class="line">                &#125;,</div><div class="line">                &quot;uci&quot;:&#123;</div><div class="line">                    &quot;*&quot;:[</div><div class="line">                        &quot;read&quot;,</div><div class="line">                        &quot;write&quot;</div><div class="line">                    ]</div><div class="line">                &#125;</div><div class="line">            &#125;,</div><div class="line">            &quot;data&quot;:&#123;</div><div class="line">                &quot;username&quot;:&quot;hac425&quot;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>里面会有一个 <code>ubus_rpc_session</code> 用于调用那些需要登录后才能调用的方法， 同时会显示所有可以通过 <code>http</code> 调用的方法。</p>
+<blockquote>
+<p>用于 <code>rpcd</code> 认证的用户名和密码在 <code>/etc/config/rpcd</code> 设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&gt; root@OpenWrt:~# cat /etc/config/rpcd </div><div class="line">&gt; </div><div class="line">&gt; config login</div><div class="line">&gt; 	option username &apos;hac425&apos;</div><div class="line">&gt; 	option password &apos;$p$hac425&apos;</div><div class="line">&gt; 	list read &apos;*&apos;</div><div class="line">&gt; 	list write &apos;*&apos;</div><div class="line">&gt; config login</div><div class="line">&gt;         option username &apos;test&apos;</div><div class="line">&gt;         option password &apos;$p$test&apos;</div><div class="line">&gt;         list read &apos;*&apos;</div><div class="line">&gt;         list write &apos;*&apos;</div><div class="line">&gt; </div><div class="line">&gt; </div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p><code>$p$test</code> 表示使用用户名为  <code>test</code> 的系统用户的密码作为 <code>rpc</code> 认证的密码</p>
+<p>所以需要增加一个用户，只需新建一个系统用户，然后增加一个 表项即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt; config login</div><div class="line">&gt;         option username &apos;xxxxx&apos;</div><div class="line">&gt;         option password &apos;$p$xxxxx&apos;</div><div class="line">&gt;         list read &apos;*&apos;</div><div class="line">&gt;         list write &apos;*&apos;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>获取到  <code>ubus_rpc_session</code>  后，就可以调用在 <code>/usr/share/rpcd/acl.d</code> 目录下设置好的允许调用的方法了。调用方法时用到的 <code>json</code> 数据的格式如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&#123; </div><div class="line">  &quot;jsonrpc&quot;: &quot;2.0&quot;,</div><div class="line">  &quot;id&quot;: &lt;unique-id-to-identify-request&gt;, </div><div class="line">  &quot;method&quot;: &quot;call&quot;,</div><div class="line">  &quot;params&quot;: [</div><div class="line">             &lt;ubus_rpc_session&gt;, &lt;ubus_object&gt;, &lt;ubus_method&gt;, </div><div class="line">             &#123; &lt;ubus_arguments&gt; &#125;</div><div class="line">            ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先使用 list 显示方法的详细信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -d &apos;&#123;&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;method&quot;:&quot;list&quot;,&quot;params&quot;:[&quot;749e6006d3be1149e8ef23c7dd6cb7ac&quot;,&quot;*&quot;],&quot;id&quot;:1&#125;&apos;  http://192.168.31.111/ubus</div></pre></td></tr></table></figure>
+<p>返回结果比较多，截个图看看</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1526648706099is1yrwhf.png?imageslim" alt="paste image"></p>
+<p>打印了方法的参数信息。</p>
+<p>接下来可以调用需要的方法，比如调用 <code>file</code> 命名空间内的 <code>read</code> 方法 读取 <code>/etc/passwd</code> 的文件内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">07:36 haclh@ubuntu:~ $ curl -d &apos;&#123; &quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 1, &quot;method&quot;: &quot;call&quot;, &quot;params&quot;: [ &quot;749e6006d3be1149e8ef23c7dd6cb7ac&quot;, &quot;file&quot;, &quot;read&quot;, &#123; &quot;path&quot;: &quot;/etc/passwd&quot; &#125; ] &#125;&apos;  http://192.168.31.111/ubus</div><div class="line">&#123;&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:1,&quot;result&quot;:[0,&#123;&quot;data&quot;:&quot;root:x:0:0:root:\/root:\/bin\/ash\ndaemon:*:1:1:daemon:\/var:\/bin\/false\nftp:*:55:55:ftp:\/home\/ftp:\/bin\/false\nnetwork:*:101:101:network:\/var:\/bin\/false\nnobody:*:65534:65534:nobody:\/var:\/bin\/false\ndnsmasq:x:453:453:dnsmasq:\/var\/run\/dnsmasq:\/bin\/false\nhac425:x:1000:1000::\/home\/hac425:\ntest:x:1001:1001::\/home\/test:\n&quot;&#125;]&#125;</div></pre></td></tr></table></figure>
+<h1 id="安全风险"><a href="#安全风险" class="headerlink" title="安全风险"></a>安全风险</h1><h2 id="ACL配置问题简述"><a href="#ACL配置问题简述" class="headerlink" title="ACL配置问题简述"></a>ACL配置问题简述</h2><p><code>rpcd</code> 用于 <code>rpc</code> 调用，那么访问控制就非常重要。</p>
+<p><code>rpcd</code> 的配置就有个很大的坑，使用 <a href="https://wiki.openwrt.org/doc/techref/ubus" target="_blank" rel="external">官网 wiki</a> 上的配置，来配置用户的 <code>ACL</code> ，就会发现 <code>ACL</code> 不成功的情况，而且也没找到可以正常 配置 <code>ACL</code> 的方法 ~_~….</p>
+<p>以上面的例子为例， <code>hac425</code> 设置了 <code>ACL</code> ，允许其调用 很多方法</p>
+<p>而 <code>test</code> 用户没有配置 <code>ACL</code> 那么他应该只能调用非常有限的方法比如（<code>session</code> 中的 <code>login</code> ） </p>
+<p> 但是实际测试发现 ， <code>test</code> 也可以调用 允许 <code>hac425</code> 调用的方法，比如 <code>file</code> 命名空间内的 <code>read</code> 方法。</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1526648718710uvhn6wei.png?imageslim" alt="paste image"></p>
+<p>由于一些错误配置，就会导致很多不该提供给用户调用的 方法被暴露出来，可能会造成一些问题（比如暴露 <code>file</code> 命名空间，就可能造成文件泄露等)。</p>
+<h2 id="CVE-2017-11361分析"><a href="#CVE-2017-11361分析" class="headerlink" title="CVE-2017-11361分析"></a>CVE-2017-11361分析</h2><p>这个漏洞是由于 对 <code>rpcd</code> 的错误配置（感觉是使用了官方的配置导致配置失效），导致管理 <code>web</code> 界面的普通用户可以通过 <code>rpcd</code> 暴露的大量方法，实现代码执行。（由于最新版的 <code>juci</code> 已经不使用 <code>rpcd</code> ，所以没有搭建复现环境）</p>
+<p>下面根据漏洞作者的博客，简述下漏洞发现流程。</p>
+<p>首先通过抓包，发现有 <code>rpc</code> 调用的登录包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&#123;&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;method&quot;:&quot;call&quot;,&quot;params&quot;:[&quot;00000000000000000000000000000000&quot;,&quot;session&quot;,&quot;login&quot;,&#123;&quot;username&quot;:&quot;user&quot;,&quot;password&quot;:&quot;testing&quot;&#125;],&quot;id&quot;:0&#125;</div></pre></td></tr></table></figure>
+<p>然后返回了大量的可以被调用的方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;&#123;&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:0,&quot;result&quot;:[0,&#123;&quot;ubus_rpc_session&quot;:&quot;eb3bd8e7beb01338b21533a89b678971&quot;,&quot;timeout&quot;:300,&quot;expires&quot;:299,&quot;acls&quot;:&#123;&quot;access-group&quot;:&#123;&quot;core&quot;:[&quot;read&quot;],&quot;juci-broadcom-dsl&quot;:[&quot;read&quot;],&quot;juci-broadcom-dsl-admin&quot;:[&quot;write&quot;],&quot;juci-broadcom-ethernet&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-broadcom-iptv&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-broadcom-vlan&quot;:[&quot;read&quot;],&quot;juci-broadcom-vlan-admin&quot;:[&quot;write&quot;],&quot;juci-ddns&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-diagnostics&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-dnsmasq-dhcp&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-dropbear&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-ethernet&quot;:[&quot;read&quot;],&quot;juci-event&quot;:[&quot;read&quot;],&quot;juci-firewall-fw3&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-igmpinfo&quot;:[&quot;read&quot;],&quot;juci-inteno-backup&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-inteno-provisioning&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-inteno-qos&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-inteno-voice-client&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-minidlna&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-mod-status&quot;:[&quot;read&quot;],&quot;juci-mod-system&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-natalie-dect&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-netmode&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-network-netifd&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-owsd&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-printer&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-realtime-graphs&quot;:[&quot;read&quot;],&quot;juci-samba&quot;:[&quot;read&quot;,&quot;write&quot;],&quot;juci-snmpd&quot;:[&quot;rea...............................</div></pre></td></tr></table></figure>
+<p>其中有可以用于文件读写的 <code>read</code> 和 <code>write</code> 方法，以及可以增加 <code>ssh_key</code> 的 <code>router.dropbear:add_ssh_key</code>  方法，组合起来就可以写 <code>ssh_key</code> , 然后 <code>ssh</code> 连过去。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>对于 <code>rpcd</code> 要限制暴露出来的方法， 避免出现严重的问题</p>
+<p><strong>参考</strong></p>
+<p><a href="http://www.cnblogs.com/nicephil/p/6768381.html#e4bdbfe794a8e696b9e6b395_2" target="_blank" rel="external">http://www.cnblogs.com/nicephil/p/6768381.html#e4bdbfe794a8e696b9e6b395_2</a></p>
+<p><a href="https://neonsea.uk/blog/2017/07/17/cve-2017-11361.html" target="_blank" rel="external">https://neonsea.uk/blog/2017/07/17/cve-2017-11361.html</a></p>
+
+        
+                <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
+                    <p><strong>
+                         
+                            <a>本站文章均原创， 转载注明来源</a>
+                        </strong>
+                        <br>
+                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2018/05/18/openwrt_rpcd_misconfig.html">http://blog.hac425.top/2018/05/18/openwrt_rpcd_misconfig.html</a>
+                    </p>
+                </blockquote>
+        
+    
+
+    
+</div>
+
+
+                
+
+                <!-- Post Comments -->
+                
+                    
+    <!-- 使用 来必力 -->
+<div id="livere-comment">
+    <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zMTQ2OC84MDMy">
+<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+</div>
+<style>
+    #livere-comment{
+        background-color: #eee;
+        padding: 2pc;
+    }
+</style>
+
+                
+            </div>
+
+            <!-- Post Prev & Next Nav -->
+            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
+    <!-- Prev Nav -->
+    
+
+    <!-- Section Spacer -->
+    <div class="section-spacer"></div>
+
+    <!-- Next Nav -->
+    
+        <a href="/2018/05/16/CVE-2018-10945-mongoose.html" id="post_nav-older" class="next-content">
+            旧篇
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </a>
+    
+</nav>
+
+        </div>
+    </div>
+
+
+
+                    
+                        <!-- Overlay For Active Sidebar -->
+<div class="sidebar-overlay"></div>
+
+<!-- Material sidebar -->
+<aside id="sidebar" class="sidebar sidebar-colored sidebar-fixed-left" role="navigation">
+    <div id="sidebar-main">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header header-cover" style="background-image: url(/img/sidebar_header.png);">
+    <!-- Top bar -->
+    <div class="top-bar"></div>
+
+    <!-- Sidebar toggle button -->
+    <button type="button" class="sidebar-toggle mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" style="display: initial;" data-upgraded=",MaterialButton,MaterialRipple">
+        <i class="material-icons">clear_all</i>
+        <span class="mdl-button__ripple-container">
+            <span class="mdl-ripple">
+            </span>
+        </span>
+    </button>
+
+    <!-- Sidebar Avatar -->
+    <div class="sidebar-image">
+        <img src="/img/girl.png" alt="hac425's avatar">
+    </div>
+
+    <!-- Sidebar Email -->
+    <a data-toggle="dropdown" class="sidebar-brand" href="#settings-dropdown">
+        hac425xxx@gmail.com
+        <b class="caret"></b>
+    </a>
+</div>
+
+
+        <!-- Sidebar Navigation  -->
+        <ul class="nav sidebar-nav">
+    <!-- User dropdown  -->
+    <li class="dropdown">
+        <ul id="settings-dropdown" class="dropdown-menu">
+            
+                <li>
+                    <a href="#" target="_blank" title="Email Me">
+                        
+                            <i class="material-icons sidebar-material-icons sidebar-indent-left1pc-element">email</i>
+                        
+                        Email Me
+                    </a>
+                </li>
+            
+        </ul>
+    </li>
+
+    <!-- Homepage -->
+    
+        <li id="sidebar-first-li">
+            <a href="/">
+                
+                    <i class="material-icons sidebar-material-icons">home</i>
+                
+                主页
+            </a>
+        </li>
+        
+    
+
+    <!-- Archives  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">inbox</i>
+                
+                    归档
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+            <li>
+                <a class="sidebar_archives-link" href="/archives/2018/05/">五月 2018<span class="sidebar_archives-count">6</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/04/">四月 2018<span class="sidebar_archives-count">5</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/03/">三月 2018<span class="sidebar_archives-count">14</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/02/">二月 2018<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/01/">一月 2018<span class="sidebar_archives-count">8</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/12/">十二月 2017<span class="sidebar_archives-count">13</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/11/">十一月 2017<span class="sidebar_archives-count">8</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/10/">十月 2017<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/08/">八月 2017<span class="sidebar_archives-count">1</span></a>
+            </ul>
+        </li>
+        
+    
+
+    <!-- Categories  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">chrome_reader_mode</i>
+                
+                分类
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                <a class="sidebar_archives-link" href="/categories/Vulnerability-analysis/">Vulnerability analysis<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/chrome/">chrome<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/ctf/">ctf<span class="sidebar_archives-count">20</span></a></li><li><a class="sidebar_archives-link" href="/categories/embedded-development/">embedded_development<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/java应用破解思路/">java应用破解思路<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/jeb破解/">jeb破解<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/categories/kernel/">kernel<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/pwn-router-os/">pwn_router_os<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/categories/reverse/">reverse<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/vulnerability-report/">vulnerability_report<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/categories/代码审计/">代码审计<span class="sidebar_archives-count">4</span></a></li><li><a class="sidebar_archives-link" href="/categories/安卓安全/">安卓安全<span class="sidebar_archives-count">6</span></a></li><li><a class="sidebar_archives-link" href="/categories/文件patch/">文件patch<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/渗透测试/">渗透测试<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/categories/破解/">破解<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/路由器安全/">路由器安全<span class="sidebar_archives-count">11</span></a>
+            </ul>
+        </li>
+        
+            <li class="divider"></li>
+        
+    
+
+    <!-- Pages  -->
+    
+        <li>
+            <a href="/about" title="关于我">
+                
+                    <i class="material-icons sidebar-material-icons">person</i>
+                
+                关于我
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/timeline" title="时间轴">
+                
+                    <i class="material-icons sidebar-material-icons">timeline</i>
+                
+                时间轴
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/links" title="友情链接">
+                
+                    <i class="material-icons sidebar-material-icons">people</i>
+                
+                友情链接
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/tags" title="标签云">
+                
+                    <i class="material-icons sidebar-material-icons">invert_colors</i>
+                
+                标签云
+            </a>
+        </li>
+        
+    
+
+    <!-- Article Number  -->
+    
+        <li>
+            <a href="/archives">
+                文章总数
+                <span class="sidebar-badge">67</span>
+            </a>
+        </li>
+        
+    
+</ul>
+
+
+        <!-- Sidebar Footer -->
+        <!--
+I'm glad you use this theme, the development is no so easy, I hope you can keep the copyright, I will thank you so much.
+If you still want to delete the copyrights, could you still retain the first one? Which namely "Theme Material"
+It will not impact the appearance and can give developers a lot of support :)
+
+很高兴您使用并喜欢该主题，开发不易 十分谢谢与希望您可以保留一下版权声明。
+如果您仍然想删除的话 能否只保留第一项呢？即 "Theme Material"
+它不会影响美观并可以给开发者很大的支持和动力。 :)
+-->
+
+<!-- Sidebar Divider -->
+
+
+<!-- Theme Material -->
+
+
+<!-- Help & Support -->
+<!--
+
+-->
+
+<!-- Feedback -->
+<!--
+
+-->
+
+<!-- About Theme -->
+<!--
+
+-->
+
+    </div>
+
+    <!-- Sidebar Image -->
+    
+
+</aside>
+
+                    
+
+                    
+                        <!-- Footer Top Button -->
+                        <div id="back-to-top" class="toTop-wrap">
+    <a href="#top" class="toTop">
+        <i class="material-icons footer_top-i">expand_less</i>
+    </a>
+</div>
+
+                    
+
+                    <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+<!--Footer-->
+<footer class="mdl-mini-footer" id="bottom">
+    
+        <!-- Paradox Footer Left Section -->
+        <div class="mdl-mini-footer--left-section sns-list">
+    <!-- Twitter -->
+    
+        <a href="https://twitter.com/hac425" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-twitter">
+                <span class="visuallyhidden">Twitter</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Facebook -->
+    
+
+    <!-- Google + -->
+    
+
+    <!-- Weibo -->
+    
+        <a href="http://weibo.com/u/5691483590" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-weibo">
+                <span class="visuallyhidden">Weibo</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Instagram -->
+    
+
+    <!-- Tumblr -->
+    
+
+    <!-- Github -->
+    
+        <a href="https://gitee.com/hac425/" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-github">
+                <span class="visuallyhidden">Github</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- LinkedIn -->
+    
+
+    <!-- Zhihu -->
+    
+
+    <!-- Bilibili -->
+    
+
+    <!-- Telegram -->
+    
+    
+    <!-- V2EX -->
+    
+</div>
+
+
+        <!--Copyright-->
+        <div id="copyright">
+            Copyright&nbsp;©<script type="text/javascript">var fd = new Date();document.write("&nbsp;" + fd.getFullYear() + "&nbsp;");</script>穷则变，变则通，通则久
+            
+        </div>
+
+        <!-- Paradox Footer Right Section -->
+
+    
+</footer>
+
+
+                    <!-- Import JS File -->
+
+    <script>lsloader.load("lazyload_js","/js/lazyload.min.js?wgjW/HuQG9JDgvPDPoRAng==", true)</script>
+
+
+
+    <script>lsloader.load("js_js","/js/js.min.js?V/53wGualMuiPM3xoetD5Q==", true)</script>
+
+
+
+    <script>lsloader.load("np_js","/js/nprogress.js?pl3Qhb9lvqR1FlyLUna1Yw==", true)</script>
+
+
+<script type="text/ls-javascript" id="NProgress-script">
+    NProgress.configure({
+        showSpinner: true
+    });
+    NProgress.start();
+    $('#nprogress .bar').css({
+        'background': '#29d'
+    });
+    $('#nprogress .peg').css({
+        'box-shadow': '0 0 10px #29d, 0 0 15px #29d'
+    });
+    $('#nprogress .spinner-icon').css({
+        'border-top-color': '#29d',
+        'border-left-color': '#29d'
+    });
+    setTimeout(function() {
+        NProgress.done();
+        $('.fade').removeClass('out');
+    }, 800);
+</script>
+
+
+
+
+
+
+
+    <!-- Busuanzi -->
+    <script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+   
+
+
+
+
+
+<!-- UC Browser Compatible -->
+<script>
+	var agent = navigator.userAgent.toLowerCase();
+	if(agent.indexOf('ucbrowser')>0) {
+		document.write('<link rel="stylesheet" href="/css/uc.css">');
+	   alert('由于 UC 浏览器使用极旧的内核，而本网站使用了一些新的特性。\n为了您能更好的浏览，推荐使用 Chrome 或 Firefox 浏览器。');
+	}
+</script>
+
+<!-- Import prettify js  -->
+
+
+    
+        <script>lsloader.load("hanabi","/js/hanabi-browser-bundle.js?5+2z7ZZmFuZK5IcimlZbxw==", true)</script>
+    
+
+
+<!-- Window Load -->
+<!-- add class for prettify -->
+<script type="text/ls-javascript" id="window-load">
+    $(window).on('load', function() {
+        // Post_Toc parent position fixed
+        $('.post-toc-wrap').parent('.mdl-menu__container').css('position', 'fixed');
+    });
+
+    
+    
+        
+        
+        HanabiBrowser.start('pre code',true);
+    
+</script>
+
+<!-- MathJax Load-->
+
+
+<!-- Bing Background -->
+
+
+<script type="text/ls-javascript" id="lazy-load">
+    // Offer LazyLoad
+    queue.offer(function(){
+        $('.lazy').lazyload({
+            effect : 'show'
+        });
+    });
+
+    // Start Queue
+    $(document).ready(function(){
+        setInterval(function(){
+            queue.execNext();
+        },200);
+    });
+</script>
+
+<!-- Custom Footer -->
+
+
+
+<script>
+    (function(){
+        var scriptList = document.querySelectorAll('script[type="text/ls-javascript"]')
+
+        for (var i = 0; i < scriptList.length; ++i) {
+            var item = scriptList[i];
+            lsloader.runInlineScript(item.id,item.id);
+        }
+    })()
+console.log('\n %c © Material Theme | Version: 1.5.0 | https://github.com/viosey/hexo-theme-material %c \n', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-left-radius:5px;border-bottom-left-radius:5px;', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-right-radius:5px;border-bottom-right-radius:5px;');
+</script>
+
+                </main>
+            </div>
+        </body>
+    
+</html>
