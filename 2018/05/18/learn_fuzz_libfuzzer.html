@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html style="display: none;" lang="zh">
+    <head>
+    <meta charset="utf-8">
+    <meta name="baidu-site-verification" content="RC70b8mZ9A" />
+    <meta name="msvalidate.01" content="325714A6172A8D425D843D8163893A54" />
+    <meta name="google-site-verification" content="QAmqP2zEYaSBqoZ9w1x5RdOflLW2Fir2-yVs5LTIUxA" />
+    <meta name="google-site-verification" content="QgUuEnRKG0PKdnDrOxnq55x7VxQbCiprrMJpfakMlow" />
+    <!--
+        © Material Theme
+        https://github.com/viosey/hexo-theme-material
+        Version: 1.5.0 -->
+    <script>
+        window.materialVersion = "1.5.0"
+        // Delete localstorage with these tags
+        window.oldVersion = [
+            'codestartv1',
+            '1.3.4',
+            '1.4.0',
+            '1.4.0b1'
+        ]
+    </script>
+
+
+    <!-- dns prefetch -->
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+
+
+
+    <link rel="dns-prefetch" href="https://busuanzi.ibruce.info"/>
+
+
+
+        <link rel="dns-prefetch" href="https://cdn-city.livere.com"/>
+
+
+
+
+
+
+
+
+
+
+    <!-- Title -->
+    
+    <title>
+        
+            fuzz系列之libfuzzer | 
+        
+        穷则变，变则通，通则久
+    </title>
+
+    <!-- Meta & Info -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="theme-color" content="#0097A7">
+    <meta name="author" content="hac425">
+    <meta name="description" itemprop="description" content="">
+    <meta name="keywords" content="">
+
+    <!-- Import lsloader -->
+    <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
+
+    <!-- Import queue -->
+    <script>function Queue(){this.dataStore=[];this.offer=b;this.poll=d;this.execNext=a;this.debug=false;this.startDebug=c;function b(e){if(this.debug){console.log("Offered a Queued Function.")}if(typeof e==="function"){this.dataStore.push(e)}else{console.log("You must offer a function.")}}function d(){if(this.debug){console.log("Polled a Queued Function.")}return this.dataStore.shift()}function a(){var e=this.poll();if(e!==undefined){if(this.debug){console.log("Run a Queued Function.")}e()}}function c(){this.debug=true}}var queue=new Queue();</script>
+
+    <!-- Favicons -->
+    <link rel="icon shortcut" type="image/ico" href="/img/girl.png">
+    <link rel="icon" sizes="192x192" href="/img/girl.png">
+    <link rel="apple-touch-icon" href="/img/girl.png">
+
+    <!--iOS -->
+    <meta name="apple-mobile-web-app-title" content="Title">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="480">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="穷则变，变则通，通则久">
+
+    <!-- Site Verification -->
+    
+    
+
+    <!-- RSS -->
+    
+
+    <!--[if lte IE 9]>
+        <link rel="stylesheet" href="/css/ie-blocker.css">
+
+        
+            <script src="/js/ie-blocker.zhCN.js"></script>
+        
+    <![endif]-->
+
+    <!-- Import CSS -->
+    
+        <style id="material_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("material_css","/css/material.min.css?Z7a72R1E4SxzBKR/WGctOA==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+        <style id="style_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("style_css","/css/style.min.css?MKetZV3cUTfDxvMffaOezg==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+
+        
+
+    
+
+    
+
+    <!-- Config CSS -->
+
+<!-- Other Styles -->
+<style>
+  body, html {
+    font-family: Roboto, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    overflow-x: hidden !important;
+  }
+  
+  code {
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  }
+
+  a {
+    color: #00838F;
+  }
+
+  .mdl-card__media,
+  #search-label,
+  #search-form-label:after,
+  #scheme-Paradox .hot_tags-count,
+  #scheme-Paradox .sidebar_archives-count,
+  #scheme-Paradox .sidebar-colored .sidebar-header,
+  #scheme-Paradox .sidebar-colored .sidebar-badge{
+    background-color: #0097A7 !important;
+  }
+
+  /* Sidebar User Drop Down Menu Text Color */
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:hover,
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:focus {
+    color: #0097A7 !important;
+  }
+
+  #post_entry-right-info,
+  .sidebar-colored .sidebar-nav li:hover > a,
+  .sidebar-colored .sidebar-nav li:hover > a i,
+  .sidebar-colored .sidebar-nav li > a:hover,
+  .sidebar-colored .sidebar-nav li > a:hover i,
+  .sidebar-colored .sidebar-nav li > a:focus i,
+  .sidebar-colored .sidebar-nav > .open > a,
+  .sidebar-colored .sidebar-nav > .open > a:hover,
+  .sidebar-colored .sidebar-nav > .open > a:focus,
+  #ds-reset #ds-ctx .ds-ctx-entry .ds-ctx-head a {
+    color: #0097A7 !important;
+  }
+
+  .toTop {
+    background: #757575 !important;
+  }
+
+  .material-layout .material-post>.material-nav,
+  .material-layout .material-index>.material-nav,
+  .material-nav a {
+    color: #757575;
+  }
+
+  #scheme-Paradox .MD-burger-layer {
+    background-color: #757575;
+  }
+
+  #scheme-Paradox #post-toc-trigger-btn {
+    color: #757575;
+  }
+
+  .post-toc a:hover {
+    color: #00838F;
+    text-decoration: underline;
+  }
+
+</style>
+
+
+<!-- Theme Background Related-->
+
+    <style>
+      body{
+        background-color: #F5F5F5;
+      }
+
+      /* blog_info bottom background */
+      #scheme-Paradox .material-layout .something-else .mdl-card__supporting-text{
+        background-color: #fff;
+      }
+    </style>
+
+
+
+
+<!-- Fade Effect -->
+
+    <style>
+      .fade {
+        transition: all 800ms linear;
+        -webkit-transform: translate3d(0,0,0);
+        -moz-transform: translate3d(0,0,0);
+        -ms-transform: translate3d(0,0,0);
+        -o-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+        opacity: 1;
+      }
+
+      .fade.out{
+        opacity: 0;
+      }
+    </style>
+
+
+<!-- Import Font -->
+<!-- Import Roboto -->
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+
+
+<!-- Import Material Icon -->
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+
+
+    <!-- Import jQuery -->
+    
+        <script>lsloader.load("jq_js","/js/jquery.min.js?ezyEvm8ST5CGfpA+kFFi1g==", true)</script>
+    
+
+    <!-- The Open Graph protocol -->
+    <meta property="og:url" content="http://blog.hac425.top">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="fuzz系列之libfuzzer | 穷则变，变则通，通则久">
+    <meta property="og:image" content="http://blog.hac425.top/img/girl.png" />
+    <meta property="og:description" content="">
+    
+
+    
+        <meta property="article:published_time" content="Fri May 18 2018 22:40:38 GMT+0800" />
+        <meta property="article:modified_time" content="Fri May 18 2018 22:51:49 GMT+0800" />
+    
+
+    <!-- The Twitter Card protocol -->
+    <meta name="twitter:title" content="fuzz系列之libfuzzer | 穷则变，变则通，通则久">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="http://blog.hac425.top/img/girl.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="http://blog.hac425.top" />
+
+    <!-- Add canonical link for SEO -->
+    
+        <link rel="canonical" href="http://blog.hac425.top/2018/05/18/learn_fuzz_libfuzzer.html" />
+    
+
+    <!-- Structured-data for SEO -->
+    
+        
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": "http://blog.hac425.top/2018/05/18/learn_fuzz_libfuzzer.html",
+    "headline": "fuzz系列之libfuzzer",
+    "datePublished": "Fri May 18 2018 22:40:38 GMT+0800",
+    "dateModified": "Fri May 18 2018 22:51:49 GMT+0800",
+    "author": {
+        "@type": "Person",
+        "name": "hac425",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/img/girl.png"
+        },
+        "description": "纵横捭阖，冷心为上"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "穷则变，变则通，通则久",
+        "logo": {
+            "@type":"ImageObject",
+            "url": "/img/girl.png"
+        }
+    },
+    "keywords": "",
+    "description": "",
+}
+</script>
+
+
+    
+
+    <!-- Analytics -->
+    
+    
+        <script>
+    var _hmt = _hmt || [];
+    (function() {var hm = document.createElement('script');
+    hm.src = 'https://hm.baidu.com/hm.js?99747687c69d73d9102f032f78f03e96';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+    
+    
+
+    <!-- Custom Head -->
+    
+
+</head>
+
+
+    
+        <body id="scheme-Paradox" class="lazy">
+            <div class="material-layout  mdl-js-layout has-drawer is-upgraded">
+                
+
+                <!-- Main Container -->
+                <main class="material-layout__content" id="main">
+
+                    <!-- Top Anchor -->
+                    <div id="top"></div>
+
+                    
+                        <!-- Hamburger Button -->
+                        <button class="MD-burger-icon sidebar-toggle">
+                            <span class="MD-burger-layer"></span>
+                        </button>
+                    
+
+                    <!-- Post TOC -->
+
+    
+    <!-- Back Button -->
+    <!--
+    <div class="material-back" id="backhome-div" tabindex="0">
+        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+           href="#" onclick="window.history.back();return false;"
+           target="_self"
+           role="button"
+           data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">arrow_back</i>
+            <span class="mdl-button__ripple-container">
+                <span class="mdl-ripple"></span>
+            </span>
+        </a>
+    </div>
+    -->
+
+
+    <!-- Left aligned menu below button -->
+    
+    
+    <button id="post-toc-trigger-btn"
+        class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">format_list_numbered</i>
+    </button>
+
+    <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#libFuzzer简介"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">libFuzzer简介</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一些概念"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">一些概念</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#传统Fuzz"><span class="post-toc-number">2.</span> <span class="post-toc-text">传统Fuzz</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#介绍"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">介绍</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实战"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">实战</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#生成测试用例"><span class="post-toc-number">2.2.1.</span> <span class="post-toc-text">生成测试用例</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#开始fuzz"><span class="post-toc-number">2.2.2.</span> <span class="post-toc-text">开始fuzz</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Helloworld-For-libFuzzer"><span class="post-toc-number">3.</span> <span class="post-toc-text">Helloworld-For-libFuzzer</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">安装</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实战-1"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">实战</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#VulnerableFunction1"><span class="post-toc-number">3.2.1.</span> <span class="post-toc-text">VulnerableFunction1</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#VulnerableFunction2"><span class="post-toc-number">3.2.2.</span> <span class="post-toc-text">VulnerableFunction2</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#VulnerableFunction3"><span class="post-toc-number">3.2.3.</span> <span class="post-toc-text">VulnerableFunction3</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">总结</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#实战两个简单的CVE"><span class="post-toc-number">4.</span> <span class="post-toc-text">实战两个简单的CVE</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#CVE-2014-0160-openssl-心脏滴血漏洞"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">CVE-2014-0160 (openssl 心脏滴血漏洞 )</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#CVE-2016-5180-（c-ares-堆溢出）"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">CVE-2016-5180 （c-ares 堆溢出）</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结-1"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">总结</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#libFuzzer进阶"><span class="post-toc-number">5.</span> <span class="post-toc-text">libFuzzer进阶</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Start-fuzz"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">Start fuzz</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#使用-Dictionary-提升性能"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">使用 Dictionary 提升性能</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#精简样本集"><span class="post-toc-number">5.3.</span> <span class="post-toc-text">精简样本集</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#生成代码覆盖率报告"><span class="post-toc-number">5.4.</span> <span class="post-toc-text">生成代码覆盖率报告</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Fuzz-xmlRegexpCompile"><span class="post-toc-number">5.5.</span> <span class="post-toc-text">Fuzz xmlRegexpCompile</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#参考"><span class="post-toc-number">6.</span> <span class="post-toc-text">参考</span></a></li></ol>
+    </ul>
+    
+
+
+
+
+<!-- Layouts -->
+
+    <!-- Post Module -->
+    <div class="material-post_container">
+
+        <div class="material-post mdl-grid">
+            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+
+                <!-- Post Header(Thumbnail & Title) -->
+                
+    <!-- Paradox Post Header -->
+    
+        
+            <!-- Random Thumbnail -->
+            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
+            <script type="text/ls-javascript" id="post-thumbnail-script">
+    var randomNum = Math.floor(Math.random() * 19 + 1);
+
+    $('.post_thumbnail-random').attr('data-original', '/img/random/material-' + randomNum + '.png');
+    $('.post_thumbnail-random').addClass('lazy');
+</script>
+
+        
+    
+            <p class="article-headline-p">
+                fuzz系列之libfuzzer
+            </p>
+        </div>
+
+
+
+
+
+                
+                    <!-- Paradox Post Info -->
+                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+
+    <!-- Author Avatar -->
+    <div id="author-avatar">
+        <img src="/img/girl.png" width="44px" height="44px" alt="Author Avatar"/>
+    </div>
+    <!-- Author Name & Date -->
+    <div>
+        <strong>hac425</strong>
+        <span>5月 18, 2018</span>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <!-- Favorite -->
+    <!--
+        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
+            <i class="material-icons" role="presentation">favorite</i>
+            <span class="visuallyhidden">favorites</span>
+        </button>
+    -->
+
+    <!-- Qrcode -->
+    
+        <button id="article-functions-qrcode-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">devices other</i>
+    <span class="visuallyhidden">devices other</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
+    <li class="mdl-menu__item">在其它设备中阅读本文章</li>
+    
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACZUlEQVR42u3aQVLEMAwEwP3/p+EBVMxISmJDdU4UC46bg2VG+nz96+eDh4eHh4eHh4d3GO8TPz9//mqFq/UvN3TxaXVveHh4eG/yfjlql5jklclqV5/me8PDw8N7n7cuBpfLtajrQtLbGx4eHt6ZvOTI7l3BEyoeHh7eX+T1Yoh8NTw8PLy/xZvErPklO4lrt2UteHh4eDGv2gB78+sN/T08PDy8Ja852FQcKZhczTfMlOHh4eEteZOGVr6VfKQgb4w1h67w8PDwxrzJQd/7c1RLQnmoCw8PD+8A3iSSmAQNvagXDw8P701ePlDVix7yoYGkFJULAx4eHt6tvPmIwDrayCOJPMK4/D4eHh7eK7xk6/krq7+V7yEaw8LDw8N7hZcvWg1b58UDDw8P7zRer1lVLSf3lpxCjIuHh4f3AK963Cew6oW7V2BG/zHg4eHhjXlJQHBXAFEdS11fu6PCgIeHh3crLx91qr6yN96aByV4eHh4u3h3HfSjZn8xhiiHEXh4eHiP8dbRbV42EnA+elW+4uPh4eE9zJuQkuv1c62v8ugAHh4e3q28fBSgOlzVa5v1rtd4eHh4e3mT4CC/rFdHCpoNMDw8PLwHeJNmVd7Kqq5QDXDx8PDw3uH1gtTJyNSkICURMB4eHt7TvPlxfFcE3BvwwsPDw9vFqzbs80iiF87me8DDw8Pby6se0L0mVt7Wyq/veHh4eOfzJvFB9ZpeDkTw8PDwDuPNG2OTgAMPDw/vNF4SRlRDh0LjqhgQ4+Hh4e3lzUed8mv0pIRE0QYeHh7ew7z/9+Dh4eHh4eHh4R3wfAMkPD7a5MMcIAAAAABJRU5ErkJggg==">
+    
+</ul>
+
+    
+
+    <!-- Tags (bookmark) -->
+    
+
+    <!-- Share -->
+    <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">share</i>
+    <span class="visuallyhidden">share</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
+    
+
+    
+        
+            <!-- Busuanzi Views -->
+            <a class="post_share-link" href="#">
+                <li class="mdl-menu__item">
+                    <span id="busuanzi_container_page_pv">
+                        <span id="busuanzi_value_page_pv"></span>&nbsp;浏览量
+                    </span>
+                </li>
+            </a>
+        
+    
+
+    <!-- Share Weibo -->
+    
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=fuzz系列之libfuzzer&url=http://blog.hac425.top/2018/05/18/learn_fuzz_libfuzzer.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
+            <li class="mdl-menu__item">
+                分享到微博
+            </li>
+        </a>
+    
+
+    <!-- Share Twitter -->
+    
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=fuzz系列之libfuzzer&url=http://blog.hac425.top/2018/05/18/learn_fuzz_libfuzzer.html&via=hac425" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Twitter
+            </li>
+        </a>
+    
+
+    <!-- Share Facebook -->
+    
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2018/05/18/learn_fuzz_libfuzzer.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Facebook
+            </li>
+        </a>
+    
+
+    <!-- Share Google+ -->
+    
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2018/05/18/learn_fuzz_libfuzzer.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Google+
+            </li>
+        </a>
+    
+
+    <!-- Share LinkedIn -->
+    
+
+    <!-- Share QQ -->
+    
+
+    <!-- Share Telegram -->
+    
+</ul>
+
+</div>
+
+                
+
+                <!-- Post Content -->
+                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+    
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本文以 <a href="https://github.com/Dor1s/libfuzzer-workshop/" target="_blank" rel="external">libfuzzer-workshop</a> 为基础 介绍 <strong>libFuzzer</strong> 的使用。</p>
+<h2 id="libFuzzer简介"><a href="#libFuzzer简介" class="headerlink" title="libFuzzer简介"></a>libFuzzer简介</h2><p><strong>libFuzzer</strong> 是一个<code>in-process</code>，<code>coverage-guided</code>，<code>evolutionary</code>  的 <code>fuzz</code> 引擎，是 <code>LLVM</code> 项目的一部分。</p>
+<p><code>libFuzzer</code> 和 要被测试的库 链接在一起，通过一个模糊测试入口点（<strong>目标函数</strong>），把测试用例喂给要被测试的库。</p>
+<p><code>fuzzer</code>会跟踪哪些代码区域已经测试过，然后在输入数据的语料库上进行<strong>变异</strong>，来使代码覆盖率最大化。代码覆盖率的信息由 <code>LLVM</code> 的 <code>SanitizerCoverage</code> 插桩提供。</p>
+<h2 id="一些概念"><a href="#一些概念" class="headerlink" title="一些概念"></a>一些概念</h2><p><strong><code>fuzz</code> 的种类</strong></p>
+<ul>
+<li><code>Generation Based</code>  ：通过对目标协议或文件格式建模的方法，从零开始产生测试用例，没有先前的状态</li>
+<li><code>Mutation Based</code> ：基于一些规则，从已有的数据样本或存在的状态变异而来</li>
+<li><code>Evolutionary</code>  ：包含了上述两种，同时会根据代码覆盖率的回馈进行变异。</li>
+</ul>
+<p><strong>target (被 fuzz 的目标)</strong></p>
+<p>基本上所有的程序的主要功能都是对一些 <strong>字节序列</strong> 进行操作，<code>libfuzzer</code> 就是基于这一个事实（<code>libfuzzer</code> 生成 随机的 字节序列 ，扔给 待 <code>fuzz</code> 的程序，然后检测是否有异常出现） 所以在 <code>libfuzzer</code> 看来，<code>fuzz</code> 的目标 其实就是一个 以 <strong>字节序列</strong> 为输入的 <strong>函数</strong>。</p>
+<p><strong>fuzzer</strong></p>
+<p>一个 <strong>生成 测试用例， 交给目标程序测试，然后检测程序是否出现异常</strong> 的程序</p>
+<p><strong>corpus（语料库）</strong></p>
+<p>给目标程序的各种各样的输入</p>
+<blockquote>
+<p>以图片处理程序为例：</p>
+<p>语料库就是各种各样的图片文件，这些图片文件可以是正常图片也可以不是。</p>
+</blockquote>
+<h1 id="传统Fuzz"><a href="#传统Fuzz" class="headerlink" title="传统Fuzz"></a>传统Fuzz</h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>传统的 <code>fuzz</code> 大多通过对已有的样本 <strong>按照预先设置好的规则</strong> 进行变异产生测试用例，然后喂给 目标程序同时监控目标程序的运行状态。</p>
+<p>这类 <code>fuzz</code> 有很多，比如: <code>peach</code> , <code>FileFuzz</code> 等 </p>
+<h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><h3 id="生成测试用例"><a href="#生成测试用例" class="headerlink" title="生成测试用例"></a>生成测试用例</h3><p>本节使用  <a href="https://github.com/aoh/radamsa" target="_blank" rel="external"><code>radamsa</code></a>  作为 变异样本生成引擎，对  <a href="https://pdfium.googlesource.com/pdfium/" target="_blank" rel="external">pdfium</a> 进行 <code>fuzz</code> 。</p>
+<p>相关文件位于</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/Dor1s/libfuzzer-workshop/tree/master/lessons/02</div></pre></td></tr></table></figure>
+<p>  <code>radamsa</code>   是一个 测试用例生成引擎，它是通过对已有的样本进行变异来生成新的测试用例。</p>
+<p>首先看看 测试样本的生成</p>
+<p><strong>generate_testcases.py</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python2</div><div class="line">import os</div><div class="line">import random</div><div class="line"></div><div class="line">WORK_DIR = &apos;work&apos;</div><div class="line"></div><div class="line"># Create work `directory` and `corpus` subdirectory.</div><div class="line">if not os.path.exists(WORK_DIR):</div><div class="line">  os.mkdir(WORK_DIR)</div><div class="line"></div><div class="line">corpus_dir = os.path.join(WORK_DIR, &apos;corpus&apos;)</div><div class="line">if not os.path.exists(corpus_dir):</div><div class="line">  os.mkdir(corpus_dir)</div><div class="line"></div><div class="line">seed_corpus_filenames = os.listdir(&apos;seed_corpus&apos;)</div><div class="line"></div><div class="line">for i in xrange(1000):</div><div class="line">  random_seed_filename = random.choice(seed_corpus_filenames)</div><div class="line">  random_seed_filename = os.path.join(&apos;seed_corpus&apos;, random_seed_filename)</div><div class="line">  output_filename = os.path.join(WORK_DIR, &apos;corpus&apos;, &apos;testcase-%06d&apos; % i)</div><div class="line">  cmd = &apos;bin/radamsa &quot;%s&quot; &gt; &quot;%s&quot;&apos; % (random_seed_filename, output_filename)</div><div class="line">  os.popen(cmd)</div></pre></td></tr></table></figure>
+<p>就是调用   <code>radamsa</code>    ,然后随机选取  <code>seed_corpus</code>  目录中的文件名作为参数，传递给   <code>radamsa</code>   进行变异，然后把生成的测试用例，放到 <code>work/corpus</code> 。</p>
+<h3 id="开始fuzz"><a href="#开始fuzz" class="headerlink" title="开始fuzz"></a>开始fuzz</h3><p>这样测试样本就生成好了，下面看看 用于 fuzz 的脚本</p>
+<p><strong>run_fuzzing.py</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python2</div><div class="line">import os</div><div class="line">import subprocess</div><div class="line"></div><div class="line">WORK_DIR = &apos;work&apos;</div><div class="line"></div><div class="line">def checkOutput(s):</div><div class="line">  if &apos;Segmentation fault&apos; in s or &apos;error&apos; in s.lower():</div><div class="line">    return False</div><div class="line">  else:</div><div class="line">    return True</div><div class="line"></div><div class="line">corpus_dir = os.path.join(WORK_DIR, &apos;corpus&apos;)</div><div class="line">corpus_filenames = os.listdir(corpus_dir)</div><div class="line">for f in corpus_filenames:</div><div class="line">  testcase_path = os.path.join(corpus_dir, f)</div><div class="line">  cmd = [&apos;bin/asan/pdfium_test&apos;, testcase_path]</div><div class="line">  process = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,</div><div class="line">                             stderr=subprocess.STDOUT)</div><div class="line">  output = process.communicate()[0]</div><div class="line">  if not checkOutput(output):</div><div class="line">    print testcase_path</div><div class="line">    print output</div><div class="line">    print &apos;-&apos; * 80</div></pre></td></tr></table></figure>
+<p>就是不断调用 程序 处理刚刚生成的测试用例，根据执行的输出结果中 是否有  <code>Segmentation fault</code>  和 <code>error</code>来判断是否触发了漏洞。</p>
+<blockquote>
+<p><code>ps</code>:  由于用于变异样本的选取 和 样本的变异方式是随机的，可能需要重复多次 <strong>样本生成 &amp;&amp; fuzz</strong> 才能找到 <code>crash</code></p>
+</blockquote>
+<p>写个 <code>bash</code> 脚本，不断重复即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line">while [ &quot;0&quot; -lt &quot;1&quot; ]</div><div class="line">do</div><div class="line">  rm -rf ./work/</div><div class="line">  ./generate_testcases.py</div><div class="line">  ./run_fuzzing.py</div><div class="line">done</div></pre></td></tr></table></figure>
+<h1 id="Helloworld-For-libFuzzer"><a href="#Helloworld-For-libFuzzer" class="headerlink" title="Helloworld-For-libFuzzer"></a>Helloworld-For-libFuzzer</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>本节相关资源文件位于：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/Dor1s/libfuzzer-workshop/tree/master/lessons/04</div></pre></td></tr></table></figure>
+<p>首先先把 <code>libFuzzer</code> 安装一下</p>
+<p>首先 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git clone https://github.com/Dor1s/libfuzzer-workshop.git</div><div class="line">sudo ln -s /usr/include/asm-generic /usr/include/asm</div><div class="line">apt-get install gcc-multilib</div></pre></td></tr></table></figure>
+<p>然后进入 <code>libfuzzer-workshop/</code> ， 执行 <code>checkout_build_install_llvm.sh</code> 安装好 <code>llvm</code>.</p>
+<p>然后进入  <code>libfuzzer-workshop/libFuzzer/Fuzzer/</code> ，执行 <code>build.sh</code> 编译好 <code>libFuzzer</code>。</p>
+<p>如果编译成功，会生成   <code>libfuzzer-workshop/libFuzzer/Fuzzer/libFuzzer.a</code></p>
+<h2 id="实战-1"><a href="#实战-1" class="headerlink" title="实战"></a>实战</h2><p>这一节中主要使用 <code>libFuzzer</code> 对  <code>vulnerable_functions.h</code> 中实现的几个有漏洞的 <strong>函数</strong> 进行 <code>fuzz</code></p>
+<h3 id="VulnerableFunction1"><a href="#VulnerableFunction1" class="headerlink" title="VulnerableFunction1"></a>VulnerableFunction1</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">bool VulnerableFunction1(const uint8_t* data, size_t size) &#123;</div><div class="line">  bool result = false;</div><div class="line">  if (size &gt;= 3) &#123;</div><div class="line">    result = data[0] == &apos;F&apos; &amp;&amp;</div><div class="line">             data[1] == &apos;U&apos; &amp;&amp;</div><div class="line">             data[2] == &apos;Z&apos; &amp;&amp;</div><div class="line">             data[3] == &apos;Z&apos;;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  return result;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个函数有两个参数，第一个参数 <code>data</code> 是 <code>uint8_t*</code> 类型的，说明  <code>data</code>  应该是指向了一个缓冲区， <code>size</code> 应该是缓冲区的大小，如果 <code>size &gt;=3</code> , 会访问 <code>data[3]</code> , 越界访问了。</p>
+<p>进行 fuzz 的第一步是 实现一个 入口点，用来接收 libFuzzer 生成的 测试用例（比特序列）。</p>
+<p>示例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">// fuzz_target.cc</div><div class="line">extern &quot;C&quot; int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) &#123;</div><div class="line">  DoSomethingInterestingWithMyAPI(Data, Size);</div><div class="line">  return 0;  // Non-zero return values are reserved for future use.</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>对于 <code>LLVMFuzzerTestOneInput</code> 有一些要注意的 <code>tips</code></p>
+<ul>
+<li><code>data</code> 是 <code>libFuzzer</code> 生成的 测试数据， <code>size</code> 是数据的长度</li>
+</ul>
+<ul>
+<li><code>fuzz</code> 引擎会在一个进程中进行多次 <code>fuzz</code>， 所以其效率非常高</li>
+<li>要能处理各种各样的输入 （空数据， 大量的 或者 畸形的数据…)</li>
+<li>内部不会调用 <code>exit()</code></li>
+<li>如果使用多线程的话，在函数末尾要把 线程 <code>join</code></li>
+</ul>
+<p>对于 <code>VulnerableFunction1</code> ， 直接把 <code>libFuzzer</code> 传过来的数据，传给 <code>VulnerableFunction1</code> 即可</p>
+<p><strong>first_fuzzer.cc</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">// Copyright 2016 Google Inc. All Rights Reserved.</div><div class="line">// Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</div><div class="line"></div><div class="line">#include &lt;stdint.h&gt;</div><div class="line">#include &lt;stddef.h&gt;</div><div class="line"></div><div class="line">#include &quot;vulnerable_functions.h&quot;</div><div class="line"></div><div class="line">extern &quot;C&quot; int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) &#123;</div><div class="line">  VulnerableFunction1(data, size);</div><div class="line">  return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后用 <code>clang++</code> 编译</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">clang++ -g -std=c++11 -fsanitize=address -fsanitize-coverage=trace-pc-guard \</div><div class="line">    first_fuzzer.cc ../../libFuzzer/Fuzzer/libFuzzer.a \</div><div class="line">    -o first_fuzzer</div></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li><code>-fsanitize=address</code>： 表示使用 <a href="http://clang.llvm.org/docs/AddressSanitizer.html" target="_blank" rel="external">AddressSanitizer</a></li>
+<li><code>-fsanitize-coverage=trace-pc-guard</code>: 为 <code>libfuzzer</code> 提供代码覆盖率信息</li>
+</ul>
+</blockquote>
+<p>然后运行 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line">haclh@ubuntu:~/vmdk_kernel/libfuzzer-workshop-master/lessons/04$ ./first_fuzzer </div><div class="line">INFO: Seed: 1608565063</div><div class="line">INFO: Loaded 1 modules (37 guards): [0x788ec0, 0x788f54), </div><div class="line">INFO: -max_len is not provided, using 64</div><div class="line">INFO: A corpus is not provided, starting from an empty corpus</div><div class="line">#0	READ units: 1</div><div class="line">#1	INITED cov: 3 ft: 3 corp: 1/1b exec/s: 0 rss: 11Mb</div><div class="line">#3	NEW    cov: 4 ft: 4 corp: 2/4b exec/s: 0 rss: 12Mb L: 3 MS: 2 InsertByte-InsertByte-</div><div class="line">#3348	NEW    cov: 5 ft: 5 corp: 3/65b exec/s: 0 rss: 12Mb L: 61 MS: 2 ChangeByte-InsertRepeatedBytes-</div><div class="line">#468765	NEW    cov: 6 ft: 6 corp: 4/78b exec/s: 0 rss: 49Mb L: 13 MS: 4 CrossOver-ChangeBit-EraseBytes-ChangeByte-</div><div class="line">#564131	NEW    cov: 7 ft: 7 corp: 5/97b exec/s: 0 rss: 56Mb L: 19 MS: 5 InsertRepeatedBytes-InsertByte-ChangeByte-InsertByte-InsertByte-</div><div class="line">=================================================================</div><div class="line">==32049==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x60200072bb93 at pc 0x000000528540 bp 0x7ffdb3439100 sp 0x7ffdb34390f8</div><div class="line">READ of size 1 at 0x60200072bb93 thread T0</div><div class="line">    ......................................................</div><div class="line">    ......................................................</div><div class="line">    ......................................................</div><div class="line"></div><div class="line">0x60200072bb93 is located 0 bytes to the right of 3-byte region [0x60200072bb90,0x60200072bb93)</div><div class="line">allocated by thread T0 here:</div><div class="line">   ......................................................</div><div class="line">   ......................................................</div><div class="line">   ......................................................</div><div class="line"></div><div class="line">SUMMARY: AddressSanitizer: heap-buffer-overflow /home/haclh/vmdk_kernel/libfuzzer-workshop-master/lessons/04/./vulnerable_functions.h:22:14 in VulnerableFunction1(unsigned char const*, unsigned long)</div><div class="line">Shadow bytes around the buggy address:</div><div class="line">  0x0c04800dd720: fa fa fd fd fa fa fd fa fa fa fd fa fa fa fd fa</div><div class="line">  0x0c04800dd730: fa fa fd fd fa fa fd fd fa fa fd fd fa fa fd fd</div><div class="line">  0x0c04800dd740: fa fa fd fa fa fa fd fa fa fa fd fa fa fa fd fa</div><div class="line">  0x0c04800dd750: fa fa fd fa fa fa fd fa fa fa fd fa fa fa fd fa</div><div class="line">  0x0c04800dd760: fa fa fd fa fa fa fd fa fa fa fd fd fa fa fd fd</div><div class="line">=&gt;0x0c04800dd770: fa fa[03]fa fa fa fa fa fa fa fa fa fa fa fa fa</div><div class="line">  0x0c04800dd780: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa</div><div class="line">  0x0c04800dd790: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa</div><div class="line">  0x0c04800dd7a0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa</div><div class="line">  0x0c04800dd7b0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa</div><div class="line">  0x0c04800dd7c0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa</div><div class="line">......................................................</div><div class="line">......................................................</div><div class="line">==32049==ABORTING</div><div class="line">MS: 1 CrossOver-; base unit: 38a223b0988bd9576fb17f5947af80b80203f0ef</div><div class="line">0x46,0x55,0x5a,</div><div class="line">FUZ</div><div class="line">artifact_prefix=&apos;./&apos;; Test unit written to ./crash-0eb8e4ed029b774d80f2b66408203801cb982a60</div><div class="line">Base64: RlVa</div></pre></td></tr></table></figure>
+<p>正常的话应该可以看到类似上面的输出，这里对其中的一些信息解析一下</p>
+<ul>
+<li><code>Seed: 1608565063</code> 说明这次的种子数据</li>
+<li><code>-max_len is not provided, using 64</code>  ， <code>-max_len</code> 用于设置最大的数据长度，默认为 <code>64</code></li>
+<li>接下来 <code>#</code> 开头的行是 <code>fuzz</code>  过程中找到的路径信息</li>
+<li>倒数第二行是触发漏洞的测试用例</li>
+</ul>
+<p>使用 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ASAN_OPTIONS=symbolize=1 ./first_fuzzer ./crash-0eb8e4ed029b774d80f2b66408203801</div><div class="line"># ASAN_OPTIONS=symbolize=1 用于显示 栈的符号信息</div></pre></td></tr></table></figure>
+<p>重现 <code>crash</code>. </p>
+<h3 id="VulnerableFunction2"><a href="#VulnerableFunction2" class="headerlink" title="VulnerableFunction2"></a>VulnerableFunction2</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">constexpr auto kMagicHeader = &quot;ZN_2016&quot;;</div><div class="line">constexpr std::size_t kMaxPacketLen = 1024;</div><div class="line">constexpr std::size_t kMaxBodyLength = 1024 - sizeof(kMagicHeader);</div><div class="line"></div><div class="line">bool VulnerableFunction2(const uint8_t* data, size_t size, bool verify_hash) &#123;</div><div class="line">  if (size &lt; sizeof(kMagicHeader))</div><div class="line">    return false;</div><div class="line"></div><div class="line">  std::string header(reinterpret_cast&lt;const char*&gt;(data), sizeof(kMagicHeader));</div><div class="line"></div><div class="line">  std::array&lt;uint8_t, kMaxBodyLength&gt; body;</div><div class="line"></div><div class="line">  if (strcmp(kMagicHeader, header.c_str()))</div><div class="line">    return false;</div><div class="line"></div><div class="line">  auto target_hash = data[--size];</div><div class="line"></div><div class="line">  if (size &gt; kMaxPacketLen)</div><div class="line">    return false;</div><div class="line"></div><div class="line">  if (!verify_hash)</div><div class="line">    return true;</div><div class="line"></div><div class="line">  std::copy(data, data + size, body.data());</div><div class="line">  auto real_hash = DummyHash(body);</div><div class="line">  return real_hash == target_hash;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>代码量比第一个要复杂了一些，不管那么多先 <code>fuzz</code> ， 首先看看这个函数的参数， 比 <code>VulnerableFunction1</code> 多了一个 <code>bool</code> 类型的参数，所以 fuzz 脚本比 <code>VulnerableFunction1</code>  中的加一点修改即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">#include &quot;vulnerable_functions.h&quot;</div><div class="line"></div><div class="line">extern &quot;C&quot; int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) &#123;</div><div class="line">  bool verify_hash_flags[] = &#123; false, true &#125;;</div><div class="line"></div><div class="line">  for (auto flag : verify_hash_flags)</div><div class="line">    VulnerableFunction2(data, size, flag);</div><div class="line">  return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>fuzz</code> 测试的目标就是尽可能的测试所有代码路径，又 <code>VulnerableFunction2</code> 的第 <code>3</code> 个参数是 <code>bool</code> 型的（有两种可能）， 那我们就对每一个测试用例都用 <code>{false, true}</code> 测试一遍以获取更多的测试路径。</p>
+<p>首先编译一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">clang++ -g -std=c++11 -fsanitize=address -fsanitize-coverage=trace-pc-guard \</div><div class="line">    second_fuzzer.cc ../../libFuzzer/Fuzzer/libFuzzer.a \</div><div class="line">    -o second_fuzzer</div></pre></td></tr></table></figure>
+<p>直接执行会得到类似下面的结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">haclh@ubuntu:~/vmdk_kernel/libfuzzer-workshop-master/lessons/04$ ./second_fuzzer</div><div class="line">INFO: Seed: 4141499174</div><div class="line">INFO: Loaded 1 modules (39 guards): [0x788f00, 0x788f9c), </div><div class="line">INFO: -max_len is not provided, using 64</div><div class="line">INFO: A corpus is not provided, starting from an empty corpus</div><div class="line">#0	READ units: 1</div><div class="line">#1	INITED cov: 5 ft: 5 corp: 1/1b exec/s: 0 rss: 11Mb</div><div class="line">#26	NEW    cov: 6 ft: 6 corp: 2/29b exec/s: 0 rss: 12Mb L: 28 MS: 5 ChangeByte-ChangeBit-ShuffleBytes-ChangeByte-InsertRepeatedBytes-</div><div class="line">#1840	NEW    cov: 26 ft: 26 corp: 3/70b exec/s: 0 rss: 12Mb L: 41 MS: 4 InsertRepeatedBytes-ShuffleBytes-CMP-CMP- DE: &quot;\x00\x00\x00\x00\x00\x00\x00\x00&quot;-&quot;ZN_2016&quot;-</div><div class="line">#1048576	pulse  cov: 26 ft: 26 corp: 3/70b exec/s: 174762 rss: 103Mb</div><div class="line">#2097152	pulse  cov: 26 ft: 26 corp: 3/70b exec/s: 149796 rss: 194Mb</div><div class="line">^C==32554== libFuzzer: run interrupted; exiting</div></pre></td></tr></table></figure>
+<p>可以看到 <code>libfuzzer</code> 到后面基本找不到新的路径了，一直 <code>pulse</code> 。回到 <code>VulnerableFunction2</code>  我们发现函数可以处理的最大数据长度是 1024 , 所以给 fuzzer 加个参数设置一下最大数据长度。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./second_fuzzer -max_len=1024</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1526655107640xixz8phv.png?imageslim" alt="paste image"></p>
+<p>可以看到检测到了 栈溢出，触发漏洞的指令位于 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vulnerable_functions.h:61:3</div></pre></td></tr></table></figure>
+<p>跟到该文件内查看，发现是 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">std::copy(data, data + size, body.data());</div></pre></td></tr></table></figure>
+<p>触发了漏洞，漏洞产生的原因在于， <code>body</code> 的 <code>buf</code> 的大小为 <code>kMaxBodyLength</code> ， 而这里可以往 <code>body</code> 的 <code>buf</code> 里面写入最多 <code>kMaxPacketLen</code> 字节。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">constexpr std::size_t kMaxPacketLen = 1024;</div><div class="line">constexpr std::size_t kMaxBodyLength = 1024 - sizeof(kMagicHeader);</div></pre></td></tr></table></figure>
+<p>溢出。</p>
+<h3 id="VulnerableFunction3"><a href="#VulnerableFunction3" class="headerlink" title="VulnerableFunction3"></a>VulnerableFunction3</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">constexpr std::size_t kZn2016VerifyHashFlag = 0x0001000;</div><div class="line"></div><div class="line">bool VulnerableFunction3(const uint8_t* data, size_t size, std::size_t flags) &#123;</div><div class="line">  bool verify_hash = flags &amp; kZn2016VerifyHashFlag;</div><div class="line">  return VulnerableFunction2(data, size, verify_hash);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>就是动态生成了 <code>verify_hash</code> 的值，然后传给 了 <code>VulnerableFunction2</code>。</p>
+<p>我们也照着来就行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">#include &quot;vulnerable_functions.h&quot;</div><div class="line"></div><div class="line">#include &lt;functional&gt;</div><div class="line">#include &lt;string&gt;</div><div class="line"></div><div class="line">extern &quot;C&quot; int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) &#123;</div><div class="line"></div><div class="line">    VulnerableFunction3(data, size, 0x0001000); // 触发 flag = true</div><div class="line">    VulnerableFunction3(data, size, 0x1000000); // 触发 flag = false</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>编译</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">clang++ -g -std=c++11 -fsanitize=address -fsanitize-coverage=trace-pc-guard \</div><div class="line">    third_fuzzer.cc ../../libFuzzer/Fuzzer/libFuzzer.a \</div><div class="line">    -o third_fuzzer</div></pre></td></tr></table></figure>
+<p>运行 </p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15266550623129d9hg3sq.png?imageslim" alt="paste image"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>简单理解 <code>libfuzzer</code> 。如果我们要 <code>fuzz</code> 一个程序，找到一个入口函数，然后利用 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">extern &quot;C&quot; int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) &#123;</div><div class="line">    .......</div><div class="line">    .......</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>接口，我们可以拿到 <code>libfuzzer</code> 生成的 <strong>测试数据以及测试数据的长度</strong>，我们的任务就是<strong>把这些生成的测试数据 传入到目标程序中 让程序来处理 测试数据， 同时要尽可能的触发更多的代码逻辑</strong>。</p>
+<h1 id="实战两个简单的CVE"><a href="#实战两个简单的CVE" class="headerlink" title="实战两个简单的CVE"></a>实战两个简单的CVE</h1><h2 id="CVE-2014-0160-openssl-心脏滴血漏洞"><a href="#CVE-2014-0160-openssl-心脏滴血漏洞" class="headerlink" title="CVE-2014-0160 (openssl 心脏滴血漏洞 )"></a>CVE-2014-0160 (openssl 心脏滴血漏洞 )</h2><p><code>libfuzzer</code> 是用于 <code>fuzz</code> 某个函数的，所以我们先编译好目标代码库， 然后在根据要 <code>fuzz</code> 的功能编写 <code>fuzzer</code> 函数。</p>
+<p>本节资源文件位于</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/Dor1s/libfuzzer-workshop/tree/master/lessons/05</div></pre></td></tr></table></figure>
+<p>首先用 <code>clang</code> 编译 <code>openssl</code>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">./config</div><div class="line">make clean</div><div class="line">make CC=&quot;clang -O2 -fno-omit-frame-pointer -g -fsanitize=address -fsanitize-coverage=trace-pc-guard,trace-cmp,trace-gep,trace-div&quot; -j$(nproc)</div></pre></td></tr></table></figure>
+<p>主要是为了加上 <code>AddressSanitizer</code> ，用于检测程序中出现的异常（uaf, 堆溢出，栈溢出等漏洞)</p>
+<blockquote>
+<p>常用内存错误检测工具</p>
+<p><code>AddressSanitizer</code>:  检测 <code>uaf</code>, 缓冲区溢出，<code>stack-use-after-return</code>, <code>container-overflow</code></p>
+<p><code>MemorySanitizer</code>： 检测未初始化内存的访问</p>
+<p><code>UndefinedBehaviorSanitizer</code>： 检测一些其他的漏洞，整数溢出，类型混淆等</p>
+</blockquote>
+<p>然后写 fuzzer 的逻辑</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">#include &lt;openssl/ssl.h&gt;</div><div class="line">#include &lt;openssl/err.h&gt;</div><div class="line">#include &lt;assert.h&gt;</div><div class="line">#include &lt;stdint.h&gt;</div><div class="line">#include &lt;stddef.h&gt;</div><div class="line"></div><div class="line">#ifndef CERT_PATH</div><div class="line"># define CERT_PATH</div><div class="line">#endif</div><div class="line"></div><div class="line">SSL_CTX *Init() &#123;</div><div class="line">  SSL_library_init();</div><div class="line">  SSL_load_error_strings();</div><div class="line">  ERR_load_BIO_strings();</div><div class="line">  OpenSSL_add_all_algorithms();</div><div class="line">  SSL_CTX *sctx;</div><div class="line">  assert (sctx = SSL_CTX_new(TLSv1_method()));</div><div class="line">  /* These two file were created with this command:</div><div class="line">      openssl req -x509 -newkey rsa:512 -keyout server.key \</div><div class="line">     -out server.pem -days 9999 -nodes -subj /CN=a/</div><div class="line">  */</div><div class="line">  assert(SSL_CTX_use_certificate_file(sctx, CERT_PATH &quot;server.pem&quot;,</div><div class="line">                                      SSL_FILETYPE_PEM));</div><div class="line">  assert(SSL_CTX_use_PrivateKey_file(sctx, CERT_PATH &quot;server.key&quot;,</div><div class="line">                                     SSL_FILETYPE_PEM));</div><div class="line">  return sctx;</div><div class="line">&#125;</div><div class="line"></div><div class="line">extern &quot;C&quot; int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) &#123;</div><div class="line">  static SSL_CTX *sctx = Init();</div><div class="line">  SSL *server = SSL_new(sctx);</div><div class="line">  BIO *sinbio = BIO_new(BIO_s_mem());</div><div class="line">  BIO *soutbio = BIO_new(BIO_s_mem());</div><div class="line">  SSL_set_bio(server, sinbio, soutbio);</div><div class="line">  SSL_set_accept_state(server);</div><div class="line">  BIO_write(sinbio, data, size);</div><div class="line">  SSL_do_handshake(server);</div><div class="line">  SSL_free(server);</div><div class="line">  return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>感觉用 <code>libfuzzer</code> 的话，<strong>我们需要做的工作就是根据目标程序的逻辑，把 <code>libfuzzer</code> 生成的 测试数据 传递 给 目标程序去处理， 然后在编译时采取合适的 <code>Sanitizer</code> 用于检测运行时出现的内存错误</strong>。</p>
+<p>比如上面就是模拟了 SSL 握手的逻辑，然后把  <code>libfuzzer</code> 生成的 测试数据作为握手包传递给 <code>openssl</code> 。</p>
+<p>编译之</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">clang++ -g openssl_fuzzer.cc -O2 -fno-omit-frame-pointer -fsanitize=address     -fsanitize-coverage=trace-pc-guard,trace-cmp,trace-gep,trace-div     -Iopenssl1.0.1f/include openssl1.0.1f/libssl.a openssl1.0.1f/libcrypto.a     ../../libFuzzer/Fuzzer/libFuzzer.a -o openssl_fuzzer</div></pre></td></tr></table></figure>
+<p>运行然后就会出现 <code>crash</code> 信息了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">haclh@ubuntu:~/vmdk_kernel/libfuzzer-workshop-master/lessons/05$ ./openssl_fuzzer ./corpus/</div><div class="line">INFO: Seed: 1472290074</div><div class="line">INFO: Loaded 1 modules (33464 guards): [0xc459b0, 0xc66490), </div><div class="line">Loading corpus dir: ./corpus/</div><div class="line">INFO: -max_len is not provided, using 64</div><div class="line">INFO: A corpus is not provided, starting from an empty corpus</div><div class="line">#0	READ units: 1</div><div class="line">#1	INITED cov: 1513 ft: 396 corp: 1/1b exec/s: 0 rss: 22Mb</div><div class="line">................................</div><div class="line">................................</div><div class="line">................................</div><div class="line">#68027	NEW    cov: 1592 ft: 703 corp: 28/1208b exec/s: 13605 rss: 363Mb L: 35 MS: 1 EraseBytes-</div><div class="line">=================================================================</div><div class="line">==35462==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x629000009748 at pc 0x0000004e8f7d bp 0x7ffd58180520 sp 0x7ffd5817fcd0</div><div class="line">READ of size 65535 at 0x629000009748 thread T0</div><div class="line">    #0 0x4e8f7c in __asan_memcpy /home/haclh/vmdk_kernel/libfuzzer-workshop-master/src/llvm/projects/compiler-rt/lib/asan/asan_interceptors_memintrinsics.cc:23</div><div class="line">    #1 0x5353f6 in tls1_process_heartbeat /home/haclh/vmdk_kernel/libfuzzer-workshop-master/lessons/05/openssl1.0.1f/ssl/t1_lib.c:2586:3</div></pre></td></tr></table></figure>
+<p>可以看到在 <code>tls1_process_heartbeat</code> 中 触发了堆溢出 （<code>heap-buffer-overflow</code> ）</p>
+<h2 id="CVE-2016-5180-（c-ares-堆溢出）"><a href="#CVE-2016-5180-（c-ares-堆溢出）" class="headerlink" title="CVE-2016-5180 （c-ares 堆溢出）"></a>CVE-2016-5180 （c-ares 堆溢出）</h2><p>本节相关文件位于 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/Dor1s/libfuzzer-workshop/tree/master/lessons/06</div></pre></td></tr></table></figure>
+<p>和前面一样，首先编译一下这个库。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">tar xzvf c-ares.tgz</div><div class="line">cd c-ares</div><div class="line"></div><div class="line">./buildconf</div><div class="line">./configure CC=&quot;clang -O2 -fno-omit-frame-pointer -g -fsanitize=address -fsanitize-coverage=trace-pc-guard,trace-cmp,trace-gep,trace-div&quot;</div><div class="line">make CFLAGS=</div></pre></td></tr></table></figure>
+<p>然后 <code>fuzzer</code> 的逻辑就非常简单了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">#include &lt;ares.h&gt;</div><div class="line"></div><div class="line">extern &quot;C&quot; int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) &#123;</div><div class="line">  unsigned char *buf;</div><div class="line">  int buflen;</div><div class="line">  std::string s(reinterpret_cast&lt;const char *&gt;(data), size);</div><div class="line">  ares_create_query(s.c_str(), ns_c_in, ns_t_a, 0x1234, 0, &amp;buf, &amp;buflen, 0);</div><div class="line">  ares_free_string(buf);</div><div class="line">  return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>把 <code>libfuzzer</code> 传过来的数据，转成 <code>char *</code> , 然后扔给 <code>ares_create_query</code> 进行处理。</p>
+<p>运行就有 <code>crash</code> 了。</p>
+<h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><p>感觉<code>libfuzzer</code> 已经把 一个 <code>fuzzer</code> 的核心（样本生成引擎和异常检测系统） 给做好了， 我们需要做的是根据目标程序的逻辑，把 <code>libfuzzer</code> 生成的数据，交给目标程序处理。</p>
+<h1 id="libFuzzer进阶"><a href="#libFuzzer进阶" class="headerlink" title="libFuzzer进阶"></a>libFuzzer进阶</h1><p>前面介绍了 <code>libFuzzer</code> 的一些简单的使用方法，下面以 <code>fuzz libxml2</code> 为例，介绍一些 <code>libFuzzer</code> 的高级用法。</p>
+<p>相关文件位于</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/Dor1s/libfuzzer-workshop/tree/master/lessons/08</div></pre></td></tr></table></figure>
+<h2 id="Start-fuzz"><a href="#Start-fuzz" class="headerlink" title="Start fuzz"></a>Start fuzz</h2><p>首先把 <code>libxml2</code> 用 <code>clang</code> 编译</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">tar xzf libxml2.tgz</div><div class="line">cd libxml2</div><div class="line"></div><div class="line">./autogen.sh</div><div class="line"></div><div class="line">export FUZZ_CXXFLAGS=&quot;-O2 -fno-omit-frame-pointer -g -fsanitize=address \</div><div class="line">    -fsanitize-coverage=edge,indirect-calls,trace-cmp,trace-div,trace-gep,trace-pc-guard&quot;</div><div class="line"></div><div class="line">CXX=&quot;clang++ $FUZZ_CXXFLAGS&quot; CC=&quot;clang $FUZZ_CXXFLAGS&quot; \</div><div class="line">    CCLD=&quot;clang++ $FUZZ_CXXFLAGS&quot;  ./configure</div><div class="line">make -j$(nproc)</div></pre></td></tr></table></figure>
+<p>然后写个 <code>fuzzer</code>, 这里选择 测试 <code>xmlReadMemory</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">#include &quot;libxml/parser.h&quot;</div><div class="line"></div><div class="line">void ignore (void* ctx, const char* msg, ...) &#123;</div><div class="line">  // Error handler to avoid spam of error messages from libxml parser.</div><div class="line">&#125;</div><div class="line"></div><div class="line">extern &quot;C&quot; int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) &#123;</div><div class="line">  xmlSetGenericErrorFunc(NULL, &amp;ignore);</div><div class="line"></div><div class="line">  if (auto doc = xmlReadMemory(reinterpret_cast&lt;const char*&gt;(data),</div><div class="line">                               static_cast&lt;int&gt;(size), &quot;noname.xml&quot;, NULL, 0)) &#123;</div><div class="line">    xmlFreeDoc(doc);</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后编译之。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">export FUZZ_CXXFLAGS=&quot;-O2 -fno-omit-frame-pointer -g -fsanitize=address \</div><div class="line">    -fsanitize-coverage=edge,indirect-calls,trace-cmp,trace-div,trace-gep,trace-pc-guard&quot;</div><div class="line">clang++ -std=c++11 xml_read_memory_fuzzer.cc $FUZZ_CXXFLAGS -Ilibxml2/include \</div><div class="line">    libxml2/.libs/libxml2.a /usr/lib/x86_64-linux-gnu/liblzma.a ../../libFuzzer/Fuzzer/libFuzzer.a -lz \</div><div class="line">    -o xml_read_memory_fuzzer</div></pre></td></tr></table></figure>
+<blockquote>
+<p><code>ps</code>:  <code>/usr/lib/x86_64-linux-gnu/liblzma.a</code> 是 <code>liblzma.a</code> 的路径，需要安装 <code>liblzma-dev</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; apt-get install liblzma-dev</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>编译好 fuzzer 后，我们运行它:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mkdir corpus1</div><div class="line">./xml_read_memory_fuzzer -max_total_time=300 -print_final_stats=1 corpus1</div></pre></td></tr></table></figure>
+<p>其中的一些参数做个解释</p>
+<blockquote>
+<ul>
+<li><code>-max_total_time</code> :  设置最长的运行时间， 单位是 秒， 这里是 <code>300s</code> , 也就是 <code>5</code> 分钟</li>
+<li><code>-print_final_stats</code>：执行完 <code>fuzz</code> 后 打印统计信息</li>
+<li><code>corpus1</code>： <code>fuzzer</code> 程序可以有多个目录作为参数，此时 <code>fuzzer</code> 会递归遍历所有目录，把目录中的文件读入最为样本数据传给测试函数，同时会把那些可以产生新的的代码路径的样本保存到第一个目录里面。</li>
+</ul>
+</blockquote>
+<p>运行完后会得到类似下面的结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">###### Recommended dictionary. ######</div><div class="line">&quot;X\x00\x00\x00\x00\x00\x00\x00&quot; # Uses: 1228</div><div class="line">&quot;prin&quot; # Uses: 1353</div><div class="line">...........................</div><div class="line">...........................</div><div class="line">...........................</div><div class="line">&quot;U&lt;/UTrri\x09&lt;/UTD&quot; # Uses: 61</div><div class="line">###### End of recommended dictionary. ######</div><div class="line">Done 1464491 runs in 301 second(s)</div><div class="line">stat::number_of_executed_units: 1464491</div><div class="line">stat::average_exec_per_sec:     4865</div><div class="line">stat::new_units_added:          1407</div><div class="line">stat::slowest_unit_time_sec:    0</div><div class="line">stat::peak_rss_mb:              407</div></pre></td></tr></table></figure>
+<p>开始由 <code>####</code> 夹着的是 <code>libfuzzer</code> 在 <code>fuzz</code> 过程中挑选出来的 <code>dictionary</code>， 同时还给出了使用的次数，这些 <code>dictionary</code> 可以在以后 <code>fuzz</code> 同类型程序时 节省 <code>fuzz</code> 的时间。</p>
+<p>然后以 <code>stat:</code> 开头的是一些 fuzz 的统计信息， 主要看 <code>stat::new_units_added</code>  表示整个 <code>fuzz</code> 过程中触发了多少个代码单元。</p>
+<p>可以看到直接 <code>fuzz</code> ,  <code>5</code>分钟 触发了 <code>1407</code> 个代码单元</p>
+<h2 id="使用-Dictionary-提升性能"><a href="#使用-Dictionary-提升性能" class="headerlink" title="使用 Dictionary 提升性能"></a>使用 Dictionary 提升性能</h2><p><code>Dictionary</code> 貌似是 <code>afl</code> 中提出的 ，具体可以看下面这篇文章</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://lcamtuf.blogspot.com/2015/01/afl-fuzz-making-up-grammar-with.html</div></pre></td></tr></table></figure>
+<p>我们知道基本上所有的程序都是<strong>处理具有一定格式的数据</strong>，比如 <code>xml</code> 文档， <code>png</code>图片等等。 这些数据中会有一些<strong>特殊字符序列 （或者说关键字）</strong>， 比如 在 <code>xml</code> 文档中 就有 <code>CDATA, &lt;!ATTLIST</code> 等，<strong>png图片</strong> 就有 <strong>png 图片头</strong>。</p>
+<p> 如果我们事先就把这些 <strong>字符序列</strong> 列举出来， <code>fuzz</code> 直接使用这些关键字去 组合，就会就可以减少很多没有意义的 尝试，同时还有可能会走到更深的程序分支中去。</p>
+<p><code>Dictionary</code> 就是实现了这种思路。 <code>libfuzzer</code> 和 <code>afl</code> 使用的 <code>dictionary</code> 文件的语法是一样的， 所以可以直接拿 afl 里面的 <code>dictionary</code> 文件来给 <code>libfuzzer</code> 使用。</p>
+<blockquote>
+<p>下面这个网址里面就有一些 <code>afl</code> 的 <code>dictionary</code> 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; https://github.com/rc0r/afl-fuzz/tree/master/dictionaries</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>以  <a href="https://llvm.org/docs/LibFuzzer.html#id30" target="_blank" rel="external">libfuzzer 官网 </a>  的示例介绍一下语法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"># Lines starting with &apos;#&apos; and empty lines are ignored.</div><div class="line"># Adds &quot;blah&quot; (w/o quotes) to the dictionary.</div><div class="line">kw1=&quot;blah&quot;</div><div class="line"># Use \\ for backslash and \&quot; for quotes.</div><div class="line">kw2=&quot;\&quot;ac\\dc\&quot;&quot;</div><div class="line"># Use \xAB for hex values</div><div class="line">kw3=&quot;\xF7\xF8&quot;</div><div class="line"># the name of the keyword followed by &apos;=&apos; may be omitted:</div><div class="line">&quot;foo\x0Abar&quot;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>#</code> 开头的行 和 空行会被忽略</li>
+<li><code>kw1=</code> 这些就类似于注释， 没有意义</li>
+<li>真正有用的是由 <code>&quot;</code> 包裹的<strong>字串</strong>，这些  <strong>字串</strong> 就会作为一个个的关键字， <code>libfuzzer</code> 会用它们进行组合来生成样本。 </li>
+</ul>
+<p><code>libfuzzer</code> 使用 <code>-dict</code> 指定 <code>dict</code> 文件，下面使用 <code>xml.dict</code> 为 <code>dictionary</code> 文件，进行 <code>fuzz</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./xml_read_memory_fuzzer -dict=./xml.dict -max_total_time=300     -print_final_stats=1 corpus2</div></pre></td></tr></table></figure>
+<p>最终这种方式可以探测到 <code>2200+</code> 的代码单元， 效率提升还是很明显的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">###### End of recommended dictionary. ######</div><div class="line">Done 1379646 runs in 301 second(s)</div><div class="line">stat::number_of_executed_units: 1379646</div><div class="line">stat::average_exec_per_sec:     4583</div><div class="line">stat::new_units_added:          2215</div><div class="line">stat::slowest_unit_time_sec:    0</div><div class="line">stat::peak_rss_mb:              415</div></pre></td></tr></table></figure>
+<h2 id="精简样本集"><a href="#精简样本集" class="headerlink" title="精简样本集"></a>精简样本集</h2><p>在上一节里面我们获得了很多的样本，其中有很多其实是重复的，可以使用 <code>libfuzzer</code> 把样本集进行精简。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mkdir corpus1_min</div><div class="line">./xml_read_memory_fuzzer -merge=1 corpus1_min corpus1</div></pre></td></tr></table></figure>
+<blockquote>
+<p><code>corpus1_min</code>:  精简后的样本集存放的位置</p>
+<p><code>corpus1</code>:  原始样本集存放的位置</p>
+</blockquote>
+<p>可以得到类似的结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">03:20 haclh@ubuntu:08 $ ls corpus1 | wc -l</div><div class="line">1403</div><div class="line">03:20 haclh@ubuntu:08 $ ./xml_read_memory_fuzzer -merge=1 corpus1_min corpus1</div><div class="line">INFO: Seed: 3775041129</div><div class="line">....................</div><div class="line">....................</div><div class="line">....................</div><div class="line">#1024	pulse  cov: 1569 exec/s: 0 rss: 108Mb</div><div class="line">MERGE-OUTER: succesfull in 1 attempt(s)</div><div class="line">MERGE-OUTER: the control file has 4150228 bytes</div><div class="line">MERGE-OUTER: consumed 2Mb (24Mb rss) to parse the control file</div><div class="line">MERGE-OUTER: 928 new files with 5307 new features added</div></pre></td></tr></table></figure>
+<p>可以看到 <code>1403</code> 个样本被精简成了 <code>928</code> 个样本</p>
+<h2 id="生成代码覆盖率报告"><a href="#生成代码覆盖率报告" class="headerlink" title="生成代码覆盖率报告"></a>生成代码覆盖率报告</h2><p>使用 <code>-dump_coverage</code> 参数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">03:28 haclh@ubuntu:08 $ ./xml_read_memory_fuzzer corpus1_min -runs=0 -dump_coverage=1</div><div class="line">INFO: Seed: 2354910000</div><div class="line">..............</div><div class="line">..............</div><div class="line">./xml_read_memory_fuzzer.69494.sancov: 1603 PCs written</div></pre></td></tr></table></figure>
+<p>然后会生成一个 *.sancov 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">03:26 haclh@ubuntu:08 $ ls *.sancov</div><div class="line">xml_read_memory_fuzzer.69494.sancov</div></pre></td></tr></table></figure>
+<p>然后把它转换成 <code>.symcov</code> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sancov -symbolize xml_read_memory_fuzzer ./xml_read_memory_fuzzer.69494.sancov &gt; xml_read_memory_fuzzer.symcov</div></pre></td></tr></table></figure>
+<p>然后使用 <a href="http://llvm.org/svn/llvm-project/llvm/trunk/tools/sancov/coverage-report-server.py" target="_blank" rel="external">coverage-report-server</a> 解析这个文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">03:29 haclh@ubuntu:08 $ python3 coverage-report-server.py --symcov xml_read_memory_fuzzer.symcov     --srcpath libxml2</div><div class="line">Loading coverage...</div><div class="line">Serving at 127.0.0.1:8001</div></pre></td></tr></table></figure>
+<p>用浏览器访问之</p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15266550173995sqmhb84.png?imageslim" alt="paste image"></p>
+<p>通过这个功能，我们可以非常直观的看到每个源文件的覆盖率。</p>
+<h2 id="Fuzz-xmlRegexpCompile"><a href="#Fuzz-xmlRegexpCompile" class="headerlink" title="Fuzz xmlRegexpCompile"></a>Fuzz xmlRegexpCompile</h2><p>前面已经 <code>fuzz</code> 了  <code>xmlReadMemory</code>，这里 <code>fuzz</code> 另外一个函数 <code>xmlRegexpCompile</code> </p>
+<p>看看 <code>fuzz</code> 代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">#include &quot;libxml/parser.h&quot;</div><div class="line">#include &quot;libxml/tree.h&quot;</div><div class="line">#include &quot;libxml/xmlversion.h&quot;</div><div class="line"></div><div class="line">void ignore (void * ctx, const char * msg, ...) &#123;</div><div class="line">  // Error handler to avoid spam of error messages from libxml parser.</div><div class="line">&#125;</div><div class="line">// Entry point for LibFuzzer.</div><div class="line">extern &quot;C&quot; int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) &#123;</div><div class="line">  xmlSetGenericErrorFunc(NULL, &amp;ignore);</div><div class="line">  std::vector&lt;uint8_t&gt; buffer(size + 1, 0);</div><div class="line">  std::copy(data, data + size, buffer.data());</div><div class="line">  xmlRegexpPtr x = xmlRegexpCompile(buffer.data());</div><div class="line">  if (x)</div><div class="line">    xmlRegFreeRegexp(x);</div><div class="line">  return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>就是把 数据用 <code>std::vector</code> 做了个中转，喂给 <code>xmlRegexpCompile</code> 函数。</p>
+<p>编译之</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">export FUZZ_CXXFLAGS=&quot;-O2 -fno-omit-frame-pointer -g -fsanitize=address \</div><div class="line">    -fsanitize-coverage=edge,indirect-calls,trace-cmp,trace-div,trace-gep,trace-pc-guard&quot;</div><div class="line">clang++ -std=c++11 xml_compile_regexp_fuzzer.cc $FUZZ_CXXFLAGS -Ilibxml2/include \</div><div class="line">    libxml2/.libs/libxml2.a /usr/lib/x86_64-linux-gnu/liblzma.a ../../libFuzzer/Fuzzer/libFuzzer.a -lz \</div><div class="line">    -o xml_compile_regexp_fuzzer</div></pre></td></tr></table></figure>
+<p>运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mkdir corpus3</div><div class="line">./xml_compile_regexp_fuzzer -dict=./xml.dict corpus3</div></pre></td></tr></table></figure>
+<p>然后过一会就会出现 <code>crash</code> 了。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://github.com/Dor1s/libfuzzer-workshop/" target="_blank" rel="external">https://github.com/Dor1s/libfuzzer-workshop/</a></p>
+
+        
+                <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
+                    <p><strong>
+                         
+                            <a>本站文章均原创， 转载注明来源</a>
+                        </strong>
+                        <br>
+                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2018/05/18/learn_fuzz_libfuzzer.html">http://blog.hac425.top/2018/05/18/learn_fuzz_libfuzzer.html</a>
+                    </p>
+                </blockquote>
+        
+    
+
+    
+</div>
+
+
+                
+
+                <!-- Post Comments -->
+                
+                    
+    <!-- 使用 来必力 -->
+<div id="livere-comment">
+    <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zMTQ2OC84MDMy">
+<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+</div>
+<style>
+    #livere-comment{
+        background-color: #eee;
+        padding: 2pc;
+    }
+</style>
+
+                
+            </div>
+
+            <!-- Post Prev & Next Nav -->
+            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
+    <!-- Prev Nav -->
+    
+
+    <!-- Section Spacer -->
+    <div class="section-spacer"></div>
+
+    <!-- Next Nav -->
+    
+        <a href="/2018/05/18/openwrt_rpcd_misconfig.html" id="post_nav-older" class="next-content">
+            旧篇
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </a>
+    
+</nav>
+
+        </div>
+    </div>
+
+
+
+                    
+                        <!-- Overlay For Active Sidebar -->
+<div class="sidebar-overlay"></div>
+
+<!-- Material sidebar -->
+<aside id="sidebar" class="sidebar sidebar-colored sidebar-fixed-left" role="navigation">
+    <div id="sidebar-main">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header header-cover" style="background-image: url(/img/sidebar_header.png);">
+    <!-- Top bar -->
+    <div class="top-bar"></div>
+
+    <!-- Sidebar toggle button -->
+    <button type="button" class="sidebar-toggle mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" style="display: initial;" data-upgraded=",MaterialButton,MaterialRipple">
+        <i class="material-icons">clear_all</i>
+        <span class="mdl-button__ripple-container">
+            <span class="mdl-ripple">
+            </span>
+        </span>
+    </button>
+
+    <!-- Sidebar Avatar -->
+    <div class="sidebar-image">
+        <img src="/img/girl.png" alt="hac425's avatar">
+    </div>
+
+    <!-- Sidebar Email -->
+    <a data-toggle="dropdown" class="sidebar-brand" href="#settings-dropdown">
+        hac425xxx@gmail.com
+        <b class="caret"></b>
+    </a>
+</div>
+
+
+        <!-- Sidebar Navigation  -->
+        <ul class="nav sidebar-nav">
+    <!-- User dropdown  -->
+    <li class="dropdown">
+        <ul id="settings-dropdown" class="dropdown-menu">
+            
+                <li>
+                    <a href="#" target="_blank" title="Email Me">
+                        
+                            <i class="material-icons sidebar-material-icons sidebar-indent-left1pc-element">email</i>
+                        
+                        Email Me
+                    </a>
+                </li>
+            
+        </ul>
+    </li>
+
+    <!-- Homepage -->
+    
+        <li id="sidebar-first-li">
+            <a href="/">
+                
+                    <i class="material-icons sidebar-material-icons">home</i>
+                
+                主页
+            </a>
+        </li>
+        
+    
+
+    <!-- Archives  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">inbox</i>
+                
+                    归档
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+            <li>
+                <a class="sidebar_archives-link" href="/archives/2018/05/">五月 2018<span class="sidebar_archives-count">7</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/04/">四月 2018<span class="sidebar_archives-count">5</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/03/">三月 2018<span class="sidebar_archives-count">14</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/02/">二月 2018<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/01/">一月 2018<span class="sidebar_archives-count">8</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/12/">十二月 2017<span class="sidebar_archives-count">13</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/11/">十一月 2017<span class="sidebar_archives-count">8</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/10/">十月 2017<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/08/">八月 2017<span class="sidebar_archives-count">1</span></a>
+            </ul>
+        </li>
+        
+    
+
+    <!-- Categories  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">chrome_reader_mode</i>
+                
+                分类
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                <a class="sidebar_archives-link" href="/categories/Vulnerability-analysis/">Vulnerability analysis<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/chrome/">chrome<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/ctf/">ctf<span class="sidebar_archives-count">20</span></a></li><li><a class="sidebar_archives-link" href="/categories/embedded-development/">embedded_development<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/java应用破解思路/">java应用破解思路<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/jeb破解/">jeb破解<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/categories/kernel/">kernel<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/pwn-router-os/">pwn_router_os<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/categories/reverse/">reverse<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/vulnerability-report/">vulnerability_report<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/categories/代码审计/">代码审计<span class="sidebar_archives-count">4</span></a></li><li><a class="sidebar_archives-link" href="/categories/安卓安全/">安卓安全<span class="sidebar_archives-count">6</span></a></li><li><a class="sidebar_archives-link" href="/categories/文件patch/">文件patch<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/渗透测试/">渗透测试<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/categories/破解/">破解<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/路由器安全/">路由器安全<span class="sidebar_archives-count">11</span></a>
+            </ul>
+        </li>
+        
+            <li class="divider"></li>
+        
+    
+
+    <!-- Pages  -->
+    
+        <li>
+            <a href="/about" title="关于我">
+                
+                    <i class="material-icons sidebar-material-icons">person</i>
+                
+                关于我
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/timeline" title="时间轴">
+                
+                    <i class="material-icons sidebar-material-icons">timeline</i>
+                
+                时间轴
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/links" title="友情链接">
+                
+                    <i class="material-icons sidebar-material-icons">people</i>
+                
+                友情链接
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/tags" title="标签云">
+                
+                    <i class="material-icons sidebar-material-icons">invert_colors</i>
+                
+                标签云
+            </a>
+        </li>
+        
+    
+
+    <!-- Article Number  -->
+    
+        <li>
+            <a href="/archives">
+                文章总数
+                <span class="sidebar-badge">68</span>
+            </a>
+        </li>
+        
+    
+</ul>
+
+
+        <!-- Sidebar Footer -->
+        <!--
+I'm glad you use this theme, the development is no so easy, I hope you can keep the copyright, I will thank you so much.
+If you still want to delete the copyrights, could you still retain the first one? Which namely "Theme Material"
+It will not impact the appearance and can give developers a lot of support :)
+
+很高兴您使用并喜欢该主题，开发不易 十分谢谢与希望您可以保留一下版权声明。
+如果您仍然想删除的话 能否只保留第一项呢？即 "Theme Material"
+它不会影响美观并可以给开发者很大的支持和动力。 :)
+-->
+
+<!-- Sidebar Divider -->
+
+
+<!-- Theme Material -->
+
+
+<!-- Help & Support -->
+<!--
+
+-->
+
+<!-- Feedback -->
+<!--
+
+-->
+
+<!-- About Theme -->
+<!--
+
+-->
+
+    </div>
+
+    <!-- Sidebar Image -->
+    
+
+</aside>
+
+                    
+
+                    
+                        <!-- Footer Top Button -->
+                        <div id="back-to-top" class="toTop-wrap">
+    <a href="#top" class="toTop">
+        <i class="material-icons footer_top-i">expand_less</i>
+    </a>
+</div>
+
+                    
+
+                    <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+<!--Footer-->
+<footer class="mdl-mini-footer" id="bottom">
+    
+        <!-- Paradox Footer Left Section -->
+        <div class="mdl-mini-footer--left-section sns-list">
+    <!-- Twitter -->
+    
+        <a href="https://twitter.com/hac425" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-twitter">
+                <span class="visuallyhidden">Twitter</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Facebook -->
+    
+
+    <!-- Google + -->
+    
+
+    <!-- Weibo -->
+    
+        <a href="http://weibo.com/u/5691483590" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-weibo">
+                <span class="visuallyhidden">Weibo</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Instagram -->
+    
+
+    <!-- Tumblr -->
+    
+
+    <!-- Github -->
+    
+        <a href="https://gitee.com/hac425/" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-github">
+                <span class="visuallyhidden">Github</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- LinkedIn -->
+    
+
+    <!-- Zhihu -->
+    
+
+    <!-- Bilibili -->
+    
+
+    <!-- Telegram -->
+    
+    
+    <!-- V2EX -->
+    
+</div>
+
+
+        <!--Copyright-->
+        <div id="copyright">
+            Copyright&nbsp;©<script type="text/javascript">var fd = new Date();document.write("&nbsp;" + fd.getFullYear() + "&nbsp;");</script>穷则变，变则通，通则久
+            
+        </div>
+
+        <!-- Paradox Footer Right Section -->
+
+    
+</footer>
+
+
+                    <!-- Import JS File -->
+
+    <script>lsloader.load("lazyload_js","/js/lazyload.min.js?wgjW/HuQG9JDgvPDPoRAng==", true)</script>
+
+
+
+    <script>lsloader.load("js_js","/js/js.min.js?V/53wGualMuiPM3xoetD5Q==", true)</script>
+
+
+
+    <script>lsloader.load("np_js","/js/nprogress.js?pl3Qhb9lvqR1FlyLUna1Yw==", true)</script>
+
+
+<script type="text/ls-javascript" id="NProgress-script">
+    NProgress.configure({
+        showSpinner: true
+    });
+    NProgress.start();
+    $('#nprogress .bar').css({
+        'background': '#29d'
+    });
+    $('#nprogress .peg').css({
+        'box-shadow': '0 0 10px #29d, 0 0 15px #29d'
+    });
+    $('#nprogress .spinner-icon').css({
+        'border-top-color': '#29d',
+        'border-left-color': '#29d'
+    });
+    setTimeout(function() {
+        NProgress.done();
+        $('.fade').removeClass('out');
+    }, 800);
+</script>
+
+
+
+
+
+
+
+    <!-- Busuanzi -->
+    <script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+   
+
+
+
+
+
+<!-- UC Browser Compatible -->
+<script>
+	var agent = navigator.userAgent.toLowerCase();
+	if(agent.indexOf('ucbrowser')>0) {
+		document.write('<link rel="stylesheet" href="/css/uc.css">');
+	   alert('由于 UC 浏览器使用极旧的内核，而本网站使用了一些新的特性。\n为了您能更好的浏览，推荐使用 Chrome 或 Firefox 浏览器。');
+	}
+</script>
+
+<!-- Import prettify js  -->
+
+
+    
+        <script>lsloader.load("hanabi","/js/hanabi-browser-bundle.js?5+2z7ZZmFuZK5IcimlZbxw==", true)</script>
+    
+
+
+<!-- Window Load -->
+<!-- add class for prettify -->
+<script type="text/ls-javascript" id="window-load">
+    $(window).on('load', function() {
+        // Post_Toc parent position fixed
+        $('.post-toc-wrap').parent('.mdl-menu__container').css('position', 'fixed');
+    });
+
+    
+    
+        
+        
+        HanabiBrowser.start('pre code',true);
+    
+</script>
+
+<!-- MathJax Load-->
+
+
+<!-- Bing Background -->
+
+
+<script type="text/ls-javascript" id="lazy-load">
+    // Offer LazyLoad
+    queue.offer(function(){
+        $('.lazy').lazyload({
+            effect : 'show'
+        });
+    });
+
+    // Start Queue
+    $(document).ready(function(){
+        setInterval(function(){
+            queue.execNext();
+        },200);
+    });
+</script>
+
+<!-- Custom Footer -->
+
+
+
+<script>
+    (function(){
+        var scriptList = document.querySelectorAll('script[type="text/ls-javascript"]')
+
+        for (var i = 0; i < scriptList.length; ++i) {
+            var item = scriptList[i];
+            lsloader.runInlineScript(item.id,item.id);
+        }
+    })()
+console.log('\n %c © Material Theme | Version: 1.5.0 | https://github.com/viosey/hexo-theme-material %c \n', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-left-radius:5px;border-bottom-left-radius:5px;', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-right-radius:5px;border-bottom-right-radius:5px;');
+</script>
+
+                </main>
+            </div>
+        </body>
+    
+</html>

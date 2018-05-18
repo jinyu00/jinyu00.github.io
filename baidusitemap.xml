@@ -4,6 +4,21 @@
 
     
   <url>
+    <loc>http://blog.hac425.top/2018/05/18/learn_fuzz_libfuzzer.html</loc>
+    <lastmod>2018-05-18T14:51:49.133Z</lastmod>
+    <data>
+        <display>
+        <title>fuzz系列之libfuzzer</title>
+        <pubTime>2018-05-18T14:40:38.000Z</pubTime>
+        
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://blog.hac425.top/2018/05/18/openwrt_rpcd_misconfig.html</loc>
     <lastmod>2018-05-18T14:34:21.379Z</lastmod>
     <data>
