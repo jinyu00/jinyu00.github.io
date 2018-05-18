@@ -230,6 +230,18 @@
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://github.com/Dor1s/libfuzzer-workshop/" target="_blank" rel="external">https://github.com/Dor1s/libfuzzer-workshop/</a></p>
 ]]></content>
       
+        <categories>
+            
+            <category> fuzz </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> libfuzzer </tag>
+            
+        </tags>
         
     </entry>
     

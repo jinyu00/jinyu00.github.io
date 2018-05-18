@@ -5,14 +5,19 @@
     
   <url>
     <loc>http://blog.hac425.top/2018/05/18/learn_fuzz_libfuzzer.html</loc>
-    <lastmod>2018-05-18T14:51:49.133Z</lastmod>
+    <lastmod>2018-05-18T14:56:02.437Z</lastmod>
     <data>
         <display>
         <title>fuzz系列之libfuzzer</title>
-        <pubTime>2018-05-18T14:40:38.000Z</pubTime>
+        <pubTime>2018-05-18T14:40:00.000Z</pubTime>
         
+        <tag>libfuzzer</tag>
+         
          
            
+             
+              <breadCrumb title="fuzz" url="http://blog.hac425.top/categories/fuzz/"/>
+          
         </display>
     </data>
     </url>
