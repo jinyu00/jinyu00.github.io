@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html style="display: none;" lang="zh">
+    <head>
+    <meta charset="utf-8">
+    <meta name="baidu-site-verification" content="RC70b8mZ9A" />
+    <meta name="msvalidate.01" content="325714A6172A8D425D843D8163893A54" />
+    <meta name="google-site-verification" content="QAmqP2zEYaSBqoZ9w1x5RdOflLW2Fir2-yVs5LTIUxA" />
+    <meta name="google-site-verification" content="QgUuEnRKG0PKdnDrOxnq55x7VxQbCiprrMJpfakMlow" />
+    <!--
+        © Material Theme
+        https://github.com/viosey/hexo-theme-material
+        Version: 1.5.0 -->
+    <script>
+        window.materialVersion = "1.5.0"
+        // Delete localstorage with these tags
+        window.oldVersion = [
+            'codestartv1',
+            '1.3.4',
+            '1.4.0',
+            '1.4.0b1'
+        ]
+    </script>
+
+
+    <!-- dns prefetch -->
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+
+
+
+    <link rel="dns-prefetch" href="https://busuanzi.ibruce.info"/>
+
+
+
+        <link rel="dns-prefetch" href="https://cdn-city.livere.com"/>
+
+
+
+
+
+
+
+
+
+
+    <!-- Title -->
+    
+    <title>
+        
+            fuzz系列之afl | 
+        
+        穷则变，变则通，通则久
+    </title>
+
+    <!-- Meta & Info -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="theme-color" content="#0097A7">
+    <meta name="author" content="hac425">
+    <meta name="description" itemprop="description" content="">
+    <meta name="keywords" content=",afl">
+
+    <!-- Import lsloader -->
+    <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
+
+    <!-- Import queue -->
+    <script>function Queue(){this.dataStore=[];this.offer=b;this.poll=d;this.execNext=a;this.debug=false;this.startDebug=c;function b(e){if(this.debug){console.log("Offered a Queued Function.")}if(typeof e==="function"){this.dataStore.push(e)}else{console.log("You must offer a function.")}}function d(){if(this.debug){console.log("Polled a Queued Function.")}return this.dataStore.shift()}function a(){var e=this.poll();if(e!==undefined){if(this.debug){console.log("Run a Queued Function.")}e()}}function c(){this.debug=true}}var queue=new Queue();</script>
+
+    <!-- Favicons -->
+    <link rel="icon shortcut" type="image/ico" href="/img/girl.png">
+    <link rel="icon" sizes="192x192" href="/img/girl.png">
+    <link rel="apple-touch-icon" href="/img/girl.png">
+
+    <!--iOS -->
+    <meta name="apple-mobile-web-app-title" content="Title">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="480">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="穷则变，变则通，通则久">
+
+    <!-- Site Verification -->
+    
+    
+
+    <!-- RSS -->
+    
+
+    <!--[if lte IE 9]>
+        <link rel="stylesheet" href="/css/ie-blocker.css">
+
+        
+            <script src="/js/ie-blocker.zhCN.js"></script>
+        
+    <![endif]-->
+
+    <!-- Import CSS -->
+    
+        <style id="material_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("material_css","/css/material.min.css?Z7a72R1E4SxzBKR/WGctOA==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+        <style id="style_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("style_css","/css/style.min.css?MKetZV3cUTfDxvMffaOezg==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+
+        
+
+    
+
+    
+
+    <!-- Config CSS -->
+
+<!-- Other Styles -->
+<style>
+  body, html {
+    font-family: Roboto, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    overflow-x: hidden !important;
+  }
+  
+  code {
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  }
+
+  a {
+    color: #00838F;
+  }
+
+  .mdl-card__media,
+  #search-label,
+  #search-form-label:after,
+  #scheme-Paradox .hot_tags-count,
+  #scheme-Paradox .sidebar_archives-count,
+  #scheme-Paradox .sidebar-colored .sidebar-header,
+  #scheme-Paradox .sidebar-colored .sidebar-badge{
+    background-color: #0097A7 !important;
+  }
+
+  /* Sidebar User Drop Down Menu Text Color */
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:hover,
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:focus {
+    color: #0097A7 !important;
+  }
+
+  #post_entry-right-info,
+  .sidebar-colored .sidebar-nav li:hover > a,
+  .sidebar-colored .sidebar-nav li:hover > a i,
+  .sidebar-colored .sidebar-nav li > a:hover,
+  .sidebar-colored .sidebar-nav li > a:hover i,
+  .sidebar-colored .sidebar-nav li > a:focus i,
+  .sidebar-colored .sidebar-nav > .open > a,
+  .sidebar-colored .sidebar-nav > .open > a:hover,
+  .sidebar-colored .sidebar-nav > .open > a:focus,
+  #ds-reset #ds-ctx .ds-ctx-entry .ds-ctx-head a {
+    color: #0097A7 !important;
+  }
+
+  .toTop {
+    background: #757575 !important;
+  }
+
+  .material-layout .material-post>.material-nav,
+  .material-layout .material-index>.material-nav,
+  .material-nav a {
+    color: #757575;
+  }
+
+  #scheme-Paradox .MD-burger-layer {
+    background-color: #757575;
+  }
+
+  #scheme-Paradox #post-toc-trigger-btn {
+    color: #757575;
+  }
+
+  .post-toc a:hover {
+    color: #00838F;
+    text-decoration: underline;
+  }
+
+</style>
+
+
+<!-- Theme Background Related-->
+
+    <style>
+      body{
+        background-color: #F5F5F5;
+      }
+
+      /* blog_info bottom background */
+      #scheme-Paradox .material-layout .something-else .mdl-card__supporting-text{
+        background-color: #fff;
+      }
+    </style>
+
+
+
+
+<!-- Fade Effect -->
+
+    <style>
+      .fade {
+        transition: all 800ms linear;
+        -webkit-transform: translate3d(0,0,0);
+        -moz-transform: translate3d(0,0,0);
+        -ms-transform: translate3d(0,0,0);
+        -o-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+        opacity: 1;
+      }
+
+      .fade.out{
+        opacity: 0;
+      }
+    </style>
+
+
+<!-- Import Font -->
+<!-- Import Roboto -->
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+
+
+<!-- Import Material Icon -->
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+
+
+    <!-- Import jQuery -->
+    
+        <script>lsloader.load("jq_js","/js/jquery.min.js?ezyEvm8ST5CGfpA+kFFi1g==", true)</script>
+    
+
+    <!-- The Open Graph protocol -->
+    <meta property="og:url" content="http://blog.hac425.top">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="fuzz系列之afl | 穷则变，变则通，通则久">
+    <meta property="og:image" content="http://blog.hac425.top/img/girl.png" />
+    <meta property="og:description" content="">
+    <meta property="og:article:tag" content="afl"> 
+
+    
+        <meta property="article:published_time" content="Sun Jun 03 2018 09:45:00 GMT+0800" />
+        <meta property="article:modified_time" content="Sun Jun 03 2018 09:49:40 GMT+0800" />
+    
+
+    <!-- The Twitter Card protocol -->
+    <meta name="twitter:title" content="fuzz系列之afl | 穷则变，变则通，通则久">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="http://blog.hac425.top/img/girl.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="http://blog.hac425.top" />
+
+    <!-- Add canonical link for SEO -->
+    
+        <link rel="canonical" href="http://blog.hac425.top/2018/06/03/fuzz_with_afl.html" />
+    
+
+    <!-- Structured-data for SEO -->
+    
+        
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": "http://blog.hac425.top/2018/06/03/fuzz_with_afl.html",
+    "headline": "fuzz系列之afl",
+    "datePublished": "Sun Jun 03 2018 09:45:00 GMT+0800",
+    "dateModified": "Sun Jun 03 2018 09:49:40 GMT+0800",
+    "author": {
+        "@type": "Person",
+        "name": "hac425",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/img/girl.png"
+        },
+        "description": "纵横捭阖，冷心为上"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "穷则变，变则通，通则久",
+        "logo": {
+            "@type":"ImageObject",
+            "url": "/img/girl.png"
+        }
+    },
+    "keywords": ",afl",
+    "description": "",
+}
+</script>
+
+
+    
+
+    <!-- Analytics -->
+    
+    
+        <script>
+    var _hmt = _hmt || [];
+    (function() {var hm = document.createElement('script');
+    hm.src = 'https://hm.baidu.com/hm.js?99747687c69d73d9102f032f78f03e96';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+    
+    
+
+    <!-- Custom Head -->
+    
+
+</head>
+
+
+    
+        <body id="scheme-Paradox" class="lazy">
+            <div class="material-layout  mdl-js-layout has-drawer is-upgraded">
+                
+
+                <!-- Main Container -->
+                <main class="material-layout__content" id="main">
+
+                    <!-- Top Anchor -->
+                    <div id="top"></div>
+
+                    
+                        <!-- Hamburger Button -->
+                        <button class="MD-burger-icon sidebar-toggle">
+                            <span class="MD-burger-layer"></span>
+                        </button>
+                    
+
+                    <!-- Post TOC -->
+
+    
+    <!-- Back Button -->
+    <!--
+    <div class="material-back" id="backhome-div" tabindex="0">
+        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+           href="#" onclick="window.history.back();return false;"
+           target="_self"
+           role="button"
+           data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">arrow_back</i>
+            <span class="mdl-button__ripple-container">
+                <span class="mdl-ripple"></span>
+            </span>
+        </a>
+    </div>
+    -->
+
+
+    <!-- Left aligned menu below button -->
+    
+    
+    <button id="post-toc-trigger-btn"
+        class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">format_list_numbered</i>
+    </button>
+
+    <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#afl-实战"><span class="post-toc-number">1.</span> <span class="post-toc-text">afl 实战</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#前言"><span class="post-toc-number">2.</span> <span class="post-toc-text">前言</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#介绍"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">介绍</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Fuzz-网络程序"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">Fuzz 网络程序</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#构建-Modbus-TCP-Server"><span class="post-toc-number">2.2.1.</span> <span class="post-toc-text">构建 Modbus TCP Server</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#利用-preeny-库辅助"><span class="post-toc-number">2.2.2.</span> <span class="post-toc-text">利用 preeny 库辅助</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#编译-modbus-server"><span class="post-toc-number">2.2.3.</span> <span class="post-toc-text">编译 modbus server</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#获取样本数据"><span class="post-toc-number">2.2.4.</span> <span class="post-toc-text">获取样本数据</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#使用获取的样本再次-fuzz"><span class="post-toc-number">2.2.5.</span> <span class="post-toc-text">使用获取的样本再次 fuzz</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#总结"><span class="post-toc-number">2.2.6.</span> <span class="post-toc-text">总结</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#AFL-Persistent-Mode"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">AFL Persistent Mode</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结-1"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">总结</span></a></li></ol></li></ol>
+    </ul>
+    
+
+
+
+
+<!-- Layouts -->
+
+    <!-- Post Module -->
+    <div class="material-post_container">
+
+        <div class="material-post mdl-grid">
+            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+
+                <!-- Post Header(Thumbnail & Title) -->
+                
+    <!-- Paradox Post Header -->
+    
+        
+            <!-- Random Thumbnail -->
+            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
+            <script type="text/ls-javascript" id="post-thumbnail-script">
+    var randomNum = Math.floor(Math.random() * 19 + 1);
+
+    $('.post_thumbnail-random').attr('data-original', '/img/random/material-' + randomNum + '.png');
+    $('.post_thumbnail-random').addClass('lazy');
+</script>
+
+        
+    
+            <p class="article-headline-p">
+                fuzz系列之afl
+            </p>
+        </div>
+
+
+
+
+
+                
+                    <!-- Paradox Post Info -->
+                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+
+    <!-- Author Avatar -->
+    <div id="author-avatar">
+        <img src="/img/girl.png" width="44px" height="44px" alt="Author Avatar"/>
+    </div>
+    <!-- Author Name & Date -->
+    <div>
+        <strong>hac425</strong>
+        <span>6月 03, 2018</span>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <!-- Favorite -->
+    <!--
+        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
+            <i class="material-icons" role="presentation">favorite</i>
+            <span class="visuallyhidden">favorites</span>
+        </button>
+    -->
+
+    <!-- Qrcode -->
+    
+        <button id="article-functions-qrcode-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">devices other</i>
+    <span class="visuallyhidden">devices other</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
+    <li class="mdl-menu__item">在其它设备中阅读本文章</li>
+    
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACZklEQVR42u3aOXLDMAwFUN3/0kmbIpY/CJBe5rHyeLTwsQApANfPV48LDw8PDw8PDw/vzXhXPP550J//769Prnx0V3VueHh4eGd4T0JtcE1n6vcLUZ0bHh4e3kleMrn7aSV33Qf3/Al4eHh4n8W7D9z58XptWfHw8PA+kZcfmvN/xlIYeHh4eAd5yQd/9aBcXYJ+ogQPDw/vDG8qWbDj99H6Hh4eHl7AK7c0xYmJ6hE5L7MVmq7w8PDwNvDyQJyka9ee1n8CHh4e3nlejqm2YVWXIy+VtZIReHh4eG3eWpkqScLmrQZr7QuFfQ8PDw9viFcN/bPXJAnc8gEdDw8PbzOvmghYK/B3qOVmAjw8PLzNvEcvSA7TU+ndznyifQ8PDw9vlLc20U7TQDX05+/Fw8PDO8mrhuxCOSpeuH4rAx4eHt4ZXielu5a07bReRRsJHh4e3mZeHnD7bQR5cataBsPDw8N7La/6+qkNI09elL8Y8PDw8EZ5U2nWpBUgTwevlc3w8PDwTvLWCv/9EF/dKhabrvDw8PBGefltO5oA1loQntyFh4eHd4SXB+WpptXO4fvJsuLh4eEd51U3hmpYLx+RZ3vK8PDw8DbwOtOqlvlzTF5+w8PDw9vNq44ctpbOWFs4PDw8vJO8Kx5VatIc0Lm+XADDw8PDG+Xlm0HSGrXWItA5rOPh4eG9ilcN0PldeaCvJiPw8PDwPpGXh/6pA/fRjQEPDw9vlDeVvEi2nLzhAA8PD+8kr1r0Wjsu56Wv6vLh4eHhneT1UwD9KSZvXOwpw8PDwxvlfd/Aw8PDw8PDw8N7g/ELfDabp2BXePwAAAAASUVORK5CYII=">
+    
+</ul>
+
+    
+
+    <!-- Tags (bookmark) -->
+    
+    <button id="article-functions-viewtags-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+        <i class="material-icons" role="presentation">bookmark</i>
+        <span class="visuallyhidden">bookmark</span>
+    </button>
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
+        <li class="mdl-menu__item">
+        <a class="post_tag-link" href="/tags/afl/">afl</a>
+    </ul>
+    
+
+    <!-- Share -->
+    <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">share</i>
+    <span class="visuallyhidden">share</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
+    
+
+    
+        
+            <!-- Busuanzi Views -->
+            <a class="post_share-link" href="#">
+                <li class="mdl-menu__item">
+                    <span id="busuanzi_container_page_pv">
+                        <span id="busuanzi_value_page_pv"></span>&nbsp;浏览量
+                    </span>
+                </li>
+            </a>
+        
+    
+
+    <!-- Share Weibo -->
+    
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=fuzz系列之afl&url=http://blog.hac425.top/2018/06/03/fuzz_with_afl.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
+            <li class="mdl-menu__item">
+                分享到微博
+            </li>
+        </a>
+    
+
+    <!-- Share Twitter -->
+    
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=fuzz系列之afl&url=http://blog.hac425.top/2018/06/03/fuzz_with_afl.html&via=hac425" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Twitter
+            </li>
+        </a>
+    
+
+    <!-- Share Facebook -->
+    
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2018/06/03/fuzz_with_afl.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Facebook
+            </li>
+        </a>
+    
+
+    <!-- Share Google+ -->
+    
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2018/06/03/fuzz_with_afl.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Google+
+            </li>
+        </a>
+    
+
+    <!-- Share LinkedIn -->
+    
+
+    <!-- Share QQ -->
+    
+
+    <!-- Share Telegram -->
+    
+</ul>
+
+</div>
+
+                
+
+                <!-- Post Content -->
+                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+    
+        <h1 id="afl-实战"><a href="#afl-实战" class="headerlink" title="afl 实战"></a>afl 实战</h1><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>像 <code>libFuzzer</code>, <code>afl</code>  这类  <code>fuzz</code>  对于 从文件 或者 标准输入 获取输入的程序都能进行很好的 <code>fuzz</code>, 但是对于基于网络的程序来说就不是那么方便了。 </p>
+<p>这篇文章介绍用 <code>afl</code> 来 <code>fuzz</code> 网络应用程序。</p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p><code>afl</code> 是一个非常厉害的 <code>fuzz</code>，最近几年炒的火热。它是基于代码插桩来生成测试用例，这样生成的样本就比较的好，而且针对 <code>linux</code> 做了许多性能优化使得速度也非常快。</p>
+<p>使用 <code>afl</code> 的常规步骤</p>
+<ul>
+<li>如果有源码，用 <code>afl-gcc</code> 或者 <code>afl-clang-fast</code> 编译源码，<code>afl</code> 会利用这些工具在编译期间对代码进行插桩，为后面的测试提供代码覆盖率，测试样本的变异则会基于代码覆盖率进行。无源码的话可以使用 <code>qemu</code> 进行插桩</li>
+<li>搜集好 <strong>初始样本集</strong>，如果必要的话使用 <code>afl-cmin</code>  把样本集进行<strong>精简</strong>。</li>
+<li>然后用 <code>afl-fuzz</code> 开始 <code>fuzz</code>.</li>
+</ul>
+<p>下面对一些常见的命令给个示例</p>
+<p><strong>精简样本集</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">afl-cmin -i in/ -o out/  /path/to/program</div></pre></td></tr></table></figure>
+<blockquote>
+<p><code>in/</code> 是初始样本集目录</p>
+<p><code>out/</code> 是 精简后的样本集存放的目录</p>
+</blockquote>
+<p><strong>开启 fuzz</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">afl-fuzz -i in/ -o out/ /path/to/program</div></pre></td></tr></table></figure>
+<blockquote>
+<p><code>in/</code> 是初始样本集目录</p>
+<p><code>out/</code> 用于保存 <code>fuzz</code> 过程中的一些文件</p>
+</blockquote>
+<p><code>afl-fuzz</code> 默认是往 <code>stdin</code> 中写测试数据，它同时支持从文件喂 测试数据给目标程序，只要把设置文件的参数修改为 <code>@@</code> ， <code>fuzz</code> 过程中 <code>afl-fuzz</code> 会把它替换成 文件名。</p>
+<p>比如 <code>./a</code> 这个程序的 第二个参数是要处理的文件的名称， 那么相应的 afl-fuzz 的命令就是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">afl-fuzz -i in/ -o out/ ./a arg1 @@</div></pre></td></tr></table></figure>
+<p>更多内容请看</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">http://lcamtuf.coredump.cx/afl/QuickStartGuide.txt</div><div class="line">http://lcamtuf.coredump.cx/afl/README.txt</div></pre></td></tr></table></figure>
+<h2 id="Fuzz-网络程序"><a href="#Fuzz-网络程序" class="headerlink" title="Fuzz 网络程序"></a>Fuzz 网络程序</h2><p>这里以 <code>libmodbus</code> 这个库为目标进行 fuzz 。</p>
+<h3 id="构建-Modbus-TCP-Server"><a href="#构建-Modbus-TCP-Server" class="headerlink" title="构建 Modbus TCP Server"></a>构建 Modbus TCP Server</h3><p>库的官网地址如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://libmodbus.org/documentation/</div></pre></td></tr></table></figure>
+<p>这是一个用于 <code>modbus</code> 通讯的库， 通过这个库可以很方便的实现 <code>modbus</code> 服务器 和 客户端。 这里以 <code>modbus tcp</code> 的服务端作为 <code>fuzz</code> 的对象。</p>
+<p>首先在官网下载好源码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://libmodbus.org/releases/libmodbus-3.1.4.tar.gz</div></pre></td></tr></table></figure>
+<p>源码目录下的 <code>tests</code> 目录里面有一些示例程序， 其中 <code>tests/bandwidth-server-one.c</code> 就实现了一个 <code>modbus tcp server</code> ， 把它做一些精简得到</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;string.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;errno.h&gt;</div><div class="line">#include &lt;modbus.h&gt;</div><div class="line"></div><div class="line">int main(int argc, char *argv[])</div><div class="line">&#123;</div><div class="line">    int s = -1;</div><div class="line">    modbus_t *ctx = NULL;</div><div class="line">    modbus_mapping_t *mb_mapping = NULL;</div><div class="line">    int rc;</div><div class="line">    int use_backend;</div><div class="line">    ctx = modbus_new_tcp(&quot;127.0.0.1&quot;, 1502);</div><div class="line">    s = modbus_tcp_listen(ctx, 1);</div><div class="line">    modbus_tcp_accept(ctx, &amp;s);</div><div class="line">    mb_mapping = modbus_mapping_new(MODBUS_MAX_READ_BITS, 0,</div><div class="line">                                    MODBUS_MAX_READ_REGISTERS, 0);</div><div class="line">    if (mb_mapping == NULL) &#123;</div><div class="line">        modbus_free(ctx);</div><div class="line">        return -1;</div><div class="line">    &#125;</div><div class="line">    uint8_t query[MODBUS_TCP_MAX_ADU_LENGTH];</div><div class="line">    memset(query, 0, MODBUS_TCP_MAX_ADU_LENGTH);</div><div class="line">    rc = modbus_receive(ctx, query); // 获取客户端的请求数据</div><div class="line">    if (rc &gt; 0) &#123;</div><div class="line">    	modbus_reply(ctx, query, rc, mb_mapping); // 处理并响应之</div><div class="line">    &#125; </div><div class="line">    modbus_mapping_free(mb_mapping);</div><div class="line">    if (s != -1) &#123;</div><div class="line">        close(s);</div><div class="line">    &#125;</div><div class="line">    /* For RTU, skipped by TCP (no TCP connect) */</div><div class="line">    modbus_close(ctx);</div><div class="line">    modbus_free(ctx);</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>代码逻辑简单理一下</p>
+<ul>
+<li><code>modbus_new_tcp</code> 初始化 <code>modbus_t</code> 结构体</li>
+<li><code>modbus_tcp_accept</code> 和 <code>modbus_tcp_listen</code> 就是调用 <code>socket</code> 监听端口</li>
+<li><code>modbus_mapping_new</code> 初始化一个缓冲区，用于模拟寄存器信息</li>
+<li>然后 <code>modbus_receive</code> 接收客户端的请求和输入</li>
+<li>获取输入后就 通过 <code>modbus_reply</code> 处理 请求，以及构造响应数据包， 同时返回响应</li>
+<li>然后就是释放掉分配的一些内存</li>
+</ul>
+<h3 id="利用-preeny-库辅助"><a href="#利用-preeny-库辅助" class="headerlink" title="利用 preeny 库辅助"></a>利用 preeny 库辅助</h3><p><code>afl</code> 默认只能 <code>fuzz</code> 通过 <code>stdin</code> 和  文件 获取输入的程序， 要 <code>fuzz</code> 网络相关的程序，需要使用一个库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/zardus/preeny</div></pre></td></tr></table></figure>
+<p>这个库利用 <code>LD_PRELOAD</code> 机制，重写了 很多库函数， 其中 <a href="https://github.com/zardus/preeny/blob/master/src/desock.c" target="_blank" rel="external">desock.c</a> 这个文件负责重写 <code>socket</code> 相关的函数，其实现的功能就是当应用从 <code>socket</code> 获取输入时，其实是从 <code>stdin</code> 获取输入。 （具体实现以后再看~_~)</p>
+<p>首先下载编译下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git clone https://github.com/zardus/preeny.git</div><div class="line">cd preeny/</div><div class="line">make</div></pre></td></tr></table></figure>
+<p>然后会在 <code>x86_64-linux-gnu</code> 目录下生成编译好的 <code>lib</code> 。</p>
+<p>写个测试脚本，测试一下 (根据 <code>tests</code> 目录里面的 <code>sock.c</code> 改造)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">#include &lt;sys/socket.h&gt;</div><div class="line">#include &lt;unistd.h&gt;</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;string.h&gt;</div><div class="line"></div><div class="line">int main()</div><div class="line">&#123;</div><div class="line">	int s = socket(AF_INET, SOCK_STREAM, 0);</div><div class="line">	char buf[1024]=&#123;0&#125;;</div><div class="line">    char send_msg[] = &quot;hello, send by send() :\n&quot;;</div><div class="line">	send(s, send_msg, strlen(send_msg), 0);</div><div class="line">	recv(s, buf, 1024, 0);</div><div class="line">    printf(&quot;recv from recv() : %s\n&quot;, buf);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>编译运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gcc sock_test.c -o sock_test</div><div class="line">LD_PRELOAD=&quot;/home/haclh/vmdk_kernel/preeny/x86_64-linux-gnu/desock.so&quot; ./sock_test</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1527990526733kwupbhxr.png?imageslim" alt="paste image"></p>
+<p>往 <code>socket</code> 调用 <code>send</code> , 成功往 <code>stdout</code> 输出了 字符串。</p>
+<p>从 <code>stdin</code> 输入 <code>I am Tester</code> ，可以看到成功写入 <code>buf</code> 里面</p>
+<p>所以我们就可以利用 <code>preeny</code> 来 <code>fuzz modbus tcp server</code> 了</p>
+<h3 id="编译-modbus-server"><a href="#编译-modbus-server" class="headerlink" title="编译 modbus server"></a>编译 modbus server</h3><p>首先使用 <code>afl-gcc</code> 编译 <code>libmodbus</code> ，对 <code>libmodbus</code>  插桩。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">unzip libmodbus-master.zip </div><div class="line">cd libmodbus-master/</div><div class="line">./autogen.sh </div><div class="line">CC=afl-gcc CXX=afl-g++ ./configure --enable-static</div><div class="line">make -j4</div></pre></td></tr></table></figure>
+<blockquote>
+<p><code>--enable-static</code> ： 用于生成静态库</p>
+</blockquote>
+<p>然后在 <code>src/.libs</code> 下就可以看到编译好的库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">03:45 haclh@ubuntu:libmodbus-master $ ls src/.libs/</div><div class="line">libmodbus.a  libmodbus.la  libmodbus.lai  libmodbus.so  libmodbus.so.5  libmodbus.so.5.1.0  modbus-data.o  modbus.o  modbus-rtu.o  modbus-tcp.o</div></pre></td></tr></table></figure>
+<p><code>libmodbus.a</code> 就是编译好的静态库</p>
+<p>然后使用我们修改过的  <code>bandwidth-server-one.c</code>  编译 和 <code>fuzz</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">cd tests/</div><div class="line">vim bandwidth-server-one.c </div><div class="line">afl-gcc bandwidth-server-one.c -I../src ../src/.libs/libmodbus.a -o server</div><div class="line">mkdir in</div><div class="line">echo 11111 &gt; in/1</div><div class="line">LD_PRELOAD=&quot;/home/haclh/vmdk_kernel/preeny/x86_64-linux-gnu/desock.so&quot; afl-fuzz -i in -o out ./server</div></pre></td></tr></table></figure>
+<p>这里 直接用 <code>echo</code> 生成了一个 测试文件，如果直接用这个去测的话会发现速度非常的慢。<br><img src="http://oy9h5q2k4.bkt.clouddn.com/1527990543993qqu6l3b0.png?imageslim" alt="paste image"></p>
+<h3 id="获取样本数据"><a href="#获取样本数据" class="headerlink" title="获取样本数据"></a>获取样本数据</h3><p>一组好的样本数据对 <code>fuzzer</code> 的影响还是非常大的，一般我们可以去网上搜索样本，比如图片，视频文件等。对于我们这次的目标 <code>libmodbus</code> ， 它自带了很多的测试程序，我们可以利用这些测试程序测试，然后用 <code>tcpdump</code> 抓包， 最后在把其中的请求数据保存下来，作为测试样本集。</p>
+<p>首先使用 random-test-server  在 127.0.0.1:1502 起一个 modbus tcp 服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">04:09 haclh@ubuntu:libmodbus-master $ cd tests/</div><div class="line">04:09 haclh@ubuntu:tests $ ./random-test-server</div></pre></td></tr></table></figure>
+<p>然后开启 tcpdump ， 保存数据包到 ~/modbus.pcap</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">04:09 haclh@ubuntu:~ $ sudo tcpdump -i lo -w ~/modbus.pcap</div><div class="line">[sudo] password for haclh: </div><div class="line">tcpdump: listening on lo, link-type EN10MB (Ethernet), capture size 262144 bytes</div></pre></td></tr></table></figure>
+<p>最后使用 <code>random-test-client</code>  随机发送各种 <code>modbus</code> 请求到 <code>127.0.0.1:1502</code> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd tests/</div><div class="line">./random-test-client</div></pre></td></tr></table></figure>
+<p>然后写一个脚本把 <code>~/modbus.pcap</code> 中 由客户端发送的数据包 （也就是目的地为 <code>127.0.0.1:1502</code>的数据包） 的内容提取出来，每个数据包内容保存为一个单独的文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">from scapy.all import *</div><div class="line">save_path = &quot;/tmp/seeds/&quot;</div><div class="line">uuid = 0</div><div class="line"></div><div class="line">if not os.path.exists(save_path):</div><div class="line">    os.system(&quot;mkdir %s&quot; %(save_path))</div><div class="line"></div><div class="line">def save_to_file(data):</div><div class="line">    global uuid</div><div class="line">    with open(&quot;&#123;&#125;&#123;&#125;&quot;.format(save_path, uuid), &quot;w&quot;) as fp:</div><div class="line">        fp.write(str(data))</div><div class="line">    uuid += 1</div><div class="line">    print &quot;write test file: &#123;&#125;&quot;.format(uuid)</div><div class="line"></div><div class="line">modbus_session = &apos;&apos;</div><div class="line">pg = rdpcap(&quot;modbus.pcap&quot;)</div><div class="line">session = pg.sessions()</div><div class="line">for k in session.keys():</div><div class="line">    if k.endswith(&quot;127.0.0.1:1502&quot;):</div><div class="line">        modbus_session = session[k]</div><div class="line"></div><div class="line">for s in modbus_session:</div><div class="line">    payload = s[TCP].payload</div><div class="line">    if len(payload) &gt; 4:</div><div class="line">        save_to_file(payload)</div><div class="line"></div><div class="line">print &quot;Total: %d tests&quot; %(uuid)</div></pre></td></tr></table></figure>
+<h3 id="使用获取的样本再次-fuzz"><a href="#使用获取的样本再次-fuzz" class="headerlink" title="使用获取的样本再次 fuzz"></a>使用获取的样本再次 fuzz</h3><p>然后以生成的样本集作为初始样本集进行 <code>fuzz</code> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">LD_PRELOAD=&quot;/home/haclh/vmdk_kernel/preeny/x86_64-linux-gnu/desock.so&quot; afl-fuzz -i /tmp/seeds/  -o out ./server</div></pre></td></tr></table></figure>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/15279905560376238dstt.png?imageslim" alt="paste image"></p>
+<p>速度有一定的提升，而且 总路径数 直接 <code>1000+</code> </p>
+<p>最后 <code>fuzz</code> 了两个多小时 </p>
+<p><img src="http://oy9h5q2k4.bkt.clouddn.com/1527990563921d0trmsao.png?imageslim" alt="paste image"></p>
+<p>那个唯一的 <code>crash</code> 还是误报 (~_~)</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><code>afl + preeny</code> 来 <code>fuzz</code> 网络应用 速度还行， 关键的还是要找到好的样本，从程序自带的测试用例中抓取也是一个不错的思路。</p>
+<p><strong>参考</strong></p>
+<p><a href="https://lolware.net/2015/04/28/nginx-fuzzing.html" target="_blank" rel="external">Fuzzing nginx - Hunting vulnerabilities with afl-fuzz</a></p>
+<h2 id="AFL-Persistent-Mode"><a href="#AFL-Persistent-Mode" class="headerlink" title="AFL Persistent Mode"></a>AFL Persistent Mode</h2><p>在介绍一个 在 <code>fuzz</code> 一些网络程序时可能用到的特性， <code>AFL</code> 的 <code>persistent</code> 模式。 </p>
+<p><code>persistent</code> 模式就是在程序的某个代码位置不断喂<strong>生成的变异数据</strong> 进行 <code>fuzz</code> , 而不用每次喂数据都得重新 <code>fork</code> 一个程序。</p>
+<p>要使用这个特性，首先得编译 <code>llvm_mode</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cd afl-2.52b/</div><div class="line">cd llvm_mode/</div><div class="line">make</div><div class="line">cd .. </div><div class="line">sudo make install</div></pre></td></tr></table></figure>
+<p>此时就会有  <code>afl-clang-fast</code> 和  <code>afl-clang-fast++</code> 两个命令， 要使用这个模式，就要用这两个命令来编译目标应用。</p>
+<p><code>afl</code>  的 作者有一篇 <a href="https://lcamtuf.blogspot.com/2015/06/new-in-afl-persistent-mode.html" target="_blank" rel="external">文章</a> 介绍这个特性。 </p>
+<p>下面还是用 <code>afl</code> 自带的 测试文件 <code>experimental/persistent_demo/persistent_demo.c</code>  来看看。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;unistd.h&gt;</div><div class="line">#include &lt;signal.h&gt;</div><div class="line">#include &lt;string.h&gt;</div><div class="line">int main(int argc, char** argv) &#123;</div><div class="line">  char buf[100]; </div><div class="line">  while (__AFL_LOOP(1000)) &#123;</div><div class="line">    memset(buf, 0, 100);</div><div class="line">    read(0, buf, 100);</div><div class="line">    if (buf[0] == &apos;f&apos;) &#123;</div><div class="line">      printf(&quot;one\n&quot;);</div><div class="line">      if (buf[1] == &apos;o&apos;) &#123;</div><div class="line">        printf(&quot;two\n&quot;);</div><div class="line">        if (buf[2] == &apos;o&apos;) &#123;</div><div class="line">          printf(&quot;three\n&quot;);</div><div class="line">          if (buf[3] == &apos;!&apos;) &#123;</div><div class="line">            printf(&quot;four\n&quot;);</div><div class="line">            abort();</div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125; // end of while (__AFL_LOOP(1000))</div><div class="line">  return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>最关键的 就是 <code>AFL_LOOP(1000)</code> 这个宏, 其中的参数指定<strong>循环的次数</strong>。</p>
+<p>每一次循环 afl 都会生成 测试数据，然后喂到 <code>stdin</code> , 这样 <code>fuzzer</code>  就可以在 <code>AFL_LOOP</code> 宏 包围的内部，通过 <code>read(0,buf, size)</code> 来获取测试数据，然后喂给目标程序的数据处理的代码，这样可以减少 <code>fork</code> 等操作的开销。</p>
+<p>对应到上面的程序，就是 <code>afl</code> 会在 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">while (__AFL_LOOP(1000)) &#123;</div><div class="line">........</div><div class="line">........</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>里面 <code>fuzz 1000</code> 次，即生成 <code>1000</code> 次测试数据， 然后会 <code>return 0</code> . 程序结束，然后 <code>afl</code> 会重新起一个程序。继续这样的 <code>fuzz</code> .</p>
+<p>被  <code>while (__AFL_LOOP(1000))</code> 包围的代码，就是不断的 从 <code>stdin</code> 获取测试数据，然后进入下面的 <code>if</code> 判断逻辑。</p>
+<p>编译 然后用 <code>afl-fuzz</code> 它</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">afl-clang-fast persistent_demo.c -o persistent_demo</div><div class="line">afl-fuzz  -i in/ -o out/ ./persistent_demo</div></pre></td></tr></table></figure>
+<p>一会就能拿到 <code>crash</code> 了。（  <code>abort</code> 会被 <code>afl</code> 检测为 <code>crash</code>) 。</p>
+<p>对于 <code>libmodbus</code> ， 不会用这种方式进行 <code>fuzz</code>。（如果有人成功，望悉知，感激不尽） </p>
+<p>不过网上还是有一些案例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">https://www.fastly.com/blog/how-fuzz-server-american-fuzzy-lop</div><div class="line">https://sensepost.com/blog/2017/fuzzing-apache-httpd-server-with-american-fuzzy-lop-%2B-persistent-mode/</div></pre></td></tr></table></figure>
+<h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><p>如果使用 <code>afl</code> 来 <code>fuzz</code> 网络应用，有两种方式 </p>
+<ul>
+<li>利用 <code>preeny</code> 把从 <code>socket</code> 获取数据，转变为 从 <code>stdin</code> 获取数据</li>
+<li>利用 <code>afl</code> 的 <code>persistent</code> 模式</li>
+</ul>
+<p>其实还有第三种，网上有个修改版的 <code>afl</code> 可以用来 <code>fuzz</code> 网络应用，不过版本比较老，貌似也没啥人使用（:~</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/jdbirdwell/afl</div></pre></td></tr></table></figure>
+<p>此外 ， <code>afl</code> 还有各种扩展模式，比如 利用 <code>qemu</code> 可以无源码 <code>fuzz</code>。 17 年 还有一个 <code>afl-unicorn</code> ，貌似可以 <code>fuzz</code> 任意架构的代码（:没来得及看~。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">https://hackernoon.com/afl-unicorn-fuzzing-arbitrary-binary-code-563ca28936bf</div><div class="line">https://hackernoon.com/afl-unicorn-part-2-fuzzing-the-unfuzzable-bea8de3540a5</div></pre></td></tr></table></figure>
+
+        
+                <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
+                    <p><strong>
+                         
+                            <a>本站文章均原创， 转载注明来源</a>
+                        </strong>
+                        <br>
+                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2018/06/03/fuzz_with_afl.html">http://blog.hac425.top/2018/06/03/fuzz_with_afl.html</a>
+                    </p>
+                </blockquote>
+        
+    
+
+    
+</div>
+
+
+                
+
+                <!-- Post Comments -->
+                
+                    
+    <!-- 使用 来必力 -->
+<div id="livere-comment">
+    <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zMTQ2OC84MDMy">
+<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+</div>
+<style>
+    #livere-comment{
+        background-color: #eee;
+        padding: 2pc;
+    }
+</style>
+
+                
+            </div>
+
+            <!-- Post Prev & Next Nav -->
+            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
+    <!-- Prev Nav -->
+    
+        <a href="/2018/06/03/fuzz_with_honggfuzz.html" id="post_nav-newer" class="prev-content">
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_back</i>
+            </button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            新篇
+        </a>
+    
+
+    <!-- Section Spacer -->
+    <div class="section-spacer"></div>
+
+    <!-- Next Nav -->
+    
+        <a href="/2018/05/18/learn_fuzz_libfuzzer.html" id="post_nav-older" class="next-content">
+            旧篇
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </a>
+    
+</nav>
+
+        </div>
+    </div>
+
+
+
+                    
+                        <!-- Overlay For Active Sidebar -->
+<div class="sidebar-overlay"></div>
+
+<!-- Material sidebar -->
+<aside id="sidebar" class="sidebar sidebar-colored sidebar-fixed-left" role="navigation">
+    <div id="sidebar-main">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header header-cover" style="background-image: url(/img/sidebar_header.png);">
+    <!-- Top bar -->
+    <div class="top-bar"></div>
+
+    <!-- Sidebar toggle button -->
+    <button type="button" class="sidebar-toggle mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" style="display: initial;" data-upgraded=",MaterialButton,MaterialRipple">
+        <i class="material-icons">clear_all</i>
+        <span class="mdl-button__ripple-container">
+            <span class="mdl-ripple">
+            </span>
+        </span>
+    </button>
+
+    <!-- Sidebar Avatar -->
+    <div class="sidebar-image">
+        <img src="/img/girl.png" alt="hac425's avatar">
+    </div>
+
+    <!-- Sidebar Email -->
+    <a data-toggle="dropdown" class="sidebar-brand" href="#settings-dropdown">
+        hac425xxx@gmail.com
+        <b class="caret"></b>
+    </a>
+</div>
+
+
+        <!-- Sidebar Navigation  -->
+        <ul class="nav sidebar-nav">
+    <!-- User dropdown  -->
+    <li class="dropdown">
+        <ul id="settings-dropdown" class="dropdown-menu">
+            
+                <li>
+                    <a href="#" target="_blank" title="Email Me">
+                        
+                            <i class="material-icons sidebar-material-icons sidebar-indent-left1pc-element">email</i>
+                        
+                        Email Me
+                    </a>
+                </li>
+            
+        </ul>
+    </li>
+
+    <!-- Homepage -->
+    
+        <li id="sidebar-first-li">
+            <a href="/">
+                
+                    <i class="material-icons sidebar-material-icons">home</i>
+                
+                主页
+            </a>
+        </li>
+        
+    
+
+    <!-- Archives  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">inbox</i>
+                
+                    归档
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+            <li>
+                <a class="sidebar_archives-link" href="/archives/2018/06/">六月 2018<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/05/">五月 2018<span class="sidebar_archives-count">7</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/04/">四月 2018<span class="sidebar_archives-count">5</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/03/">三月 2018<span class="sidebar_archives-count">14</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/02/">二月 2018<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/01/">一月 2018<span class="sidebar_archives-count">8</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/12/">十二月 2017<span class="sidebar_archives-count">13</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/11/">十一月 2017<span class="sidebar_archives-count">8</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/10/">十月 2017<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/08/">八月 2017<span class="sidebar_archives-count">1</span></a>
+            </ul>
+        </li>
+        
+    
+
+    <!-- Categories  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">chrome_reader_mode</i>
+                
+                分类
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                <a class="sidebar_archives-link" href="/categories/Vulnerability-analysis/">Vulnerability analysis<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/chrome/">chrome<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/ctf/">ctf<span class="sidebar_archives-count">20</span></a></li><li><a class="sidebar_archives-link" href="/categories/embedded-development/">embedded_development<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/fuzz/">fuzz<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/categories/java应用破解思路/">java应用破解思路<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/jeb破解/">jeb破解<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/categories/kernel/">kernel<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/pwn-router-os/">pwn_router_os<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/categories/reverse/">reverse<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/vulnerability-report/">vulnerability_report<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/categories/代码审计/">代码审计<span class="sidebar_archives-count">4</span></a></li><li><a class="sidebar_archives-link" href="/categories/安卓安全/">安卓安全<span class="sidebar_archives-count">6</span></a></li><li><a class="sidebar_archives-link" href="/categories/文件patch/">文件patch<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/渗透测试/">渗透测试<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/categories/破解/">破解<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/路由器安全/">路由器安全<span class="sidebar_archives-count">11</span></a>
+            </ul>
+        </li>
+        
+            <li class="divider"></li>
+        
+    
+
+    <!-- Pages  -->
+    
+        <li>
+            <a href="/about" title="关于我">
+                
+                    <i class="material-icons sidebar-material-icons">person</i>
+                
+                关于我
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/timeline" title="时间轴">
+                
+                    <i class="material-icons sidebar-material-icons">timeline</i>
+                
+                时间轴
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/links" title="友情链接">
+                
+                    <i class="material-icons sidebar-material-icons">people</i>
+                
+                友情链接
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/tags" title="标签云">
+                
+                    <i class="material-icons sidebar-material-icons">invert_colors</i>
+                
+                标签云
+            </a>
+        </li>
+        
+    
+
+    <!-- Article Number  -->
+    
+        <li>
+            <a href="/archives">
+                文章总数
+                <span class="sidebar-badge">70</span>
+            </a>
+        </li>
+        
+    
+</ul>
+
+
+        <!-- Sidebar Footer -->
+        <!--
+I'm glad you use this theme, the development is no so easy, I hope you can keep the copyright, I will thank you so much.
+If you still want to delete the copyrights, could you still retain the first one? Which namely "Theme Material"
+It will not impact the appearance and can give developers a lot of support :)
+
+很高兴您使用并喜欢该主题，开发不易 十分谢谢与希望您可以保留一下版权声明。
+如果您仍然想删除的话 能否只保留第一项呢？即 "Theme Material"
+它不会影响美观并可以给开发者很大的支持和动力。 :)
+-->
+
+<!-- Sidebar Divider -->
+
+
+<!-- Theme Material -->
+
+
+<!-- Help & Support -->
+<!--
+
+-->
+
+<!-- Feedback -->
+<!--
+
+-->
+
+<!-- About Theme -->
+<!--
+
+-->
+
+    </div>
+
+    <!-- Sidebar Image -->
+    
+
+</aside>
+
+                    
+
+                    
+                        <!-- Footer Top Button -->
+                        <div id="back-to-top" class="toTop-wrap">
+    <a href="#top" class="toTop">
+        <i class="material-icons footer_top-i">expand_less</i>
+    </a>
+</div>
+
+                    
+
+                    <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+<!--Footer-->
+<footer class="mdl-mini-footer" id="bottom">
+    
+        <!-- Paradox Footer Left Section -->
+        <div class="mdl-mini-footer--left-section sns-list">
+    <!-- Twitter -->
+    
+        <a href="https://twitter.com/hac425" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-twitter">
+                <span class="visuallyhidden">Twitter</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Facebook -->
+    
+
+    <!-- Google + -->
+    
+
+    <!-- Weibo -->
+    
+        <a href="http://weibo.com/u/5691483590" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-weibo">
+                <span class="visuallyhidden">Weibo</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Instagram -->
+    
+
+    <!-- Tumblr -->
+    
+
+    <!-- Github -->
+    
+        <a href="https://gitee.com/hac425/" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-github">
+                <span class="visuallyhidden">Github</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- LinkedIn -->
+    
+
+    <!-- Zhihu -->
+    
+
+    <!-- Bilibili -->
+    
+
+    <!-- Telegram -->
+    
+    
+    <!-- V2EX -->
+    
+</div>
+
+
+        <!--Copyright-->
+        <div id="copyright">
+            Copyright&nbsp;©<script type="text/javascript">var fd = new Date();document.write("&nbsp;" + fd.getFullYear() + "&nbsp;");</script>穷则变，变则通，通则久
+            
+        </div>
+
+        <!-- Paradox Footer Right Section -->
+
+    
+</footer>
+
+
+                    <!-- Import JS File -->
+
+    <script>lsloader.load("lazyload_js","/js/lazyload.min.js?wgjW/HuQG9JDgvPDPoRAng==", true)</script>
+
+
+
+    <script>lsloader.load("js_js","/js/js.min.js?V/53wGualMuiPM3xoetD5Q==", true)</script>
+
+
+
+    <script>lsloader.load("np_js","/js/nprogress.js?pl3Qhb9lvqR1FlyLUna1Yw==", true)</script>
+
+
+<script type="text/ls-javascript" id="NProgress-script">
+    NProgress.configure({
+        showSpinner: true
+    });
+    NProgress.start();
+    $('#nprogress .bar').css({
+        'background': '#29d'
+    });
+    $('#nprogress .peg').css({
+        'box-shadow': '0 0 10px #29d, 0 0 15px #29d'
+    });
+    $('#nprogress .spinner-icon').css({
+        'border-top-color': '#29d',
+        'border-left-color': '#29d'
+    });
+    setTimeout(function() {
+        NProgress.done();
+        $('.fade').removeClass('out');
+    }, 800);
+</script>
+
+
+
+
+
+
+
+    <!-- Busuanzi -->
+    <script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+   
+
+
+
+
+
+<!-- UC Browser Compatible -->
+<script>
+	var agent = navigator.userAgent.toLowerCase();
+	if(agent.indexOf('ucbrowser')>0) {
+		document.write('<link rel="stylesheet" href="/css/uc.css">');
+	   alert('由于 UC 浏览器使用极旧的内核，而本网站使用了一些新的特性。\n为了您能更好的浏览，推荐使用 Chrome 或 Firefox 浏览器。');
+	}
+</script>
+
+<!-- Import prettify js  -->
+
+
+    
+        <script>lsloader.load("hanabi","/js/hanabi-browser-bundle.js?5+2z7ZZmFuZK5IcimlZbxw==", true)</script>
+    
+
+
+<!-- Window Load -->
+<!-- add class for prettify -->
+<script type="text/ls-javascript" id="window-load">
+    $(window).on('load', function() {
+        // Post_Toc parent position fixed
+        $('.post-toc-wrap').parent('.mdl-menu__container').css('position', 'fixed');
+    });
+
+    
+    
+        
+        
+        HanabiBrowser.start('pre code',true);
+    
+</script>
+
+<!-- MathJax Load-->
+
+
+<!-- Bing Background -->
+
+
+<script type="text/ls-javascript" id="lazy-load">
+    // Offer LazyLoad
+    queue.offer(function(){
+        $('.lazy').lazyload({
+            effect : 'show'
+        });
+    });
+
+    // Start Queue
+    $(document).ready(function(){
+        setInterval(function(){
+            queue.execNext();
+        },200);
+    });
+</script>
+
+<!-- Custom Footer -->
+
+
+
+<script>
+    (function(){
+        var scriptList = document.querySelectorAll('script[type="text/ls-javascript"]')
+
+        for (var i = 0; i < scriptList.length; ++i) {
+            var item = scriptList[i];
+            lsloader.runInlineScript(item.id,item.id);
+        }
+    })()
+console.log('\n %c © Material Theme | Version: 1.5.0 | https://github.com/viosey/hexo-theme-material %c \n', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-left-radius:5px;border-bottom-left-radius:5px;', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-right-radius:5px;border-bottom-right-radius:5px;');
+</script>
+
+                </main>
+            </div>
+        </body>
+    
+</html>

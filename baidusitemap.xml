@@ -4,6 +4,46 @@
 
     
   <url>
+    <loc>http://blog.hac425.top/2018/06/03/fuzz_with_honggfuzz.html</loc>
+    <lastmod>2018-06-03T01:51:39.492Z</lastmod>
+    <data>
+        <display>
+        <title>fuzz实战之honggfuzz</title>
+        <pubTime>2018-06-03T01:50:00.000Z</pubTime>
+        
+        <tag>honggfuzz</tag>
+         
+         
+           
+             
+              <breadCrumb title="fuzz" url="http://blog.hac425.top/categories/fuzz/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://blog.hac425.top/2018/06/03/fuzz_with_afl.html</loc>
+    <lastmod>2018-06-03T01:49:40.875Z</lastmod>
+    <data>
+        <display>
+        <title>fuzz系列之afl</title>
+        <pubTime>2018-06-03T01:45:00.000Z</pubTime>
+        
+        <tag>afl</tag>
+         
+         
+           
+             
+              <breadCrumb title="fuzz" url="http://blog.hac425.top/categories/fuzz/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://blog.hac425.top/2018/05/18/learn_fuzz_libfuzzer.html</loc>
     <lastmod>2018-05-18T14:56:02.437Z</lastmod>
     <data>
